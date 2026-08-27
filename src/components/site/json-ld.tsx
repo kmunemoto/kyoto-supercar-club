@@ -52,3 +52,32 @@ export function FaqJsonLd() {
     />
   );
 }
+
+export function WebPageJsonLd({
+  name,
+  description,
+  path,
+}: {
+  name: string;
+  description: string;
+  path: string;
+}) {
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        name,
+        description,
+        url: absUrl(path),
+        inLanguage: "ja",
+        isPartOf: { "@type": "WebSite", name: BRAND.name, url: absUrl("/") },
+        about: {
+          "@type": "Organization",
+          name: BRAND.name,
+          areaServed: { "@type": "AdministrativeArea", name: "京都府" },
+        },
+      }}
+    />
+  );
+}

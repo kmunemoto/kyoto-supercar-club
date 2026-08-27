@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { InquiryCta } from "@/components/site/inquiry-cta";
+import { WebPageJsonLd } from "@/components/site/json-ld";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
 import {
+  COLLECTION_DUTIES,
   COLLECTION_FLOW,
   COLLECTION_IDEA,
   COLLECTION_RISKS,
   COLLECTION_UNDECIDED,
   FAQS,
-  MANAGEMENT_ITEMS,
 } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 import { lineCtaLabel } from "@/lib/site";
@@ -26,8 +27,13 @@ export const Route = createFileRoute("/collection")({
 function Page() {
   return (
     <SiteShell>
+      <WebPageJsonLd
+        name="京都のスーパーカー共同所有｜KSC COLLECTION"
+        description="一台を少人数で共同所有し、KSCが保管と管理を担う構想。投資商品ではありません。サービス準備中、事前登録のみ。"
+        path="/collection"
+      />
       <PageIntro
-        kicker="COLLECTION"
+        kicker="COLLECTION｜サービス準備中"
         title="一台を、少人数で所有する。"
         lead="複数の参加者が車両代を負担し、共有持分を持つ構想です。KSCが管理します。いまはサービス準備中で、共同オーナー候補の事前登録だけ受け付けています。"
       />
@@ -78,7 +84,7 @@ function Page() {
 
         <h2 className="mt-20 font-serif text-3xl">KSCが担当すること</h2>
         <ul className="mt-8 grid gap-6 md:grid-cols-2">
-          {MANAGEMENT_ITEMS.map((item) => (
+          {COLLECTION_DUTIES.map((item) => (
             <li key={item.title} className="border-t border-line pt-4">
               <h3 className="font-serif text-xl">{item.title}</h3>
               <p className="mt-2 text-sm text-ink-soft">{item.body}</p>

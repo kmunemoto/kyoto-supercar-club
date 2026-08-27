@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { InquiryCta } from "@/components/site/inquiry-cta";
+import { WebPageJsonLd } from "@/components/site/json-ld";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
 import { OWNER_FLOW, OWNER_NETWORK_POINTS } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
@@ -19,8 +20,13 @@ export const Route = createFileRoute("/owners")({
 function Page() {
   return (
     <SiteShell>
+      <WebPageJsonLd
+        name="京都のスーパーカーオーナーネットワーク｜KSC"
+        description="愛車を登録し、登録オーナー同士で相互利用する構想。共同所有ではありません。一般会員への貸し出しは行いません。先行相談受付中。"
+        path="/owners"
+      />
       <PageIntro
-        kicker="OWNER NETWORK"
+        kicker="OWNER NETWORK｜先行相談受付"
         title="愛車を登録し、他のオーナー車両へ。"
         lead="すでにスーパーカーを所有している方向けです。愛車をKSCへ登録し、登録オーナー同士で他の車両を相互利用する仕組みを準備しています。共同所有ではなく、各車両は元のオーナーが所有したままです。"
       />

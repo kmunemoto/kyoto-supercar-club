@@ -239,9 +239,10 @@ export function OwnerForm() {
             </Field>
           </div>
           <Field
-            label="現在の保管形態"
+            label="現在の保管場所"
             htmlFor="storageType"
             required
+            hint="形態で構いません。正確な住所は不要です。"
             error={errors["storageType"]}
           >
             <NativeSelect
@@ -375,7 +376,7 @@ export function OwnerForm() {
                 autoComplete="email"
               />
             </Field>
-            <Field label="電話番号" htmlFor="phone" hint="任意" error={errors["phone"]}>
+            <Field label="電話番号" htmlFor="phone" required error={errors["phone"]}>
               <Input
                 id="phone"
                 type="tel"

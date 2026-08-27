@@ -244,7 +244,7 @@ export const ownerInquirySchema = z.object({
   concerns: z.string().trim().min(1, "気になること・質問を入力してください").max(2000),
   fullName: name,
   email,
-  phone: optionalPhone,
+  phone: requiredPhone,
   privacyAgreed: z.literal(true, {
     errorMap: () => ({ message: "プライバシーポリシーへの同意が必要です" }),
   }),
