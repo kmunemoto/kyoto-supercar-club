@@ -28,7 +28,7 @@ npm run dev
 
 公開URL・canonical は `VITE_PUBLIC_SITE_URL` で切り替えます。未設定時は Lovable の実URLを使います。
 
-LINE 導線は `VITE_KSC_LINE_URL` です。未設定時は `/contact` へ落ちます。コードに LINE URL を直接書かないでください。
+LINE 導線は公式アカウント（`src/lib/site.ts` の `OFFICIAL_LINE_URL`）です。アカウントが変わったときだけ `VITE_KSC_LINE_URL` で上書きしてください。
 
 ## 管理画面
 

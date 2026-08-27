@@ -3,6 +3,7 @@ import { ContactForm } from "@/components/forms/contact-form";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
 import { CONTACT_TOPICS } from "@/lib/schemas";
 import { pageHead } from "@/lib/seo";
+import { getLineUrl, lineCtaLabel } from "@/lib/site";
 
 export const Route = createFileRoute("/contact")({
   component: Page,
@@ -21,6 +22,7 @@ function Page() {
     "topic",
   );
   const topic = raw && (CONTACT_TOPICS as readonly string[]).includes(raw) ? raw : undefined;
+  const line = getLineUrl();
   return (
     <SiteShell>
       <PageIntro
@@ -29,6 +31,31 @@ function Page() {
         lead="共同所有、オーナーネットワーク、取材・提携のご質問はこちらから。車両の予約依頼は受け付けていません。"
       />
       <Section className="max-w-3xl pt-0">
+        {line ? (
+          <aside className="mb-12 flex flex-col items-start gap-6 rounded-xl border border-line bg-cream p-6 sm:flex-row sm:items-center">
+            <img
+              src="/images/line-qr.jpg"
+              alt="公式LINEを追加するQRコード"
+              width={160}
+              height={160}
+              className="size-40 rounded-md bg-white object-contain"
+            />
+            <div>
+              <h2 className="font-serif text-2xl">LINEで相談する</h2>
+              <p className="mt-2 text-sm text-ink-soft">
+                共同所有・オーナーネットワークの先行相談は、公式LINEからも受け付けています。契約や購入申込ではありません。
+              </p>
+              <a
+                href={line}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream"
+              >
+                {lineCtaLabel()}
+              </a>
+            </div>
+          </aside>
+        ) : null}
         <ContactForm initialTopic={topic} />
       </Section>
     </SiteShell>
