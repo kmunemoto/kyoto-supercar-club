@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Defs, StatusAndNotes } from "@/components/admin/detail-tools";
-import { getMember } from "@/lib/server/admin";
+import { getMember } from "@/lib/data/admin";
 import { formatDateTime, jsonList } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/members/$id")({

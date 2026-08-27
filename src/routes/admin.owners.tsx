@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { AdminToolbar } from "@/components/admin/toolbar";
-import { listOwners, type OwnerRow } from "@/lib/server/admin";
+import { listOwners, type OwnerRow } from "@/lib/data/admin";
 import { downloadText, formatDateTime, toCsv } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/owners")({

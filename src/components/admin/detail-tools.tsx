@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { NativeSelect, Textarea } from "@/components/ui/native";
-import { addNote, updateStatus, type EventRow, type NoteRow } from "@/lib/server/admin";
+import { addNote, updateStatus, type EventRow, type NoteRow } from "@/lib/data/admin";
 import { APPLICATION_STATUSES, STATUS_LABEL, type ApplicationStatus, type SubjectType } from "@/lib/status";
 import { formatDateTime } from "@/lib/utils";
 import { StatusBadge } from "./status-badge";

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Checkbox, CheckRow, Field } from "@/components/ui/field";
 import { Input, NativeSelect, Textarea } from "@/components/ui/native";
 import { Button } from "@/components/ui/button";
-import { submitOwnerInquiry } from "@/lib/server/public";
+import { submitOwnerInquiry } from "@/lib/data/public";
 import {
   ANNUAL_USE,
   MANAGEMENT_OPTIONS,
