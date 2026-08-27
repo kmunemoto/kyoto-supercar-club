@@ -25,8 +25,8 @@ function Page() {
       <div className="mx-auto max-w-6xl px-5 pb-8">
         <div className="overflow-hidden rounded-xl">
           <Photo
-            src="/images/interior.jpg"
-            alt="暗い車内のステアリング"
+            src="/images/interior-720s.jpg"
+            alt="マクラーレン720Sのステアリングとメーター"
             className="aspect-[16/8]"
           />
         </div>
