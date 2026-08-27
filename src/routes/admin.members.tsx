@@ -23,8 +23,10 @@ function Page() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="font-serif text-3xl">会員事前登録</h1>
-        <p className="mt-2 text-ink-soft">将来の会員候補の一覧です。</p>
+        <h1 className="font-serif text-3xl">旧・会員事前登録（受付停止）</h1>
+        <p className="mt-2 text-ink-soft">
+          一般会員の新規募集は停止しています。過去データのみ残しています。
+        </p>
       </header>
       <AdminToolbar
         q={q}

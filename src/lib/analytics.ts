@@ -3,7 +3,9 @@ export type TrackEvent =
   | "owner_form_start"
   | "owner_form_submit"
   | "owner_form_error"
-  | "member_prereg_submit";
+  | "member_prereg_submit"
+  | "collection_cta_click"
+  | "collection_prereg_submit";
 
 function gaId(): string | undefined {
   const value = import.meta.env["VITE_GA_MEASUREMENT_ID"];

@@ -29,7 +29,8 @@ export function SiteJsonLd() {
           name: BRAND.name,
           url: absUrl("/"),
           areaServed: { "@type": "AdministrativeArea", name: "京都府" },
-          description: "京都府内限定で準備中の招待制スーパーカークラブ。",
+          description:
+            "京都からスーパーカーの共同所有とオーナーネットワークを準備しているカーライフブランド。",
         },
       ]}
     />

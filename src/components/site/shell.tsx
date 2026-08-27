@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BRAND, FOOTER_LINKS, NAV } from "@/lib/brand";
 import { track } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -52,17 +52,17 @@ export function SiteHeader() {
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
           <Link
-            to="/membership"
+            to="/owners"
             className="text-sm text-ink-soft underline-offset-4 hover:text-ink hover:underline"
           >
-            会員事前登録
+            オーナーの方
           </Link>
           <Link
-            to="/apply/owner"
-            onClick={() => track("owner_cta_click", { place: "header" })}
+            to="/apply/collection"
+            onClick={() => track("collection_cta_click", { place: "header" })}
             className="inline-flex h-11 min-h-11 items-center rounded-md bg-oxblood px-4 text-sm font-medium text-cream hover:bg-oxblood-dark"
           >
-            車両提供について相談する
+            共同所有の事前登録
           </Link>
         </div>
         <button
@@ -89,21 +89,21 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link
-              to="/apply/owner"
+              to="/apply/collection"
               className="mt-3 flex min-h-12 items-center justify-center rounded-md bg-oxblood font-medium text-cream"
               onClick={() => {
                 setOpen(false);
-                track("owner_cta_click", { place: "mobile-nav" });
+                track("collection_cta_click", { place: "mobile-nav" });
               }}
             >
-              車両提供について相談する
+              共同所有の事前登録
             </Link>
             <Link
-              to="/apply/member"
+              to="/apply/owner"
               className="flex min-h-12 items-center text-ink-soft"
               onClick={() => setOpen(false)}
             >
-              会員事前登録を見る
+              オーナーネットワークの相談
             </Link>
           </nav>
         </div>
@@ -145,18 +145,18 @@ function MobileOwnerCta() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const hide =
     pathname === "/" ||
-    pathname.startsWith("/apply/owner") ||
+    pathname.startsWith("/apply/") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/login");
   if (hide) return null;
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
       <Link
-        to="/apply/owner"
-        onClick={() => track("owner_cta_click", { place: "sticky" })}
+        to="/apply/collection"
+        onClick={() => track("collection_cta_click", { place: "sticky" })}
         className="pointer-events-auto flex min-h-12 items-center justify-center rounded-md bg-oxblood px-4 text-sm font-medium text-cream shadow-lg"
       >
-        車両提供について相談する
+        共同所有の事前登録
       </Link>
     </div>
   );

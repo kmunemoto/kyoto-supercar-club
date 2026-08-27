@@ -7,10 +7,17 @@ import {
   type ApplicationStatus,
   type SubjectType,
 } from "@/lib/status";
-import type { ContactRow, EventRow, MemberRow, NoteRow, OwnerRow } from "@/lib/store";
+import type {
+  CollectionRow,
+  ContactRow,
+  EventRow,
+  MemberRow,
+  NoteRow,
+  OwnerRow,
+} from "@/lib/store";
 import { newId } from "@/lib/utils";
 
-export type { ContactRow, EventRow, MemberRow, NoteRow, OwnerRow };
+export type { CollectionRow, ContactRow, EventRow, MemberRow, NoteRow, OwnerRow };
 export type StatusCount = { status: string; n: number };
 export const STATUSES = APPLICATION_STATUSES;
 
@@ -61,6 +68,13 @@ function asOwner(row: Record<string, unknown>): OwnerRow {
     concerns: row["concerns"] == null ? null : String(row["concerns"]),
     preferred_contact: row["preferred_contact"] == null ? null : String(row["preferred_contact"]),
     free_text: row["free_text"] == null ? null : String(row["free_text"]),
+    participation_purpose:
+      row["participation_purpose"] == null ? null : String(row["participation_purpose"]),
+    priority_use_period:
+      row["priority_use_period"] == null ? null : String(row["priority_use_period"]),
+    annual_km_cap: row["annual_km_cap"] == null ? null : String(row["annual_km_cap"]),
+    other_driver_conditions:
+      row["other_driver_conditions"] == null ? null : String(row["other_driver_conditions"]),
     utm_source: row["utm_source"] == null ? null : String(row["utm_source"]),
     utm_medium: row["utm_medium"] == null ? null : String(row["utm_medium"]),
     utm_campaign: row["utm_campaign"] == null ? null : String(row["utm_campaign"]),
@@ -130,6 +144,40 @@ function asContact(row: Record<string, unknown>): ContactRow {
   };
 }
 
+function asCollection(row: Record<string, unknown>): CollectionRow {
+  return {
+    id: String(row["id"] ?? ""),
+    full_name: String(row["full_name"] ?? ""),
+    email: String(row["email"] ?? ""),
+    phone: String(row["phone"] ?? ""),
+    applicant_type: String(row["applicant_type"] ?? ""),
+    region: String(row["region"] ?? ""),
+    kyoto_connection: String(row["kyoto_connection"] ?? ""),
+    current_vehicle_status: String(row["current_vehicle_status"] ?? ""),
+    desired_models: String(row["desired_models"] ?? ""),
+    budget_band: String(row["budget_band"] ?? ""),
+    desired_days_per_year: String(row["desired_days_per_year"] ?? ""),
+    desired_km_per_year: String(row["desired_km_per_year"] ?? ""),
+    desired_start_timing: String(row["desired_start_timing"] ?? ""),
+    license_years: row["license_years"] == null ? null : Number(row["license_years"]),
+    incident_history: String(row["incident_history"] ?? ""),
+    priorities: asStringList(row["priorities"]),
+    concerns: row["concerns"] == null ? null : String(row["concerns"]),
+    utm_source: row["utm_source"] == null ? null : String(row["utm_source"]),
+    utm_medium: row["utm_medium"] == null ? null : String(row["utm_medium"]),
+    utm_campaign: row["utm_campaign"] == null ? null : String(row["utm_campaign"]),
+    utm_content: row["utm_content"] == null ? null : String(row["utm_content"]),
+    utm_term: row["utm_term"] == null ? null : String(row["utm_term"]),
+    landing_path: row["landing_path"] == null ? null : String(row["landing_path"]),
+    referrer: row["referrer"] == null ? null : String(row["referrer"]),
+    status: isApplicationStatus(String(row["status"]))
+      ? (row["status"] as ApplicationStatus)
+      : "new",
+    created_at: String(row["created_at"] ?? ""),
+    updated_at: String(row["updated_at"] ?? ""),
+  };
+}
+
 function counts(rows: { status: string }[]): StatusCount[] {
   const map = new Map<string, number>();
   for (const r of rows) map.set(r.status, (map.get(r.status) ?? 0) + 1);
@@ -140,15 +188,19 @@ const getDashboardFn = createServerFn({ method: "POST" })
   .validator((data: Token) => data)
   .handler(async ({ data }) => {
     const { db } = await requireDb(data.accessToken);
-    const [ownersRes, membersRes, contactsRes, legalRes] = await Promise.all([
+    const [ownersRes, membersRes, contactsRes, collectionsRes, legalRes] = await Promise.all([
       db.from("owner_inquiries").select("*").order("created_at", { ascending: false }),
       db.from("member_preregistrations").select("*").order("created_at", { ascending: false }),
       db.from("contact_inquiries").select("*").order("created_at", { ascending: false }),
+      db.from("collection_inquiries").select("*").order("created_at", { ascending: false }),
       db.from("legal_review_items").select("*"),
     ]);
     const owners = (ownersRes.data ?? []).map((r) => asOwner(r as Record<string, unknown>));
     const members = (membersRes.data ?? []).map((r) => asMember(r as Record<string, unknown>));
     const contacts = (contactsRes.data ?? []).map((r) => asContact(r as Record<string, unknown>));
+    const collections = collectionsRes.error
+      ? []
+      : (collectionsRes.data ?? []).map((r) => asCollection(r as Record<string, unknown>));
     const storedLegal = (legalRes.data ?? []).map((r) => {
       const row = r as Record<string, unknown>;
       return {
@@ -176,10 +228,36 @@ const getDashboardFn = createServerFn({ method: "POST" })
       owners: counts(owners),
       members: counts(members),
       contacts: counts(contacts),
+      collections: counts(collections),
       recentOwners: owners.slice(0, 5),
       recentMembers: members.slice(0, 5),
+      recentCollections: collections.slice(0, 5),
       legal,
     };
+  });
+
+const listCollectionsFn = createServerFn({ method: "POST" })
+  .validator((data: Token & { q?: string; status?: string }) => data)
+  .handler(async ({ data }) => {
+    const { db } = await requireDb(data.accessToken);
+    const { data: rows, error } = await db
+      .from("collection_inquiries")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    const status = data.status && isApplicationStatus(data.status) ? data.status : "all";
+    const q = (data.q ?? "").trim().toLowerCase();
+    return (rows ?? [])
+      .map((r) => asCollection(r as Record<string, unknown>))
+      .filter(
+        (r) =>
+          (status === "all" || r.status === status) &&
+          (!q ||
+            [r.full_name, r.email, r.phone, r.region, r.desired_models, r.applicant_type]
+              .join(" ")
+              .toLowerCase()
+              .includes(q)),
+      );
   });
 
 const listOwnersFn = createServerFn({ method: "POST" })
@@ -300,6 +378,22 @@ async function trail(
   return { notes, events };
 }
 
+const getCollectionFn = createServerFn({ method: "POST" })
+  .validator((data: Token & { id: string }) => data)
+  .handler(async ({ data }) => {
+    const { db } = await requireDb(data.accessToken);
+    const { data: row } = await db
+      .from("collection_inquiries")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!row) return null;
+    return {
+      row: asCollection(row as Record<string, unknown>),
+      ...(await trail(db, "collection", data.id)),
+    };
+  });
+
 const getOwnerFn = createServerFn({ method: "POST" })
   .validator((data: Token & { id: string }) => data)
   .handler(async ({ data }) => {
@@ -348,6 +442,7 @@ const getContactFn = createServerFn({ method: "POST" })
 function tableFor(subjectType: SubjectType): string {
   if (subjectType === "owner") return "owner_inquiries";
   if (subjectType === "member") return "member_preregistrations";
+  if (subjectType === "collection") return "collection_inquiries";
   return "contact_inquiries";
 }
 
@@ -419,6 +514,19 @@ export async function getAdminSession() {
 
 export async function getDashboard() {
   return getDashboardFn({ data: { accessToken: await token() } });
+}
+
+export async function listCollections(arg: { data: { q?: string; status?: string } }) {
+  const payload: { accessToken: string; q?: string; status?: string } = {
+    accessToken: await token(),
+  };
+  if (arg.data.q) payload.q = arg.data.q;
+  if (arg.data.status) payload.status = arg.data.status;
+  return listCollectionsFn({ data: payload });
+}
+
+export async function getCollection(arg: { data: string }) {
+  return getCollectionFn({ data: { accessToken: await token(), id: arg.data } });
 }
 
 export async function listOwners(arg: { data: { q?: string; status?: string } }) {

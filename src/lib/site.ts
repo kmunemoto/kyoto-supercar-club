@@ -2,10 +2,10 @@ const FALLBACK_SITE_URL = "https://start-your-spark-56.lovable.app";
 
 export const SITE_PATHS = [
   "/",
+  "/collection",
   "/owners",
   "/how-it-works",
   "/safety",
-  "/membership",
   "/faq",
   "/contact",
   "/privacy",
@@ -42,6 +42,16 @@ export function isCloudConfigured(): boolean {
 
 export function allowLocalStore(): boolean {
   return import.meta.env.DEV && import.meta.env["VITE_ALLOW_LOCAL_STORE"] === "true";
+}
+
+export function getLineUrl(): string | undefined {
+  const raw = import.meta.env["VITE_KSC_LINE_URL"];
+  const value = typeof raw === "string" ? raw.trim() : "";
+  return value || undefined;
+}
+
+export function lineCtaLabel(): string {
+  return getLineUrl() ? "LINEで相談する" : "お問い合わせする";
 }
 
 export const OG_IMAGE = {

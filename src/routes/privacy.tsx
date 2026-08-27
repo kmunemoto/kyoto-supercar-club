@@ -9,7 +9,7 @@ export const Route = createFileRoute("/privacy")({
   head: () =>
     pageHead({
       title: "プライバシーポリシー｜KYOTO SUPERCAR CLUB",
-      description: "先行相談でお預かりする個人情報の取扱い。",
+      description: "事前登録と相談でお預かりする個人情報の取扱い。",
       path: "/privacy",
     }),
 });
@@ -26,7 +26,7 @@ function Page() {
         <article>
           <h2 className="font-serif text-2xl">1. 取得する情報</h2>
           <p className="mt-3 text-ink-soft">
-            車両提供の相談、会員事前登録、お問い合わせにおいて、氏名、メールアドレス、任意の電話番号、保管または居住地域（京都市／京都府内）、車両の概要、関心事項、自己申告の運転歴、広告流入時のUTMパラメータ、参照元、自由記述を取得します。初回相談では、正確な保管住所、ナンバープレート、車台番号、車検証、免許証画像は取得しません。
+            共同所有の事前登録、オーナーネットワークの先行相談、お問い合わせにおいて、氏名、メールアドレス、電話番号、居住または保管地域（京都市／京都府内）、車両の概要、関心事項、自己申告の運転歴、広告流入時のUTMパラメータ、参照元、自由記述を取得します。初回では、正確な保管住所、ナンバープレート、車台番号、車検証、免許証画像、資産証明は取得しません。
           </p>
         </article>
         <article>
@@ -78,7 +78,6 @@ function Page() {
             </p>
           </article>
         )}
-        <p className="text-sm text-muted">最終更新: 2026年8月27日（草案）</p>
       </Section>
     </SiteShell>
   );

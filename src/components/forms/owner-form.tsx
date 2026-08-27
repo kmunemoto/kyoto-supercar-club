@@ -10,9 +10,9 @@ import { readAttribution } from "@/lib/attribution";
 import {
   ANNUAL_USE,
   MILEAGE_BANDS,
-  OWNER_INTERESTS,
+  OWNER_MANAGEMENT,
+  OWNER_PURPOSES,
   OWNS_VEHICLE,
-  PREFERRED_CONTACT,
   REGIONS,
   STORAGE_TYPES,
   fieldErrors,
@@ -33,13 +33,15 @@ export function OwnerForm() {
     mileageBand: "" as string,
     annualUseCount: "年に数回" as (typeof ANNUAL_USE)[number],
     storageType: "屋内ガレージ" as (typeof STORAGE_TYPES)[number],
-    interests: [] as string[],
+    participationPurpose: "まず説明を聞きたい" as (typeof OWNER_PURPOSES)[number],
+    priorityUsePeriod: "",
+    annualKmCap: "",
+    otherDriverConditions: "",
+    managementNeeds: [] as string[],
     concerns: "",
     fullName: "",
     email: "",
     phone: "",
-    preferredContact: "メール" as (typeof PREFERRED_CONTACT)[number],
-    freeText: "",
     privacyAgreed: false,
     companyUrl: "",
   });
@@ -59,12 +61,12 @@ export function OwnerForm() {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  function toggleInterest(opt: string) {
+  function toggleNeed(opt: string) {
     setForm((f) => ({
       ...f,
-      interests: f.interests.includes(opt)
-        ? f.interests.filter((x) => x !== opt)
-        : [...f.interests, opt],
+      managementNeeds: f.managementNeeds.includes(opt)
+        ? f.managementNeeds.filter((x) => x !== opt)
+        : [...f.managementNeeds, opt],
     }));
   }
 
@@ -75,13 +77,7 @@ export function OwnerForm() {
       year: form.year === "" ? undefined : form.year,
       mileageBand: form.mileageBand || undefined,
       privacyAgreed: form.privacyAgreed ? true : false,
-      utmSource: attr.utmSource ?? "",
-      utmMedium: attr.utmMedium ?? "",
-      utmCampaign: attr.utmCampaign ?? "",
-      utmContent: attr.utmContent ?? "",
-      utmTerm: attr.utmTerm ?? "",
-      landingPath: attr.landingPath ?? "",
-      referrer: attr.referrer ?? "",
+      ...attr,
     };
   }
 
@@ -96,7 +92,11 @@ export function OwnerForm() {
         mileageBand: true,
         annualUseCount: true,
         storageType: true,
-        interests: true,
+        participationPurpose: true,
+        priorityUsePeriod: true,
+        annualKmCap: true,
+        otherDriverConditions: true,
+        managementNeeds: true,
         concerns: true,
       })
       .safeParse(payload());
@@ -147,7 +147,7 @@ export function OwnerForm() {
     return (
       <SuccessPanel
         title="お問い合わせありがとうございます"
-        body="これは車両登録や契約の確定ではありません。内容を確認後、必要に応じてご連絡します。"
+        body="車両登録や相互利用の確定ではありません。内容を確認後、必要に応じてご連絡します。"
       />
     );
   }
@@ -156,10 +156,10 @@ export function OwnerForm() {
     <form onSubmit={onSubmit} className="relative space-y-8" noValidate>
       <Honeypot value={form.companyUrl} onChange={(v) => set("companyUrl", v)} />
       <p className="text-sm text-ink-soft">
-        初回相談では、正確な保管住所・ナンバー・車台番号・車検証はいただきません。
+        オーナー同士の相互利用と車両管理の先行相談です。一般の方への貸し出しではありません。初回では正確な保管住所・ナンバー・車検証は不要です。
       </p>
       <div className="flex gap-2 text-xs tracking-[0.16em] text-muted">
-        <span className={step === 1 ? "text-oxblood" : ""}>01 車両</span>
+        <span className={step === 1 ? "text-oxblood" : ""}>01 車両と希望</span>
         <span>/</span>
         <span className={step === 2 ? "text-oxblood" : ""}>02 ご連絡先</span>
       </div>
@@ -182,7 +182,12 @@ export function OwnerForm() {
               ))}
             </NativeSelect>
           </Field>
-          <Field label="車両の主な保管地域" htmlFor="region" required error={errors["region"]}>
+          <Field
+            label="京都府内の居住・保管地域"
+            htmlFor="region"
+            required
+            error={errors["region"]}
+          >
             <NativeSelect
               id="region"
               value={form.region}
@@ -234,22 +239,6 @@ export function OwnerForm() {
             </Field>
           </div>
           <Field
-            label="年間の利用頻度"
-            htmlFor="annualUseCount"
-            required
-            error={errors["annualUseCount"]}
-          >
-            <NativeSelect
-              id="annualUseCount"
-              value={form.annualUseCount}
-              onChange={(e) => set("annualUseCount", e.target.value)}
-            >
-              {ANNUAL_USE.map((r) => (
-                <option key={r}>{r}</option>
-              ))}
-            </NativeSelect>
-          </Field>
-          <Field
             label="現在の保管形態"
             htmlFor="storageType"
             required
@@ -265,31 +254,97 @@ export function OwnerForm() {
               ))}
             </NativeSelect>
           </Field>
+          <Field
+            label="年間の利用回数"
+            htmlFor="annualUseCount"
+            required
+            error={errors["annualUseCount"]}
+          >
+            <NativeSelect
+              id="annualUseCount"
+              value={form.annualUseCount}
+              onChange={(e) => set("annualUseCount", e.target.value)}
+            >
+              {ANNUAL_USE.map((r) => (
+                <option key={r}>{r}</option>
+              ))}
+            </NativeSelect>
+          </Field>
+          <Field
+            label="参加目的"
+            htmlFor="participationPurpose"
+            required
+            error={errors["participationPurpose"]}
+          >
+            <NativeSelect
+              id="participationPurpose"
+              value={form.participationPurpose}
+              onChange={(e) => set("participationPurpose", e.target.value)}
+            >
+              {OWNER_PURPOSES.map((r) => (
+                <option key={r}>{r}</option>
+              ))}
+            </NativeSelect>
+          </Field>
+          <Field
+            label="自分の利用を優先したい時期"
+            htmlFor="priorityUsePeriod"
+            required
+            hint="例：週末、GW、未定"
+            error={errors["priorityUsePeriod"]}
+          >
+            <Input
+              id="priorityUsePeriod"
+              value={form.priorityUsePeriod}
+              onChange={(e) => set("priorityUsePeriod", e.target.value)}
+            />
+          </Field>
+          <Field
+            label="設定したい年間走行距離上限"
+            htmlFor="annualKmCap"
+            required
+            hint="希望の目安で構いません。未確定でも「未定」と書いてください。"
+            error={errors["annualKmCap"]}
+          >
+            <Input
+              id="annualKmCap"
+              value={form.annualKmCap}
+              onChange={(e) => set("annualKmCap", e.target.value)}
+            />
+          </Field>
+          <Field
+            label="他の運転者に求める条件"
+            htmlFor="otherDriverConditions"
+            required
+            hint="年齢、免許歴、面談の希望など。まだ決まっていなくても構いません。"
+            error={errors["otherDriverConditions"]}
+          >
+            <Textarea
+              id="otherDriverConditions"
+              value={form.otherDriverConditions}
+              onChange={(e) => set("otherDriverConditions", e.target.value)}
+            />
+          </Field>
           <fieldset>
             <legend className="mb-3 text-sm font-medium">
-              関心のある内容 <span className="ml-2 text-xs font-normal text-oxblood">必須</span>
+              希望する管理内容 <span className="ml-2 text-xs font-normal text-oxblood">必須</span>
             </legend>
             <div className="grid gap-3">
-              {OWNER_INTERESTS.map((opt) => (
+              {OWNER_MANAGEMENT.map((opt) => (
                 <CheckRow key={opt}>
                   <Checkbox
-                    checked={form.interests.includes(opt)}
-                    onChange={() => toggleInterest(opt)}
+                    checked={form.managementNeeds.includes(opt)}
+                    onChange={() => toggleNeed(opt)}
                   />
                   <span>{opt}</span>
                 </CheckRow>
               ))}
             </div>
-            {errors["interests"] ? (
-              <p className="mt-2 text-sm text-oxblood">{errors["interests"]}</p>
+            {errors["managementNeeds"] ? (
+              <p className="mt-2 text-sm text-oxblood">{errors["managementNeeds"]}</p>
             ) : null}
           </fieldset>
-          <Field
-            label="最も気になること・不安"
-            htmlFor="concerns"
-            required
-            error={errors["concerns"]}
-          >
+          <Field label="質問・懸念事項" htmlFor="concerns" required error={errors["concerns"]}>
             <Textarea
               id="concerns"
               value={form.concerns}
@@ -329,30 +384,7 @@ export function OwnerForm() {
                 autoComplete="tel"
               />
             </Field>
-            <Field
-              label="希望する連絡方法"
-              htmlFor="preferredContact"
-              required
-              error={errors["preferredContact"]}
-            >
-              <NativeSelect
-                id="preferredContact"
-                value={form.preferredContact}
-                onChange={(e) => set("preferredContact", e.target.value)}
-              >
-                {PREFERRED_CONTACT.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
           </div>
-          <Field label="自由記述" htmlFor="freeText" error={errors["freeText"]}>
-            <Textarea
-              id="freeText"
-              value={form.freeText}
-              onChange={(e) => set("freeText", e.target.value)}
-            />
-          </Field>
           <CheckRow>
             <Checkbox
               checked={form.privacyAgreed}

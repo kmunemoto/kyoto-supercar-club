@@ -34,11 +34,12 @@ export function isApplicationStatus(value: string): value is ApplicationStatus {
   return (APPLICATION_STATUSES as readonly string[]).includes(value);
 }
 
-export const SUBJECT_TYPES = ["owner", "member", "contact"] as const;
+export const SUBJECT_TYPES = ["owner", "member", "contact", "collection"] as const;
 export type SubjectType = (typeof SUBJECT_TYPES)[number];
 
 export const SUBJECT_LABEL: Record<SubjectType, string> = {
-  owner: "車両オーナー申込",
-  member: "会員事前登録",
+  owner: "オーナーネットワーク申込",
+  member: "旧・会員事前登録",
   contact: "お問い合わせ",
+  collection: "共同オーナー候補",
 };

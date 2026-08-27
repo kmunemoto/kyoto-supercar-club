@@ -26,8 +26,9 @@ function Dashboard() {
   if (!data) return <p className="text-muted">読み込み中…</p>;
 
   const cards = [
-    { label: "オーナー申込", total: sum(data.owners), href: "/admin/owners" },
-    { label: "会員事前登録", total: sum(data.members), href: "/admin/members" },
+    { label: "共同所有", total: sum(data.collections), href: "/admin/collection" },
+    { label: "オーナー", total: sum(data.owners), href: "/admin/owners" },
+    { label: "旧会員", total: sum(data.members), href: "/admin/members" },
     { label: "お問い合わせ", total: sum(data.contacts), href: "/admin/inquiries" },
   ];
 
@@ -37,7 +38,7 @@ function Dashboard() {
         <h1 className="font-serif text-3xl">概況</h1>
         <p className="mt-2 text-ink-soft">Lovable Cloud に保存された実データです。</p>
       </header>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
           <Link key={c.href} to={c.href} className="rounded-xl border border-line bg-cream p-6">
             <p className="text-sm text-muted">{c.label}</p>
@@ -52,8 +53,9 @@ function Dashboard() {
             <thead>
               <tr className="border-b border-line text-muted">
                 <th className="py-2 font-medium">状態</th>
+                <th className="py-2 font-medium">共同所有</th>
                 <th className="py-2 font-medium">オーナー</th>
-                <th className="py-2 font-medium">会員</th>
+                <th className="py-2 font-medium">旧会員</th>
                 <th className="py-2 font-medium">問合せ</th>
               </tr>
             </thead>
@@ -61,6 +63,9 @@ function Dashboard() {
               {APPLICATION_STATUSES.map((s) => (
                 <tr key={s} className="border-b border-line/70">
                   <td className="py-2">{STATUS_LABEL[s]}</td>
+                  <td className="py-2 tabular-nums">
+                    {data.collections.find((x) => x.status === s)?.n ?? 0}
+                  </td>
                   <td className="py-2 tabular-nums">
                     {data.owners.find((x) => x.status === s)?.n ?? 0}
                   </td>
@@ -77,6 +82,20 @@ function Dashboard() {
         </div>
       </section>
       <section className="grid gap-10 lg:grid-cols-2">
+        <div>
+          <h2 className="font-serif text-xl">最近の共同所有</h2>
+          <ul className="mt-4 divide-y divide-line border-y border-line">
+            {data.recentCollections.map((r) => (
+              <li key={r.id} className="flex items-center justify-between gap-3 py-3">
+                <Link to="/admin/collection/$id" params={{ id: r.id }} className="hover:underline">
+                  {r.full_name}
+                  <span className="ml-2 text-sm text-muted">{r.desired_models}</span>
+                </Link>
+                <StatusBadge status={r.status} />
+              </li>
+            ))}
+          </ul>
+        </div>
         <div>
           <h2 className="font-serif text-xl">最近のオーナー</h2>
           <ul className="mt-4 divide-y divide-line border-y border-line">

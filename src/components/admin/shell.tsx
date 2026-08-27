@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 
 const LINKS = [
   { href: "/admin", label: "概況", exact: true },
-  { href: "/admin/owners", label: "オーナー申込", exact: false },
-  { href: "/admin/members", label: "会員事前登録", exact: false },
+  { href: "/admin/collection", label: "共同所有", exact: false },
+  { href: "/admin/owners", label: "オーナー", exact: false },
+  { href: "/admin/members", label: "旧会員", exact: false },
   { href: "/admin/inquiries", label: "お問い合わせ", exact: false },
 ] as const;
 

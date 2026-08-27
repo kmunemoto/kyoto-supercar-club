@@ -70,7 +70,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 const fallbackHead = pageHead({
   title: BRAND.name,
   description:
-    "京都府内のスーパーカーオーナーへ。車両提供の先行相談を受け付けています。予約・貸出は行っていません。",
+    "京都からスーパーカーの共同所有とオーナーネットワークを準備しています。予約・貸出は行っていません。",
   path: "/",
 });
 

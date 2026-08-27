@@ -3,7 +3,7 @@ import { allowLocalStore } from "@/lib/site";
 import type { ApplicationStatus, SubjectType } from "@/lib/status";
 import { newId } from "@/lib/utils";
 
-const KEY = "ksc.db.v2";
+const KEY = "ksc.db.v3";
 
 export type OwnerRow = {
   id: string;
@@ -29,6 +29,40 @@ export type OwnerRow = {
   concerns: string | null;
   preferred_contact: string | null;
   free_text: string | null;
+  participation_purpose: string | null;
+  priority_use_period: string | null;
+  annual_km_cap: string | null;
+  other_driver_conditions: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  utm_term: string | null;
+  landing_path: string | null;
+  referrer: string | null;
+  status: ApplicationStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CollectionRow = {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  applicant_type: string;
+  region: string;
+  kyoto_connection: string;
+  current_vehicle_status: string;
+  desired_models: string;
+  budget_band: string;
+  desired_days_per_year: string;
+  desired_km_per_year: string;
+  desired_start_timing: string;
+  license_years: number | null;
+  incident_history: string;
+  priorities: string[];
+  concerns: string | null;
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;
@@ -118,6 +152,7 @@ type Db = {
   owners: OwnerRow[];
   members: MemberRow[];
   contacts: ContactRow[];
+  collections: CollectionRow[];
   notes: NoteRow[];
   events: EventRow[];
   legal: LegalItem[];
@@ -128,6 +163,7 @@ function emptyDb(): Db {
     owners: [],
     members: [],
     contacts: [],
+    collections: [],
     notes: [],
     events: [],
     legal: LEGAL_TODOS.map((t) => ({

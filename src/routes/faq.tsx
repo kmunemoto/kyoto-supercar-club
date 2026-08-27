@@ -9,7 +9,8 @@ export const Route = createFileRoute("/faq")({
   head: () =>
     pageHead({
       title: "よくある質問｜KYOTO SUPERCAR CLUB",
-      description: "京都府内限定の準備中サービスに関する質問。料金・車種・保険は未確定です。",
+      description:
+        "京都のスーパーカー共同所有とオーナーネットワーク。料金・車種・保険は未確定です。",
       path: "/faq",
     }),
 });
@@ -17,10 +18,11 @@ export const Route = createFileRoute("/faq")({
 function Page() {
   return (
     <SiteShell>
+      <FaqJsonLd />
       <PageIntro
         kicker="FAQ"
         title="よくある質問"
-        lead="予約できる状態ではありません。料金、車種、保険は確定次第、改めてご案内します。"
+        lead="予約できる状態ではありません。料金、車種、保険、名義は確定次第、改めてご案内します。"
       />
       <Section className="pt-0">
         <dl className="divide-y divide-line border-y border-line">

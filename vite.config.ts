@@ -12,10 +12,10 @@ const SITE_URL = (
 ).replace(/\/$/, "");
 const PAGES = [
   "/",
+  "/collection",
   "/owners",
   "/how-it-works",
   "/safety",
-  "/membership",
   "/faq",
   "/contact",
   "/privacy",
@@ -35,7 +35,7 @@ function siteMetaPlugin() {
       );
       writeFileSync(
         "public/robots.txt",
-        `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /login\nDisallow: /apply/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`,
+        `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /login\nDisallow: /apply/\nDisallow: /membership\n\nSitemap: ${SITE_URL}/sitemap.xml\n`,
       );
     },
   };

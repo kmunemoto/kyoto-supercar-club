@@ -2,34 +2,29 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { AdminToolbar } from "@/components/admin/toolbar";
-import { listOwners, type OwnerRow } from "@/lib/data/admin";
+import { listCollections, type CollectionRow } from "@/lib/data/admin";
 import { downloadText, formatDateTime, toCsv } from "@/lib/utils";
 
-export const Route = createFileRoute("/admin/owners")({
+export const Route = createFileRoute("/admin/collection")({
   component: Page,
 });
 
 function Page() {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
-  const [rows, setRows] = useState<OwnerRow[] | null>(null);
-
-  function load(nextQ = q, nextStatus = status) {
-    listOwners({ data: { q: nextQ, status: nextStatus } })
-      .then(setRows)
-      .catch(() => setRows([]));
-  }
+  const [rows, setRows] = useState<CollectionRow[] | null>(null);
 
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    listCollections({ data: { q, status } })
+      .then(setRows)
+      .catch(() => setRows([]));
   }, [q, status]);
 
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="font-serif text-3xl">オーナー申込</h1>
-        <p className="mt-2 text-ink-soft">オーナーネットワークの先行相談一覧です。</p>
+        <h1 className="font-serif text-3xl">共同オーナー候補</h1>
+        <p className="mt-2 text-ink-soft">共同所有の事前登録一覧です。契約ではありません。</p>
       </header>
       <AdminToolbar
         q={q}
@@ -39,17 +34,16 @@ function Page() {
         onExport={() => {
           if (!rows) return;
           downloadText(
-            "owner-inquiries.csv",
+            "collection-inquiries.csv",
             toCsv(rows, [
               "id",
               "full_name",
               "email",
               "phone",
+              "applicant_type",
               "region",
-              "make",
-              "model",
-              "year",
-              "mileage_km",
+              "desired_models",
+              "budget_band",
               "status",
               "created_at",
             ]),
@@ -61,7 +55,7 @@ function Page() {
           <thead>
             <tr className="border-b border-line text-muted">
               <th className="py-2 font-medium">氏名</th>
-              <th className="py-2 font-medium">車両</th>
+              <th className="py-2 font-medium">希望</th>
               <th className="py-2 font-medium">地域</th>
               <th className="py-2 font-medium">状態</th>
               <th className="py-2 font-medium">受付</th>
@@ -84,20 +78,18 @@ function Page() {
               rows.map((r) => (
                 <tr key={r.id} className="border-b border-line/70">
                   <td className="py-3">
-                    <Link to="/admin/owners/$id" params={{ id: r.id }} className="hover:underline">
+                    <Link
+                      to="/admin/collection/$id"
+                      params={{ id: r.id }}
+                      className="hover:underline"
+                    >
                       {r.full_name}
                     </Link>
                     <p className="text-xs text-muted">{r.email}</p>
                   </td>
                   <td className="py-3">
-                    {r.make} {r.model}
-                    <p className="text-xs text-muted">
-                      {r.year ?? "年式未記入"} /{" "}
-                      {r.mileage_band ||
-                        (r.mileage_km != null
-                          ? `${r.mileage_km.toLocaleString()} km`
-                          : "距離未記入")}
-                    </p>
+                    {r.desired_models}
+                    <p className="text-xs text-muted">{r.budget_band}</p>
                   </td>
                   <td className="py-3">{r.region}</td>
                   <td className="py-3">

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
@@ -21,11 +22,14 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SafetyRouteImport } from './routes/safety'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminCollectionRouteImport } from './routes/admin.collection'
 import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
 import { Route as AdminMembersRouteImport } from './routes/admin.members'
 import { Route as AdminOwnersRouteImport } from './routes/admin.owners'
+import { Route as ApplyCollectionRouteImport } from './routes/apply/collection'
 import { Route as ApplyMemberRouteImport } from './routes/apply/member'
 import { Route as ApplyOwnerRouteImport } from './routes/apply/owner'
+import { Route as AdminCollectionIdRouteImport } from './routes/admin.collection.$id'
 import { Route as AdminInquiriesIdRouteImport } from './routes/admin.inquiries.$id'
 import { Route as AdminMembersIdRouteImport } from './routes/admin.members.$id'
 import { Route as AdminOwnersIdRouteImport } from './routes/admin.owners.$id'
@@ -38,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -90,6 +99,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCollectionRoute = AdminCollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminInquiriesRoute = AdminInquiriesRouteImport.update({
   id: '/inquiries',
   path: '/inquiries',
@@ -105,6 +119,11 @@ const AdminOwnersRoute = AdminOwnersRouteImport.update({
   path: '/owners',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApplyCollectionRoute = ApplyCollectionRouteImport.update({
+  id: '/apply/collection',
+  path: '/apply/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApplyMemberRoute = ApplyMemberRouteImport.update({
   id: '/apply/member',
   path: '/apply/member',
@@ -114,6 +133,11 @@ const ApplyOwnerRoute = ApplyOwnerRouteImport.update({
   id: '/apply/owner',
   path: '/apply/owner',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCollectionIdRoute = AdminCollectionIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminCollectionRoute,
 } as any)
 const AdminInquiriesIdRoute = AdminInquiriesIdRouteImport.update({
   id: '/$id',
@@ -134,6 +158,7 @@ const AdminOwnersIdRoute = AdminOwnersIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/collection': typeof CollectionRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -143,18 +168,22 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
+  '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
   '/admin/members': typeof AdminMembersRouteWithChildren
   '/admin/owners': typeof AdminOwnersRouteWithChildren
+  '/apply/collection': typeof ApplyCollectionRoute
   '/apply/member': typeof ApplyMemberRoute
   '/apply/owner': typeof ApplyOwnerRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/collection/$id': typeof AdminCollectionIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
   '/admin/members/$id': typeof AdminMembersIdRoute
   '/admin/owners/$id': typeof AdminOwnersIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/collection': typeof CollectionRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -164,12 +193,15 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
+  '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
   '/admin/members': typeof AdminMembersRouteWithChildren
   '/admin/owners': typeof AdminOwnersRouteWithChildren
+  '/apply/collection': typeof ApplyCollectionRoute
   '/apply/member': typeof ApplyMemberRoute
   '/apply/owner': typeof ApplyOwnerRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/collection/$id': typeof AdminCollectionIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
   '/admin/members/$id': typeof AdminMembersIdRoute
   '/admin/owners/$id': typeof AdminOwnersIdRoute
@@ -178,6 +210,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/collection': typeof CollectionRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -187,12 +220,15 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/safety': typeof SafetyRoute
   '/terms': typeof TermsRoute
+  '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
   '/admin/members': typeof AdminMembersRouteWithChildren
   '/admin/owners': typeof AdminOwnersRouteWithChildren
+  '/apply/collection': typeof ApplyCollectionRoute
   '/apply/member': typeof ApplyMemberRoute
   '/apply/owner': typeof ApplyOwnerRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/collection/$id': typeof AdminCollectionIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
   '/admin/members/$id': typeof AdminMembersIdRoute
   '/admin/owners/$id': typeof AdminOwnersIdRoute
@@ -202,6 +238,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/collection'
     | '/contact'
     | '/faq'
     | '/how-it-works'
@@ -211,18 +248,22 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/safety'
     | '/terms'
+    | '/admin/collection'
     | '/admin/inquiries'
     | '/admin/members'
     | '/admin/owners'
+    | '/apply/collection'
     | '/apply/member'
     | '/apply/owner'
     | '/admin/'
+    | '/admin/collection/$id'
     | '/admin/inquiries/$id'
     | '/admin/members/$id'
     | '/admin/owners/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/collection'
     | '/contact'
     | '/faq'
     | '/how-it-works'
@@ -232,12 +273,15 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/safety'
     | '/terms'
+    | '/admin/collection'
     | '/admin/inquiries'
     | '/admin/members'
     | '/admin/owners'
+    | '/apply/collection'
     | '/apply/member'
     | '/apply/owner'
     | '/admin'
+    | '/admin/collection/$id'
     | '/admin/inquiries/$id'
     | '/admin/members/$id'
     | '/admin/owners/$id'
@@ -245,6 +289,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/collection'
     | '/contact'
     | '/faq'
     | '/how-it-works'
@@ -254,12 +299,15 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/safety'
     | '/terms'
+    | '/admin/collection'
     | '/admin/inquiries'
     | '/admin/members'
     | '/admin/owners'
+    | '/apply/collection'
     | '/apply/member'
     | '/apply/owner'
     | '/admin/'
+    | '/admin/collection/$id'
     | '/admin/inquiries/$id'
     | '/admin/members/$id'
     | '/admin/owners/$id'
@@ -268,6 +316,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  CollectionRoute: typeof CollectionRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   HowItWorksRoute: typeof HowItWorksRoute
@@ -277,6 +326,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SafetyRoute: typeof SafetyRoute
   TermsRoute: typeof TermsRoute
+  ApplyCollectionRoute: typeof ApplyCollectionRoute
   ApplyMemberRoute: typeof ApplyMemberRoute
   ApplyOwnerRoute: typeof ApplyOwnerRoute
 }
@@ -295,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -367,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/collection': {
+      id: '/admin/collection'
+      path: '/collection'
+      fullPath: '/admin/collection'
+      preLoaderRoute: typeof AdminCollectionRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/inquiries': {
       id: '/admin/inquiries'
       path: '/inquiries'
@@ -388,6 +452,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOwnersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/apply/collection': {
+      id: '/apply/collection'
+      path: '/apply/collection'
+      fullPath: '/apply/collection'
+      preLoaderRoute: typeof ApplyCollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/apply/member': {
       id: '/apply/member'
       path: '/apply/member'
@@ -401,6 +472,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/apply/owner'
       preLoaderRoute: typeof ApplyOwnerRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/collection/$id': {
+      id: '/admin/collection/$id'
+      path: '/$id'
+      fullPath: '/admin/collection/$id'
+      preLoaderRoute: typeof AdminCollectionIdRouteImport
+      parentRoute: typeof AdminCollectionRoute
     }
     '/admin/inquiries/$id': {
       id: '/admin/inquiries/$id'
@@ -425,6 +503,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminCollectionRouteChildren {
+  AdminCollectionIdRoute: typeof AdminCollectionIdRoute
+}
+
+const AdminCollectionRouteChildren: AdminCollectionRouteChildren = {
+  AdminCollectionIdRoute: AdminCollectionIdRoute,
+}
+
+const AdminCollectionRouteWithChildren = AdminCollectionRoute._addFileChildren(
+  AdminCollectionRouteChildren,
+)
 
 interface AdminInquiriesRouteChildren {
   AdminInquiriesIdRoute: typeof AdminInquiriesIdRoute
@@ -463,6 +553,7 @@ const AdminOwnersRouteWithChildren = AdminOwnersRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminCollectionRoute: typeof AdminCollectionRouteWithChildren
   AdminInquiriesRoute: typeof AdminInquiriesRouteWithChildren
   AdminMembersRoute: typeof AdminMembersRouteWithChildren
   AdminOwnersRoute: typeof AdminOwnersRouteWithChildren
@@ -470,6 +561,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCollectionRoute: AdminCollectionRouteWithChildren,
   AdminInquiriesRoute: AdminInquiriesRouteWithChildren,
   AdminMembersRoute: AdminMembersRouteWithChildren,
   AdminOwnersRoute: AdminOwnersRouteWithChildren,
@@ -481,6 +573,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  CollectionRoute: CollectionRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   HowItWorksRoute: HowItWorksRoute,
@@ -490,6 +583,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SafetyRoute: SafetyRoute,
   TermsRoute: TermsRoute,
+  ApplyCollectionRoute: ApplyCollectionRoute,
   ApplyMemberRoute: ApplyMemberRoute,
   ApplyOwnerRoute: ApplyOwnerRoute,
 }

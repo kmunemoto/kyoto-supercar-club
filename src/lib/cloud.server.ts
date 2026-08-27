@@ -2,7 +2,12 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getRequestIP } from "@tanstack/react-start/server";
 import { getSupabaseAnonKey, getSupabaseUrl, isCloudConfigured } from "@/lib/site";
 import { newId } from "@/lib/utils";
-import type { ContactInput, MemberPreregInput, OwnerInquiryInput } from "@/lib/schemas";
+import type {
+  CollectionInquiryInput,
+  ContactInput,
+  MemberPreregInput,
+  OwnerInquiryInput,
+} from "@/lib/schemas";
 
 const UNCONFIGURED = "現在受付設定を確認中です。時間をおいて再度お試しください。";
 const SAVE_FAILED = "送信に失敗しました。時間をおいて再度お試しください。";
@@ -118,8 +123,8 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     mileage_km: null,
     storage_location: null,
     annual_use_count: data.annualUseCount,
-    lendable_period: null,
-    management_needs: data.interests,
+    lendable_period: data.priorityUsePeriod,
+    management_needs: data.managementNeeds,
     reward_preference: null,
     photo_notes: null,
     questions: data.concerns,
@@ -128,18 +133,62 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     owns_vehicle: data.ownsVehicle,
     mileage_band: data.mileageBand || null,
     storage_type: data.storageType,
-    interests: data.interests,
+    interests: data.managementNeeds,
     concerns: data.concerns,
-    preferred_contact: data.preferredContact,
-    free_text: data.freeText || null,
+    preferred_contact: null,
+    free_text: null,
+    participation_purpose: data.participationPurpose,
+    priority_use_period: data.priorityUsePeriod,
+    annual_km_cap: data.annualKmCap,
+    other_driver_conditions: data.otherDriverConditions,
     created_at: now,
     updated_at: now,
     ...attr(data),
   });
   if (error) return { ok: false, error: SAVE_FAILED };
   await notify(
-    "【車両提供相談】新しい先行相談",
-    `地域: ${data.region}\nメーカー: ${data.make}\n車種: ${data.model}\nID: ${id}`,
+    "【OWNER NETWORK】新しい先行相談",
+    `地域: ${data.region}\nメーカー: ${data.make}\n車種: ${data.model}\n目的: ${data.participationPurpose}\nID: ${id}`,
+  );
+  return { ok: true, id };
+}
+
+export async function insertCollectionInquiry(data: CollectionInquiryInput): Promise<Result> {
+  if (!cloudReady()) return { ok: false, error: UNCONFIGURED };
+  if (rateLimited("collection"))
+    return { ok: false, error: "送信が集中しています。しばらくしてから再度お試しください。" };
+  const client = insertClient();
+  if (!client) return { ok: false, error: UNCONFIGURED };
+  const id = newId("col");
+  const now = new Date().toISOString();
+  const { error } = await client.from("collection_inquiries").insert({
+    id,
+    full_name: data.fullName,
+    email: data.email,
+    phone: data.phone,
+    applicant_type: data.applicantType,
+    region: data.region,
+    kyoto_connection: data.kyotoConnection,
+    current_vehicle_status: data.currentVehicleStatus,
+    desired_models: data.desiredModels,
+    budget_band: data.budgetBand,
+    desired_days_per_year: data.desiredDaysPerYear,
+    desired_km_per_year: data.desiredKmPerYear,
+    desired_start_timing: data.desiredStartTiming,
+    license_years: data.licenseYears ?? null,
+    incident_history: data.incidentHistory,
+    priorities: data.priorities,
+    concerns: data.concerns || null,
+    privacy_agreed: true,
+    status: "new",
+    created_at: now,
+    updated_at: now,
+    ...attr(data),
+  });
+  if (error) return { ok: false, error: SAVE_FAILED };
+  await notify(
+    "【COLLECTION】新しい共同オーナー候補",
+    `地域: ${data.region}\n希望: ${data.desiredModels}\nID: ${id}`,
   );
   return { ok: true, id };
 }

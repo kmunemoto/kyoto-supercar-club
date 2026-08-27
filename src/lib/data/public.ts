@@ -1,9 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import {
+  collectionInquirySchema,
   contactSchema,
   fieldErrors,
   memberPreregSchema,
   ownerInquirySchema,
+  type CollectionInquiryInput,
   type ContactInput,
   type MemberPreregInput,
   type OwnerInquiryInput,
@@ -30,6 +32,22 @@ export const submitOwnerInquiry = createServerFn({ method: "POST" })
     if (spam(parsed.data)) return { ok: true, id: "ignored" };
     const { insertOwnerInquiry } = await import("@/lib/cloud.server");
     return insertOwnerInquiry(parsed.data as OwnerInquiryInput);
+  });
+
+export const submitCollectionInquiry = createServerFn({ method: "POST" })
+  .validator((data: unknown) => data)
+  .handler(async ({ data }): Promise<Result> => {
+    const parsed = collectionInquirySchema.safeParse(data);
+    if (!parsed.success) {
+      return {
+        ok: false,
+        error: "入力内容を確認してください。",
+        fields: fieldErrors(parsed.error),
+      };
+    }
+    if (spam(parsed.data)) return { ok: true, id: "ignored" };
+    const { insertCollectionInquiry } = await import("@/lib/cloud.server");
+    return insertCollectionInquiry(parsed.data as CollectionInquiryInput);
   });
 
 export const submitMemberPrereg = createServerFn({ method: "POST" })

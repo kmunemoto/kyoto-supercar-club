@@ -1,5 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { MemberForm } from "@/components/forms/member-form";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
 import { pageHead } from "@/lib/seo";
 
@@ -7,9 +6,8 @@ export const Route = createFileRoute("/apply/member")({
   component: Page,
   head: () =>
     pageHead({
-      title: "京都の会員制スーパーカーシェア｜会員事前登録",
-      description:
-        "見る・知る入口と、運転する会員を分けた事前登録。サービス開始前、予約はできません。",
+      title: "一般会員向けサービスは募集停止｜KYOTO SUPERCAR CLUB",
+      description: "一般会員の事前登録は停止しています。",
       path: "/apply/member",
       noindex: true,
     }),
@@ -19,12 +17,17 @@ function Page() {
   return (
     <SiteShell>
       <PageIntro
-        kicker="PRE-REGISTER"
-        title="会員事前登録"
-        lead="クラブへの参加希望を受け付けます。見る・知る入口と、運転する会員は別です。いまは予約できません。免許証などの書類は、このフォームでは送りません。"
+        kicker="PAUSED"
+        title="一般会員向けサービスは現在募集していません"
+        lead="新規の会員事前登録は停止しています。過去にいただいた登録は保管しています。"
       />
       <Section className="max-w-3xl pt-0">
-        <MemberForm />
+        <Link
+          to="/collection"
+          className="inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"
+        >
+          共同所有へ進む
+        </Link>
       </Section>
     </SiteShell>
   );
