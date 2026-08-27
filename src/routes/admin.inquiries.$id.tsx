@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Defs, StatusAndNotes } from "@/components/admin/detail-tools";
-import { getContact } from "@/lib/server/admin";
+import { getContact } from "@/lib/data/admin";
 import { formatDateTime } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/inquiries/$id")({

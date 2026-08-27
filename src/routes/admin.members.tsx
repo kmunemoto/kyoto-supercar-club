@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { AdminToolbar } from "@/components/admin/toolbar";
-import { listMembers, type MemberRow } from "@/lib/server/admin";
+import { listMembers, type MemberRow } from "@/lib/data/admin";
 import { downloadText, formatDateTime, toCsv } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/members")({

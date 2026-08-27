@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { getDashboard } from "@/lib/server/admin";
+import { getDashboard } from "@/lib/data/admin";
 import { APPLICATION_STATUSES, STATUS_LABEL } from "@/lib/status";
 
 export const Route = createFileRoute("/admin/")({

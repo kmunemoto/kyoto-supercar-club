@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Checkbox, CheckRow, Field } from "@/components/ui/field";
 import { Input, NativeSelect, Textarea } from "@/components/ui/native";
 import { Button } from "@/components/ui/button";
-import { submitContact } from "@/lib/server/public";
+import { submitContact } from "@/lib/data/public";
 import { CONTACT_TOPICS, contactSchema, fieldErrors } from "@/lib/schemas";
 import { Honeypot, SuccessPanel } from "./form-status";
 

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Checkbox, CheckRow, Field } from "@/components/ui/field";
 import { Input, NativeSelect, Textarea } from "@/components/ui/native";
 import { Button } from "@/components/ui/button";
-import { submitMemberPrereg } from "@/lib/server/public";
+import { submitMemberPrereg } from "@/lib/data/public";
 import {
   BUDGET_BANDS,
   INCIDENT_OPTIONS,
