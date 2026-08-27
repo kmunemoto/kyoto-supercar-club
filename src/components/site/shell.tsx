@@ -144,6 +144,7 @@ export function SiteFooter() {
 function MobileOwnerCta() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const hide =
+    pathname === "/" ||
     pathname.startsWith("/apply/owner") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/login");

@@ -31,17 +31,17 @@ function Home() {
     <SiteShell>
       <SiteJsonLd />
       <FaqJsonLd />
-      <section className="relative min-h-[88dvh] overflow-hidden bg-charcoal">
+      <section className="relative min-h-[62dvh] overflow-hidden bg-charcoal md:min-h-[88dvh]">
         <Photo
           src="/images/hero.jpg"
           alt="雨の京都の通りに停まる赤いスーパーカー"
-          className="absolute inset-0 h-full w-full scale-105 object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-[46%_center] md:object-center"
           priority
           width={1500}
           height={844}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/55 to-charcoal/20" />
-        <div className="relative mx-auto flex min-h-[88dvh] max-w-6xl flex-col justify-end px-5 pb-16 pt-28 text-cream md:pb-24">
+        <div className="relative mx-auto flex min-h-[62dvh] max-w-6xl flex-col justify-end px-5 pb-16 pt-28 text-cream md:min-h-[88dvh] md:pb-24">
           <p className="text-xs font-medium tracking-[0.28em] text-cream/80">
             京都府内限定｜サービス準備中
           </p>
