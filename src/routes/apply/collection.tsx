@@ -19,7 +19,7 @@ function Page() {
     <SiteShell>
       <PageIntro
         kicker="COLLECTION PRE-REGISTER"
-        title="共同オーナー候補の事前登録"
+        title="共同購入の事前登録"
         lead="共同所有に関心があることの確認です。契約、購入申込、出資申込、予約ではありません。車両代と申込金は受け取りません。"
       />
       <Section className="max-w-3xl pt-0">

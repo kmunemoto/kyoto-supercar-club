@@ -4,7 +4,6 @@ import { WebPageJsonLd } from "@/components/site/json-ld";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
 import { OWNER_FLOW, OWNER_NETWORK_POINTS } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
-import { lineCtaLabel } from "@/lib/site";
 
 export const Route = createFileRoute("/owners")({
   component: Page,
@@ -32,7 +31,11 @@ function Page() {
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
-          <Photo src="/images/keys-ferrari.jpg" alt="トレイに置いたフェラーリのスマートキー" className="aspect-[16/8]" />
+          <Photo
+            src="/images/keys-ferrari.jpg"
+            alt="トレイに置いたフェラーリのスマートキー"
+            className="aspect-[16/8]"
+          />
         </div>
       </div>
       <Section>
@@ -62,13 +65,13 @@ function Page() {
             to="/apply/owner"
             className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream type-cta`}
           >
-            オーナーネットワークの先行相談
+            所有車の登録を相談する
           </Link>
           <InquiryCta
             topic="オーナーネットワークについて"
             className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6 type-cta`}
           >
-            {lineCtaLabel()}（オーナーネットワーク）
+            愛車の登録についてLINEで相談する
           </InquiryCta>
         </div>
       </Section>

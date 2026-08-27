@@ -29,7 +29,7 @@ function Page() {
           to="/collection"
           className="mt-8 inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"
         >
-          共同所有（COLLECTION）を見る
+          共同購入を見る
         </Link>
       </Section>
     </SiteShell>

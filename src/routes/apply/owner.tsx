@@ -20,7 +20,7 @@ function Page() {
     <SiteShell>
       <PageIntro
         kicker="OWNER NETWORK"
-        title="オーナーネットワークの先行相談"
+        title="愛車の登録についての相談"
         lead="スーパーカー所有者の方向けです。愛車の登録と、登録オーナー同士の相互利用について相談を受け付けます。送信は相談の受付であり、登録の確定ではありません。"
       />
       <Section className="max-w-3xl pt-0">

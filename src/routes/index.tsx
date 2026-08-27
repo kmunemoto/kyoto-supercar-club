@@ -48,19 +48,13 @@ function Home() {
               to="/collection"
               className="inline-flex min-h-12 items-center justify-center rounded-md bg-cream px-5 py-3 text-center text-ink type-cta"
             >
-              <span className="leading-snug">
-                一台を、
-                <span className="whitespace-nowrap">少人数で共同所有する</span>
-              </span>
+              共同購入に興味がある方
             </Link>
             <Link
               to="/owners"
               className="inline-flex min-h-12 items-center justify-center rounded-md border border-cream/40 px-5 py-3 text-center text-cream type-cta"
             >
-              <span className="leading-snug">
-                愛車を登録し、
-                <span className="whitespace-nowrap">オーナーネットワークへ</span>
-              </span>
+              愛車を登録したい方
             </Link>
           </div>
         </div>
@@ -157,7 +151,7 @@ function Home() {
               to="/apply/collection"
               className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta`}
             >
-              共同所有の事前登録
+              共同購入の事前登録をする
             </Link>
             <InquiryCta
               topic="共同所有について"

@@ -1,8 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
-import { BRAND, FOOTER_LINKS, NAV } from "@/lib/brand";
+import { useEffect, useId, useState } from "react";
+import { BRAND, FOOTER_LINKS, MOBILE_AUX_NAV, MOBILE_SERVICE_CARDS, NAV } from "@/lib/brand";
 import { track } from "@/lib/analytics";
+import { getLineUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export function Wordmark({ invert = false }: { invert?: boolean }) {
@@ -33,33 +34,48 @@ export function PhaseChip({ invert = false }: { invert?: boolean }) {
   );
 }
 
-export function SiteHeader() {
-  const [open, setOpen] = useState(false);
+export function SiteHeader({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const menuId = useId();
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onOpenChange(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, onOpenChange]);
+
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/90 backdrop-blur-md">
       <div className="mx-auto flex h-[4.25rem] max-w-6xl items-center justify-between gap-3 px-5">
         <Wordmark />
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="主要">
+        <nav className="hidden items-center gap-5 xl:gap-7 lg:flex" aria-label="主要">
           {NAV.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className={cn("text-sm text-ink-soft transition-colors hover:text-ink", "type-cta")}
+              className={cn(
+                "whitespace-nowrap text-sm text-ink-soft transition-colors hover:text-ink",
+                "type-cta",
+              )}
             >
               {item.label}
             </Link>
           ))}
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            to="/owners"
-            className={cn(
-              "text-sm text-ink-soft underline-offset-4 hover:text-ink hover:underline",
-              "type-cta",
-            )}
-          >
-            オーナーの方
-          </Link>
           <Link
             to="/apply/collection"
             onClick={() => track("collection_cta_click", { place: "header" })}
@@ -68,52 +84,67 @@ export function SiteHeader() {
               "type-cta",
             )}
           >
-            共同所有の事前登録
+            共同購入の事前登録
           </Link>
         </div>
         <button
           type="button"
-          className="inline-flex size-11 min-h-11 min-w-11 items-center justify-center rounded-md border border-line lg:hidden"
+          className="inline-flex size-11 min-h-11 min-w-11 items-center justify-center rounded-md border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oxblood lg:hidden"
           aria-label={open ? "メニューを閉じる" : "メニューを開く"}
           aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+          aria-controls={menuId}
+          onClick={() => onOpenChange(!open)}
         >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          {open ? (
+            <X className="size-5" aria-hidden="true" />
+          ) : (
+            <Menu className="size-5" aria-hidden="true" />
+          )}
         </button>
       </div>
       {open ? (
-        <div className="border-t border-line bg-paper px-5 py-5 lg:hidden">
-          <nav className="flex flex-col gap-1" aria-label="モバイル">
-            {NAV.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn("flex min-h-12 items-center text-base", "type-cta")}
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Link
-              to="/apply/collection"
-              className={cn(
-                "mt-3 flex min-h-12 items-center justify-center rounded-md bg-oxblood text-cream",
-                "type-cta",
-              )}
-              onClick={() => {
-                setOpen(false);
-                track("collection_cta_click", { place: "mobile-nav" });
-              }}
-            >
-              共同所有の事前登録
-            </Link>
-            <Link
-              to="/apply/owner"
-              className={cn("flex min-h-12 items-center text-ink-soft", "type-cta")}
-              onClick={() => setOpen(false)}
-            >
-              オーナーネットワークの相談
-            </Link>
+        <div
+          id={menuId}
+          className="max-h-[calc(100dvh-4.25rem)] overflow-y-auto border-t border-line bg-paper px-5 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] lg:hidden"
+        >
+          <nav aria-label="スマートフォンメニュー">
+            <p className="text-[11px] font-medium tracking-[0.18em] text-copper">はじめての方</p>
+            <ul className="mt-3 flex flex-col gap-3">
+              {MOBILE_SERVICE_CARDS.map((card) => (
+                <li key={card.href}>
+                  <Link
+                    to={card.href}
+                    className="block rounded-xl border border-line bg-cream px-4 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oxblood"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    <p className="text-[11px] font-medium tracking-[0.16em] text-copper">
+                      {card.kicker}
+                    </p>
+                    <p className="mt-2 font-serif text-lg leading-snug text-ink type-cta">
+                      {card.title}
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-ink-soft">{card.body}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-8 text-[11px] font-medium tracking-[0.18em] text-copper">案内</p>
+            <ul className="mt-2 flex flex-col">
+              {MOBILE_AUX_NAV.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    to={item.href}
+                    className={cn(
+                      "flex min-h-12 items-center text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oxblood",
+                      "type-cta",
+                    )}
+                    onClick={() => onOpenChange(false)}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </nav>
         </div>
       ) : null}
@@ -154,31 +185,75 @@ export function SiteFooter() {
   );
 }
 
-function MobileOwnerCta() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const hide =
+function stickyKind(pathname: string): "none" | "collection" | "owner" | "line" {
+  if (
     pathname === "/" ||
     pathname.startsWith("/apply/") ||
     pathname.startsWith("/admin") ||
-    pathname.startsWith("/login");
-  if (hide) return null;
+    pathname.startsWith("/login")
+  ) {
+    return "none";
+  }
+  if (pathname.startsWith("/collection")) return "collection";
+  if (pathname.startsWith("/owners")) return "owner";
+  return "line";
+}
+
+function MobileStickyCta({ hidden }: { hidden: boolean }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const kind = stickyKind(pathname);
+  const line = getLineUrl();
+  if (hidden || kind === "none") return null;
+
+  const className = cn(
+    "pointer-events-auto flex min-h-12 items-center justify-center rounded-md bg-oxblood px-4 text-sm text-cream shadow-lg",
+    "type-cta",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream",
+  );
+
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
-      <Link
-        to="/apply/collection"
-        onClick={() => track("collection_cta_click", { place: "sticky" })}
-        className={cn(
-          "pointer-events-auto flex min-h-12 items-center justify-center rounded-md bg-oxblood px-4 text-sm text-cream shadow-lg",
-          "type-cta",
-        )}
-      >
-        共同所有の事前登録
-      </Link>
+      {kind === "collection" ? (
+        <Link
+          to="/apply/collection"
+          onClick={() => track("collection_cta_click", { place: "sticky" })}
+          className={className}
+        >
+          共同購入の事前登録
+        </Link>
+      ) : null}
+      {kind === "owner" ? (
+        <Link
+          to="/apply/owner"
+          onClick={() => track("owner_cta_click", { place: "sticky" })}
+          className={className}
+        >
+          愛車の登録を相談する
+        </Link>
+      ) : null}
+      {kind === "line" ? (
+        <a
+          href={line || "/contact"}
+          target={line ? "_blank" : undefined}
+          rel={line ? "noopener noreferrer" : undefined}
+          className={className}
+        >
+          LINEで相談する
+        </a>
+      ) : null}
     </div>
   );
 }
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const showSticky = stickyKind(pathname) !== "none";
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   return (
     <div className="flex min-h-dvh flex-col bg-paper text-ink">
       <a
@@ -187,12 +262,18 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       >
         本文へスキップ
       </a>
-      <SiteHeader />
-      <main id="main" className="flex-1 pb-20 lg:pb-0">
+      <SiteHeader open={menuOpen} onOpenChange={setMenuOpen} />
+      <main
+        id="main"
+        className={cn(
+          "flex-1",
+          showSticky && "pb-[calc(5.5rem+env(safe-area-inset-bottom))] lg:pb-0",
+        )}
+      >
         {children}
       </main>
       <SiteFooter />
-      <MobileOwnerCta />
+      <MobileStickyCta hidden={menuOpen} />
     </div>
   );
 }

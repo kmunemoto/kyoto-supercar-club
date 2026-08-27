@@ -39,7 +39,11 @@ function Page() {
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
-          <Photo src="/images/garage-revuelto.jpg" alt="木目のガレージに置かれたランボルギーニ・レヴエルト" className="aspect-[16/8]" />
+          <Photo
+            src="/images/garage-revuelto.jpg"
+            alt="木目のガレージに置かれたランボルギーニ・レヴエルト"
+            className="aspect-[16/8]"
+          />
         </div>
       </div>
       <Section>
@@ -48,13 +52,13 @@ function Page() {
             to="/apply/collection"
             className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream type-cta`}
           >
-            共同オーナー候補の事前登録
+            共同購入の事前登録をする
           </Link>
           <InquiryCta
             topic="共同所有について"
             className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6 type-cta`}
           >
-            {lineCtaLabel()}（共同所有）
+            {lineCtaLabel()}
           </InquiryCta>
         </div>
         <p className="mt-4 text-sm text-muted">
@@ -127,7 +131,7 @@ function Page() {
         </dl>
 
         <div className="mt-16 rounded-xl bg-charcoal px-6 py-10 text-cream md:px-10">
-          <h2 className="font-serif text-2xl">共同オーナー候補の事前登録</h2>
+          <h2 className="font-serif text-2xl">共同購入の事前登録</h2>
           <p className="mt-3 max-w-2xl text-cream/75">
             関心のある方の意向確認です。契約でも予約でもありません。
           </p>
@@ -136,13 +140,13 @@ function Page() {
               to="/apply/collection"
               className={`inline-flex h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta`}
             >
-              事前登録をする
+              共同購入の事前登録をする
             </Link>
             <InquiryCta
               topic="共同所有について"
               className={`inline-flex h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream type-cta`}
             >
-              {lineCtaLabel()}（共同所有）
+              {lineCtaLabel()}
             </InquiryCta>
           </div>
         </div>

@@ -46,11 +46,11 @@ function Page() {
         </p>
         <p className="mt-12">
           <Link to="/collection" className="text-oxblood">
-            共同所有へ
+            共同購入を見る
           </Link>
           <span className="mx-3 text-muted">/</span>
           <Link to="/owners" className="text-oxblood">
-            オーナーネットワークへ
+            愛車の登録を見る
           </Link>
         </p>
       </Section>

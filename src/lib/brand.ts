@@ -16,11 +16,33 @@ export const BRAND = {
 } as const;
 
 export const NAV = [
-  { href: "/collection", label: "共同所有" },
-  { href: "/owners", label: "オーナーネットワーク" },
-  { href: "/how-it-works", label: "仕組み" },
-  { href: "/safety", label: "安全管理" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/collection", label: "共同購入", labelLong: "スーパーカーを共同購入する" },
+  { href: "/owners", label: "愛車登録", labelLong: "愛車を登録する" },
+  { href: "/how-it-works", label: "サービスの違い", labelLong: "2つのサービスの違い" },
+  { href: "/safety", label: "安全・保険", labelLong: "安全・保険について" },
+  { href: "/faq", label: "よくある質問", labelLong: "よくある質問" },
+  { href: "/contact", label: "お問い合わせ", labelLong: "お問い合わせ" },
+] as const;
+
+export const MOBILE_SERVICE_CARDS = [
+  {
+    href: "/collection",
+    kicker: "KSC COLLECTION",
+    title: "スーパーカーを共同購入したい方",
+    body: "複数人で1台を購入し、実際に共同所有する仕組み",
+  },
+  {
+    href: "/owners",
+    kicker: "KSC OWNER NETWORK",
+    title: "スーパーカーをお持ちの方",
+    body: "愛車を登録し、所有者限定で他の登録車両を相互利用する仕組み",
+  },
+] as const;
+
+export const MOBILE_AUX_NAV = [
+  { href: "/how-it-works", label: "2つのサービスの違い" },
+  { href: "/safety", label: "安全・保険について" },
+  { href: "/faq", label: "よくある質問" },
   { href: "/contact", label: "お問い合わせ" },
 ] as const;
 
