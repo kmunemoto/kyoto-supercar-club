@@ -39,7 +39,7 @@ function Page() {
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
-          <Photo src="/images/garage.jpg" alt="静かなガレージの光" className="aspect-[16/8]" />
+          <Photo src="/images/garage.jpg" alt="屋内に置かれたランボルギーニ・レヴエルト" className="aspect-[16/8]" />
         </div>
       </div>
       <Section>

@@ -32,7 +32,7 @@ function Page() {
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
-          <Photo src="/images/keys.jpg" alt="ロゴのないキーと茶器" className="aspect-[16/8]" />
+          <Photo src="/images/keys.jpg" alt="トレイに置いたフェラーリのスマートキー" className="aspect-[16/8]" />
         </div>
       </div>
       <Section>
