@@ -82,14 +82,15 @@ function asMember(row: Record<string, unknown>): MemberRow {
     full_name: String(row["full_name"] ?? ""),
     email: String(row["email"] ?? ""),
     phone: String(row["phone"] ?? ""),
-    age: Number(row["age"] ?? 0),
+    age: row["age"] == null ? null : Number(row["age"]),
     region: String(row["region"] ?? ""),
-    license_years: Number(row["license_years"] ?? 0),
-    use_frequency: String(row["use_frequency"] ?? ""),
+    license_years: row["license_years"] == null ? null : Number(row["license_years"]),
+    use_frequency: row["use_frequency"] == null ? null : String(row["use_frequency"]),
     interest_models: asStringList(row["interest_models"]),
-    budget_band: String(row["budget_band"] ?? ""),
-    use_purpose: String(row["use_purpose"] ?? ""),
-    incident_history: String(row["incident_history"] ?? ""),
+    participation_interests: asStringList(row["participation_interests"]),
+    budget_band: row["budget_band"] == null ? null : String(row["budget_band"]),
+    use_purpose: row["use_purpose"] == null ? null : String(row["use_purpose"]),
+    incident_history: row["incident_history"] == null ? null : String(row["incident_history"]),
     requests: row["requests"] == null ? null : String(row["requests"]),
     utm_source: row["utm_source"] == null ? null : String(row["utm_source"]),
     utm_medium: row["utm_medium"] == null ? null : String(row["utm_medium"]),
@@ -148,20 +149,29 @@ const getDashboardFn = createServerFn({ method: "POST" })
     const owners = (ownersRes.data ?? []).map((r) => asOwner(r as Record<string, unknown>));
     const members = (membersRes.data ?? []).map((r) => asMember(r as Record<string, unknown>));
     const contacts = (contactsRes.data ?? []).map((r) => asContact(r as Record<string, unknown>));
-    const legal =
-      legalRes.data && legalRes.data.length > 0
-        ? legalRes.data.map((r) => ({
-            id: String((r as Record<string, unknown>)["id"] ?? ""),
-            title: String((r as Record<string, unknown>)["title"] ?? ""),
-            detail: String((r as Record<string, unknown>)["detail"] ?? ""),
-            status: String((r as Record<string, unknown>)["status"] ?? "needs_review"),
-          }))
-        : LEGAL_TODOS.map((t) => ({
+    const storedLegal = (legalRes.data ?? []).map((r) => {
+      const row = r as Record<string, unknown>;
+      return {
+        id: String(row["id"] ?? ""),
+        title: String(row["title"] ?? ""),
+        detail: String(row["detail"] ?? ""),
+        status: String(row["status"] ?? "needs_review"),
+      };
+    });
+    const storedById = new Map(storedLegal.map((item) => [item.id, item]));
+    const knownIds = new Set<string>(LEGAL_TODOS.map((t) => t.id));
+    const legal = [
+      ...LEGAL_TODOS.map(
+        (t) =>
+          storedById.get(t.id) ?? {
             id: t.id,
             title: t.title,
             detail: t.detail,
             status: "needs_review",
-          }));
+          },
+      ),
+      ...storedLegal.filter((item) => item.id && !knownIds.has(item.id)),
+    ];
     return {
       owners: counts(owners),
       members: counts(members),
@@ -213,7 +223,7 @@ const listMembersFn = createServerFn({ method: "POST" })
         (r) =>
           (status === "all" || r.status === status) &&
           (!q ||
-            [r.full_name, r.email, r.phone, r.region, r.use_purpose]
+            [r.full_name, r.email, r.phone, r.region, r.use_purpose, ...r.participation_interests]
               .join(" ")
               .toLowerCase()
               .includes(q)),

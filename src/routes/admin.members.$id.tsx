@@ -39,6 +39,7 @@ function Page() {
         items={[
           ["メール", r.email],
           ["電話", r.phone],
+          ["参加方法", jsonList(r.participation_interests)],
           ["年齢", r.age],
           ["地域", r.region],
           ["免許取得年数", r.license_years],

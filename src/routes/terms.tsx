@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
 import { BRAND } from "@/lib/brand";
+import { ACCIDENT_POLICY, DRIVER_BURDEN_ITEMS, OPERATOR_SIDE_RESPONSIBILITY } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/terms")({
@@ -27,11 +28,30 @@ function Page() {
           は招待制スーパーカーシェアの検証中であり、車両の予約・貸出・課金は行っていません。フォーム送信は相談または事前登録の意思表示であり、契約の成立ではありません。
         </p>
         <ul className="space-y-3 text-ink-soft">
-          <li>登録ご本人以外の運転、又貸しを禁じる方針です。</li>
+          <li>クラブへの参加と、スーパーカーの運転資格は別です。</li>
+          <li>ドライビング会員の運転は登録ご本人のみ。又貸しを禁じる方針です。</li>
           <li>サーキット、ドリフト、危険運転を禁じる方針です。</li>
           <li>オーナーご自身の利用を優先する方針です。</li>
-          <li>許認可・保険が整うまで、サービスは開始しません。</li>
+          <li>許認可・保険が整うまで、貸出は開始しません。</li>
         </ul>
+        <article>
+          <h2 className="font-serif text-2xl">事故と運転者負担</h2>
+          <p className="mt-3 text-ink-soft">{ACCIDENT_POLICY}</p>
+          <p className="mt-4 text-sm text-muted">
+            以下は将来の貸渡約款で検討する項目です。法令上認められる範囲で、運転者の責めに帰すべき場合に限ります。
+          </p>
+          <ul className="mt-4 space-y-2 text-sm text-ink-soft">
+            {DRIVER_BURDEN_ITEMS.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="mt-6 text-sm text-muted">次の内容まで運転者負担と断定しません。</p>
+          <ul className="mt-3 space-y-2 text-sm text-ink-soft">
+            {OPERATOR_SIDE_RESPONSIBILITY.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </article>
         <p className="text-sm text-muted">
           法令や許認可に関する断定はしません。確認が必要な項目は運営の「要確認」に記録しています。
         </p>

@@ -5,6 +5,7 @@ import { FaqJsonLd, SiteJsonLd } from "@/components/site/json-ld";
 import { track } from "@/lib/analytics";
 import { BRAND } from "@/lib/brand";
 import {
+  CULTURE_PURPOSE,
   FAQS,
   HERO_PILLARS,
   OWNER_FLOW,
@@ -179,17 +180,20 @@ function Home() {
       <section className="border-t border-line bg-paper">
         <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
           <p className="text-xs tracking-[0.22em] text-copper">FOR FUTURE MEMBERS</p>
-          <h2 className="mt-4 font-serif text-2xl md:text-3xl">
-            将来、京都でスーパーカーを利用したい方へ
+          <h2 className="mt-4 max-w-3xl font-serif text-2xl md:text-3xl">
+            {CULTURE_PURPOSE.heading}
           </h2>
-          <p className="mt-4 max-w-xl text-ink-soft">
-            会員制度は準備中です。予約はできません。興味のある方は事前登録だけ受け付けています。
-          </p>
+          <div className="mt-4 max-w-2xl space-y-3 text-ink-soft">
+            {CULTURE_PURPOSE.paragraphs.slice(0, 2).map((p) => (
+              <p key={p}>{p}</p>
+            ))}
+            <p>クラブへの参加と、スーパーカーの運転資格は別です。予約はできません。</p>
+          </div>
           <Link
             to="/membership"
             className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-oxblood"
           >
-            会員事前登録を見る <ArrowRight className="size-4" />
+            会員制度と事前登録を見る <ArrowRight className="size-4" />
           </Link>
         </div>
       </section>

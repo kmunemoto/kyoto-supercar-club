@@ -42,6 +42,7 @@ function Page() {
               "phone",
               "age",
               "region",
+              "participation_interests",
               "license_years",
               "status",
               "created_at",
@@ -54,7 +55,7 @@ function Page() {
           <thead>
             <tr className="border-b border-line text-muted">
               <th className="py-2 font-medium">氏名</th>
-              <th className="py-2 font-medium">条件</th>
+              <th className="py-2 font-medium">参加方法</th>
               <th className="py-2 font-medium">地域</th>
               <th className="py-2 font-medium">状態</th>
               <th className="py-2 font-medium">受付</th>
@@ -83,8 +84,13 @@ function Page() {
                     <p className="text-xs text-muted">{r.email}</p>
                   </td>
                   <td className="py-3">
-                    {r.age}歳 / 免許{r.license_years}年
-                    <p className="text-xs text-muted">{r.use_frequency}</p>
+                    {r.participation_interests.length
+                      ? r.participation_interests.join("、")
+                      : "未記入"}
+                    <p className="text-xs text-muted">
+                      {r.age != null ? `${r.age}歳` : "年齢未記入"}
+                      {r.license_years != null ? ` / 免許${r.license_years}年` : ""}
+                    </p>
                   </td>
                   <td className="py-3">{r.region}</td>
                   <td className="py-3">

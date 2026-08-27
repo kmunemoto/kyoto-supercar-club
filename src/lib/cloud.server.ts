@@ -157,14 +157,15 @@ export async function insertMemberPrereg(data: MemberPreregInput): Promise<Resul
     full_name: data.fullName,
     email: data.email,
     phone: data.phone,
-    age: data.age,
+    age: data.age ?? null,
     region: data.region,
-    license_years: data.licenseYears,
-    use_frequency: data.useFrequency,
-    interest_models: data.interestModels,
-    budget_band: data.budgetBand,
-    use_purpose: data.usePurpose,
-    incident_history: data.incidentHistory,
+    license_years: data.licenseYears ?? null,
+    use_frequency: data.useFrequency || null,
+    interest_models: data.interestModels ?? [],
+    participation_interests: data.participationInterests,
+    budget_band: data.budgetBand || null,
+    use_purpose: data.usePurpose || null,
+    incident_history: data.incidentHistory || null,
     requests: data.requests || null,
     privacy_agreed: true,
     status: "new",
@@ -173,7 +174,10 @@ export async function insertMemberPrereg(data: MemberPreregInput): Promise<Resul
     ...attr(data),
   });
   if (error) return { ok: false, error: SAVE_FAILED };
-  await notify("【会員事前登録】新しい登録", `地域: ${data.region}\nID: ${id}`);
+  await notify(
+    "【会員事前登録】新しい登録",
+    `地域: ${data.region}\n参加: ${data.participationInterests.join("、")}\nID: ${id}`,
+  );
   return { ok: true, id };
 }
 

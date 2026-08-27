@@ -51,6 +51,24 @@ export const OWNER_INTERESTS = [
 
 export const PREFERRED_CONTACT = ["メール", "電話", "どちらでもよい"] as const;
 
+export const PARTICIPATION_OPTIONS = [
+  "車について知る・学ぶ",
+  "展示や交流イベントへ参加したい",
+  "オーナーの話を聞きたい",
+  "将来ドライビング会員になりたい",
+  "車両の利用を希望している",
+  "まだ決めていない",
+] as const;
+
+export const DRIVING_INTERESTS = [
+  "将来ドライビング会員になりたい",
+  "車両の利用を希望している",
+] as const;
+
+export function wantsDrivingMembership(interests: string[]): boolean {
+  return interests.some((item) => (DRIVING_INTERESTS as readonly string[]).includes(item));
+}
+
 export const USE_FREQUENCY = [
   "月1回程度",
   "月2〜3回",
@@ -146,36 +164,66 @@ export const ownerInquirySchema = z.object({
   ...attribution,
 });
 
-export const memberPreregSchema = z.object({
-  fullName: name,
-  email,
-  phone: z
-    .string()
-    .trim()
-    .min(10, "電話番号を入力してください")
-    .max(20, "電話番号が長すぎます")
-    .regex(/^[0-9+\-() ]+$/, "電話番号の形式を確認してください"),
-  age: z.coerce.number().int().min(30, "現時点の想定条件は30歳以上です").max(99),
-  region: z.enum(REGIONS, { errorMap: () => ({ message: "居住地域を選択してください" }) }),
-  licenseYears: z.coerce.number().int().min(5, "現時点の想定条件は免許取得5年以上です").max(60),
-  useFrequency: z.enum(USE_FREQUENCY, {
-    errorMap: () => ({ message: "利用頻度を選択してください" }),
-  }),
-  interestModels: z.array(z.string()).min(1, "興味のある車種を1つ以上選んでください"),
-  budgetBand: z.enum(BUDGET_BANDS, {
-    errorMap: () => ({ message: "希望の料金感を選択してください" }),
-  }),
-  usePurpose: z.enum(USE_PURPOSES, { errorMap: () => ({ message: "利用目的を選択してください" }) }),
-  incidentHistory: z.enum(INCIDENT_OPTIONS, {
-    errorMap: () => ({ message: "自己申告を選択してください" }),
-  }),
-  requests: z.string().trim().max(2000).optional().or(z.literal("")),
-  privacyAgreed: z.literal(true, {
-    errorMap: () => ({ message: "プライバシーポリシーへの同意が必要です" }),
-  }),
-  companyUrl: honeypot,
-  ...attribution,
-});
+const optionalAge = z.preprocess((value) => {
+  if (value === "" || value === null || value === undefined) return undefined;
+  return value;
+}, z.coerce.number().int().min(10, "年齢を確認してください").max(99).optional());
+
+const optionalLicenseYears = z.preprocess((value) => {
+  if (value === "" || value === null || value === undefined) return undefined;
+  return value;
+}, z.coerce.number().int().min(0, "免許取得年数を確認してください").max(70).optional());
+
+export const memberPreregSchema = z
+  .object({
+    participationInterests: z.array(z.string()).min(1, "興味のある参加方法を1つ以上選んでください"),
+    fullName: name,
+    email,
+    phone: z
+      .string()
+      .trim()
+      .min(10, "電話番号を入力してください")
+      .max(20, "電話番号が長すぎます")
+      .regex(/^[0-9+\-() ]+$/, "電話番号の形式を確認してください"),
+    age: optionalAge,
+    region: z.enum(REGIONS, { errorMap: () => ({ message: "居住地域を選択してください" }) }),
+    licenseYears: optionalLicenseYears,
+    useFrequency: z.enum(USE_FREQUENCY).optional().or(z.literal("")),
+    interestModels: z.array(z.string()).optional(),
+    budgetBand: z.enum(BUDGET_BANDS).optional().or(z.literal("")),
+    usePurpose: z.enum(USE_PURPOSES).optional().or(z.literal("")),
+    incidentHistory: z.enum(INCIDENT_OPTIONS).optional().or(z.literal("")),
+    requests: z.string().trim().max(2000).optional().or(z.literal("")),
+    privacyAgreed: z.literal(true, {
+      errorMap: () => ({ message: "プライバシーポリシーへの同意が必要です" }),
+    }),
+    companyUrl: honeypot,
+    ...attribution,
+  })
+  .superRefine((value, ctx) => {
+    if (!wantsDrivingMembership(value.participationInterests)) return;
+    if (value.licenseYears === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["licenseYears"],
+        message: "免許取得年数を入力してください",
+      });
+    }
+    if (!value.useFrequency) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["useFrequency"],
+        message: "利用頻度を選択してください",
+      });
+    }
+    if (!value.incidentHistory) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["incidentHistory"],
+        message: "自己申告を選択してください",
+      });
+    }
+  });
 
 export const contactSchema = z.object({
   fullName: name,
