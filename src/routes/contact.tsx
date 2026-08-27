@@ -49,7 +49,7 @@ function Page() {
                 href={line}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream"
+                className={`mt-4 inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream type-cta`}
               >
                 {lineCtaLabel()}
               </a>

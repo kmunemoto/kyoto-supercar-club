@@ -44,7 +44,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               to={item.href}
-              className="text-sm text-ink-soft transition-colors hover:text-ink"
+              className={cn("text-sm text-ink-soft transition-colors hover:text-ink", "type-cta")}
             >
               {item.label}
             </Link>
@@ -53,14 +53,20 @@ export function SiteHeader() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             to="/owners"
-            className="text-sm text-ink-soft underline-offset-4 hover:text-ink hover:underline"
+            className={cn(
+              "text-sm text-ink-soft underline-offset-4 hover:text-ink hover:underline",
+              "type-cta",
+            )}
           >
             オーナーの方
           </Link>
           <Link
             to="/apply/collection"
             onClick={() => track("collection_cta_click", { place: "header" })}
-            className="inline-flex h-11 min-h-11 items-center rounded-md bg-oxblood px-4 text-sm font-medium text-cream hover:bg-oxblood-dark"
+            className={cn(
+              "inline-flex h-11 min-h-11 items-center rounded-md bg-oxblood px-4 text-sm text-cream hover:bg-oxblood-dark",
+              "type-cta",
+            )}
           >
             共同所有の事前登録
           </Link>
@@ -82,7 +88,7 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 to={item.href}
-                className="flex min-h-12 items-center text-base"
+                className={cn("flex min-h-12 items-center text-base", "type-cta")}
                 onClick={() => setOpen(false)}
               >
                 {item.label}
@@ -90,7 +96,10 @@ export function SiteHeader() {
             ))}
             <Link
               to="/apply/collection"
-              className="mt-3 flex min-h-12 items-center justify-center rounded-md bg-oxblood font-medium text-cream"
+              className={cn(
+                "mt-3 flex min-h-12 items-center justify-center rounded-md bg-oxblood text-cream",
+                "type-cta",
+              )}
               onClick={() => {
                 setOpen(false);
                 track("collection_cta_click", { place: "mobile-nav" });
@@ -100,7 +109,7 @@ export function SiteHeader() {
             </Link>
             <Link
               to="/apply/owner"
-              className="flex min-h-12 items-center text-ink-soft"
+              className={cn("flex min-h-12 items-center text-ink-soft", "type-cta")}
               onClick={() => setOpen(false)}
             >
               オーナーネットワークの相談
@@ -123,7 +132,11 @@ export function SiteFooter() {
         </div>
         <div className="flex flex-col gap-3 text-sm">
           {FOOTER_LINKS.map((l) => (
-            <Link key={l.href} to={l.href} className="text-cream/80 hover:text-cream">
+            <Link
+              key={l.href}
+              to={l.href}
+              className={cn("text-cream/80 hover:text-cream", "type-cta")}
+            >
               {l.label}
             </Link>
           ))}
@@ -154,7 +167,10 @@ function MobileOwnerCta() {
       <Link
         to="/apply/collection"
         onClick={() => track("collection_cta_click", { place: "sticky" })}
-        className="pointer-events-auto flex min-h-12 items-center justify-center rounded-md bg-oxblood px-4 text-sm font-medium text-cream shadow-lg"
+        className={cn(
+          "pointer-events-auto flex min-h-12 items-center justify-center rounded-md bg-oxblood px-4 text-sm text-cream shadow-lg",
+          "type-cta",
+        )}
       >
         共同所有の事前登録
       </Link>

@@ -46,13 +46,13 @@ function Home() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/collection"
-              className="inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink"
+              className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta`}
             >
               一台を、少人数で共同所有する
             </Link>
             <Link
               to="/owners"
-              className="inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream"
+              className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream type-cta`}
             >
               愛車を登録し、オーナーネットワークへ
             </Link>
@@ -149,13 +149,13 @@ function Home() {
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               to="/apply/collection"
-              className="inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink"
+              className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta`}
             >
               共同所有の事前登録
             </Link>
             <InquiryCta
               topic="共同所有について"
-              className="inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream"
+              className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream type-cta`}
             >
               {lineCtaLabel()}
             </InquiryCta>

@@ -60,13 +60,13 @@ function Page() {
         <div className="mt-16 flex flex-col gap-3 sm:flex-row">
           <Link
             to="/apply/owner"
-            className="inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream"
+            className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream type-cta`}
           >
             オーナーネットワークの先行相談
           </Link>
           <InquiryCta
             topic="オーナーネットワークについて"
-            className="inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6"
+            className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6 type-cta`}
           >
             {lineCtaLabel()}（オーナーネットワーク）
           </InquiryCta>

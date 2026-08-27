@@ -46,13 +46,13 @@ function Page() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             to="/apply/collection"
-            className="inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream"
+            className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream type-cta`}
           >
             共同オーナー候補の事前登録
           </Link>
           <InquiryCta
             topic="共同所有について"
-            className="inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6"
+            className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6 type-cta`}
           >
             {lineCtaLabel()}（共同所有）
           </InquiryCta>
@@ -134,13 +134,13 @@ function Page() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/apply/collection"
-              className="inline-flex h-12 items-center justify-center rounded-md bg-cream px-6 text-ink"
+              className={`inline-flex h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta`}
             >
               事前登録をする
             </Link>
             <InquiryCta
               topic="共同所有について"
-              className="inline-flex h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream"
+              className={`inline-flex h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream type-cta`}
             >
               {lineCtaLabel()}（共同所有）
             </InquiryCta>
