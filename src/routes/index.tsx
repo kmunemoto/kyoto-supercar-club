@@ -46,15 +46,21 @@ function Home() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/collection"
-              className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta`}
+              className="inline-flex min-h-12 items-center justify-center rounded-md bg-cream px-5 py-3 text-center text-ink type-cta"
             >
-              一台を、少人数で共同所有する
+              <span className="leading-snug">
+                一台を、
+                <span className="whitespace-nowrap">少人数で共同所有する</span>
+              </span>
             </Link>
             <Link
               to="/owners"
-              className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream type-cta`}
+              className="inline-flex min-h-12 items-center justify-center rounded-md border border-cream/40 px-5 py-3 text-center text-cream type-cta"
             >
-              愛車を登録し、オーナーネットワークへ
+              <span className="leading-snug">
+                愛車を登録し、
+                <span className="whitespace-nowrap">オーナーネットワークへ</span>
+              </span>
             </Link>
           </div>
         </div>
