@@ -1,0 +1,102 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { StatusBadge } from "@/components/admin/status-badge";
+import { AdminToolbar } from "@/components/admin/toolbar";
+import { listMembers, type MemberRow } from "@/lib/server/admin";
+import { downloadText, formatDateTime, toCsv } from "@/lib/utils";
+
+export const Route = createFileRoute("/admin/members")({
+  component: Page,
+});
+
+function Page() {
+  const [q, setQ] = useState("");
+  const [status, setStatus] = useState("all");
+  const [rows, setRows] = useState<MemberRow[] | null>(null);
+
+  useEffect(() => {
+    listMembers({ data: { q, status } })
+      .then(setRows)
+      .catch(() => setRows([]));
+  }, [q, status]);
+
+  return (
+    <div className="space-y-6">
+      <header>
+        <h1 className="font-serif text-3xl">会員事前登録</h1>
+        <p className="mt-2 text-ink-soft">将来の会員候補の一覧です。</p>
+      </header>
+      <AdminToolbar
+        q={q}
+        status={status}
+        onQ={setQ}
+        onStatus={setStatus}
+        onExport={() => {
+          if (!rows) return;
+          downloadText(
+            "member-preregistrations.csv",
+            toCsv(rows, [
+              "id",
+              "full_name",
+              "email",
+              "phone",
+              "age",
+              "region",
+              "license_years",
+              "status",
+              "created_at",
+            ]),
+          );
+        }}
+      />
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[44rem] text-left text-sm">
+          <thead>
+            <tr className="border-b border-line text-muted">
+              <th className="py-2 font-medium">氏名</th>
+              <th className="py-2 font-medium">条件</th>
+              <th className="py-2 font-medium">地域</th>
+              <th className="py-2 font-medium">状態</th>
+              <th className="py-2 font-medium">受付</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows == null ? (
+              <tr>
+                <td className="py-6 text-muted" colSpan={5}>
+                  読み込み中…
+                </td>
+              </tr>
+            ) : rows.length === 0 ? (
+              <tr>
+                <td className="py-6 text-muted" colSpan={5}>
+                  該当なし
+                </td>
+              </tr>
+            ) : (
+              rows.map((r) => (
+                <tr key={r.id} className="border-b border-line/70">
+                  <td className="py-3">
+                    <Link to="/admin/members/$id" params={{ id: r.id }} className="hover:underline">
+                      {r.full_name}
+                    </Link>
+                    <p className="text-xs text-muted">{r.email}</p>
+                  </td>
+                  <td className="py-3">
+                    {r.age}歳 / 免許{r.license_years}年
+                    <p className="text-xs text-muted">{r.use_frequency}</p>
+                  </td>
+                  <td className="py-3">{r.region}</td>
+                  <td className="py-3">
+                    <StatusBadge status={r.status} />
+                  </td>
+                  <td className="py-3 text-muted">{formatDateTime(r.created_at)}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

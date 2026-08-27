@@ -10,33 +10,275 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MembershipRouteImport } from './routes/membership'
+import { Route as OwnersRouteImport } from './routes/owners'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
+import { Route as AdminMembersRouteImport } from './routes/admin.members'
+import { Route as AdminOwnersRouteImport } from './routes/admin.owners'
+import { Route as ApplyMemberRouteImport } from './routes/apply/member'
+import { Route as ApplyOwnerRouteImport } from './routes/apply/owner'
+import { Route as AdminInquiriesIdRouteImport } from './routes/admin.inquiries.$id'
+import { Route as AdminMembersIdRouteImport } from './routes/admin.members.$id'
+import { Route as AdminOwnersIdRouteImport } from './routes/admin.owners.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MembershipRoute = MembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OwnersRoute = OwnersRouteImport.update({
+  id: '/owners',
+  path: '/owners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInquiriesRoute = AdminInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMembersRoute = AdminMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminOwnersRoute = AdminOwnersRouteImport.update({
+  id: '/owners',
+  path: '/owners',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApplyMemberRoute = ApplyMemberRouteImport.update({
+  id: '/apply/member',
+  path: '/apply/member',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyOwnerRoute = ApplyOwnerRouteImport.update({
+  id: '/apply/owner',
+  path: '/apply/owner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminInquiriesIdRoute = AdminInquiriesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminInquiriesRoute,
+} as any)
+const AdminMembersIdRoute = AdminMembersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminMembersRoute,
+} as any)
+const AdminOwnersIdRoute = AdminOwnersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminOwnersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/membership': typeof MembershipRoute
+  '/owners': typeof OwnersRoute
+  '/privacy': typeof PrivacyRoute
+  '/safety': typeof SafetyRoute
+  '/terms': typeof TermsRoute
+  '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
+  '/admin/members': typeof AdminMembersRouteWithChildren
+  '/admin/owners': typeof AdminOwnersRouteWithChildren
+  '/apply/member': typeof ApplyMemberRoute
+  '/apply/owner': typeof ApplyOwnerRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/members/$id': typeof AdminMembersIdRoute
+  '/admin/owners/$id': typeof AdminOwnersIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/membership': typeof MembershipRoute
+  '/owners': typeof OwnersRoute
+  '/privacy': typeof PrivacyRoute
+  '/safety': typeof SafetyRoute
+  '/terms': typeof TermsRoute
+  '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
+  '/admin/members': typeof AdminMembersRouteWithChildren
+  '/admin/owners': typeof AdminOwnersRouteWithChildren
+  '/apply/member': typeof ApplyMemberRoute
+  '/apply/owner': typeof ApplyOwnerRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/members/$id': typeof AdminMembersIdRoute
+  '/admin/owners/$id': typeof AdminOwnersIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/membership': typeof MembershipRoute
+  '/owners': typeof OwnersRoute
+  '/privacy': typeof PrivacyRoute
+  '/safety': typeof SafetyRoute
+  '/terms': typeof TermsRoute
+  '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
+  '/admin/members': typeof AdminMembersRouteWithChildren
+  '/admin/owners': typeof AdminOwnersRouteWithChildren
+  '/apply/member': typeof ApplyMemberRoute
+  '/apply/owner': typeof ApplyOwnerRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
+  '/admin/members/$id': typeof AdminMembersIdRoute
+  '/admin/owners/$id': typeof AdminOwnersIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/contact'
+    | '/faq'
+    | '/how-it-works'
+    | '/login'
+    | '/membership'
+    | '/owners'
+    | '/privacy'
+    | '/safety'
+    | '/terms'
+    | '/admin/inquiries'
+    | '/admin/members'
+    | '/admin/owners'
+    | '/apply/member'
+    | '/apply/owner'
+    | '/admin/'
+    | '/admin/inquiries/$id'
+    | '/admin/members/$id'
+    | '/admin/owners/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/contact'
+    | '/faq'
+    | '/how-it-works'
+    | '/login'
+    | '/membership'
+    | '/owners'
+    | '/privacy'
+    | '/safety'
+    | '/terms'
+    | '/admin/inquiries'
+    | '/admin/members'
+    | '/admin/owners'
+    | '/apply/member'
+    | '/apply/owner'
+    | '/admin'
+    | '/admin/inquiries/$id'
+    | '/admin/members/$id'
+    | '/admin/owners/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/contact'
+    | '/faq'
+    | '/how-it-works'
+    | '/login'
+    | '/membership'
+    | '/owners'
+    | '/privacy'
+    | '/safety'
+    | '/terms'
+    | '/admin/inquiries'
+    | '/admin/members'
+    | '/admin/owners'
+    | '/apply/member'
+    | '/apply/owner'
+    | '/admin/'
+    | '/admin/inquiries/$id'
+    | '/admin/members/$id'
+    | '/admin/owners/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  ContactRoute: typeof ContactRoute
+  FaqRoute: typeof FaqRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  LoginRoute: typeof LoginRoute
+  MembershipRoute: typeof MembershipRoute
+  OwnersRoute: typeof OwnersRoute
+  PrivacyRoute: typeof PrivacyRoute
+  SafetyRoute: typeof SafetyRoute
+  TermsRoute: typeof TermsRoute
+  ApplyMemberRoute: typeof ApplyMemberRoute
+  ApplyOwnerRoute: typeof ApplyOwnerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +290,218 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/membership': {
+      id: '/membership'
+      path: '/membership'
+      fullPath: '/membership'
+      preLoaderRoute: typeof MembershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/owners': {
+      id: '/owners'
+      path: '/owners'
+      fullPath: '/owners'
+      preLoaderRoute: typeof OwnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/inquiries': {
+      id: '/admin/inquiries'
+      path: '/inquiries'
+      fullPath: '/admin/inquiries'
+      preLoaderRoute: typeof AdminInquiriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/members': {
+      id: '/admin/members'
+      path: '/members'
+      fullPath: '/admin/members'
+      preLoaderRoute: typeof AdminMembersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/owners': {
+      id: '/admin/owners'
+      path: '/owners'
+      fullPath: '/admin/owners'
+      preLoaderRoute: typeof AdminOwnersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/apply/member': {
+      id: '/apply/member'
+      path: '/apply/member'
+      fullPath: '/apply/member'
+      preLoaderRoute: typeof ApplyMemberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply/owner': {
+      id: '/apply/owner'
+      path: '/apply/owner'
+      fullPath: '/apply/owner'
+      preLoaderRoute: typeof ApplyOwnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/inquiries/$id': {
+      id: '/admin/inquiries/$id'
+      path: '/$id'
+      fullPath: '/admin/inquiries/$id'
+      preLoaderRoute: typeof AdminInquiriesIdRouteImport
+      parentRoute: typeof AdminInquiriesRoute
+    }
+    '/admin/members/$id': {
+      id: '/admin/members/$id'
+      path: '/$id'
+      fullPath: '/admin/members/$id'
+      preLoaderRoute: typeof AdminMembersIdRouteImport
+      parentRoute: typeof AdminMembersRoute
+    }
+    '/admin/owners/$id': {
+      id: '/admin/owners/$id'
+      path: '/$id'
+      fullPath: '/admin/owners/$id'
+      preLoaderRoute: typeof AdminOwnersIdRouteImport
+      parentRoute: typeof AdminOwnersRoute
+    }
   }
 }
 
+interface AdminInquiriesRouteChildren {
+  AdminInquiriesIdRoute: typeof AdminInquiriesIdRoute
+}
+
+const AdminInquiriesRouteChildren: AdminInquiriesRouteChildren = {
+  AdminInquiriesIdRoute: AdminInquiriesIdRoute,
+}
+
+const AdminInquiriesRouteWithChildren = AdminInquiriesRoute._addFileChildren(
+  AdminInquiriesRouteChildren,
+)
+
+interface AdminMembersRouteChildren {
+  AdminMembersIdRoute: typeof AdminMembersIdRoute
+}
+
+const AdminMembersRouteChildren: AdminMembersRouteChildren = {
+  AdminMembersIdRoute: AdminMembersIdRoute,
+}
+
+const AdminMembersRouteWithChildren = AdminMembersRoute._addFileChildren(
+  AdminMembersRouteChildren,
+)
+
+interface AdminOwnersRouteChildren {
+  AdminOwnersIdRoute: typeof AdminOwnersIdRoute
+}
+
+const AdminOwnersRouteChildren: AdminOwnersRouteChildren = {
+  AdminOwnersIdRoute: AdminOwnersIdRoute,
+}
+
+const AdminOwnersRouteWithChildren = AdminOwnersRoute._addFileChildren(
+  AdminOwnersRouteChildren,
+)
+
+interface AdminRouteChildren {
+  AdminInquiriesRoute: typeof AdminInquiriesRouteWithChildren
+  AdminMembersRoute: typeof AdminMembersRouteWithChildren
+  AdminOwnersRoute: typeof AdminOwnersRouteWithChildren
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminInquiriesRoute: AdminInquiriesRouteWithChildren,
+  AdminMembersRoute: AdminMembersRouteWithChildren,
+  AdminOwnersRoute: AdminOwnersRouteWithChildren,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  ContactRoute: ContactRoute,
+  FaqRoute: FaqRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  LoginRoute: LoginRoute,
+  MembershipRoute: MembershipRoute,
+  OwnersRoute: OwnersRoute,
+  PrivacyRoute: PrivacyRoute,
+  SafetyRoute: SafetyRoute,
+  TermsRoute: TermsRoute,
+  ApplyMemberRoute: ApplyMemberRoute,
+  ApplyOwnerRoute: ApplyOwnerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
+import type { createStart } from '@tanstack/react-start'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }
