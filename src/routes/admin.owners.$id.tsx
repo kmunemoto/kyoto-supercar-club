@@ -39,18 +39,23 @@ function Page() {
         items={[
           ["メール", r.email],
           ["電話", r.phone],
+          ["所有", r.owns_vehicle],
           ["地域", r.region],
           ["メーカー", r.make],
           ["車種", r.model],
           ["年式", r.year],
-          ["走行距離", `${r.mileage_km.toLocaleString()} km`],
-          ["保管場所", r.storage_location],
+          ["走行距離帯", r.mileage_band],
+          ["保管形態", r.storage_type],
           ["年間利用", r.annual_use_count],
-          ["貸出可能期間", r.lendable_period],
-          ["希望する管理", jsonList(r.management_needs)],
-          ["報酬方式", r.reward_preference],
-          ["写真メモ", r.photo_notes],
-          ["質問", r.questions],
+          ["関心", jsonList(r.interests.length ? r.interests : r.management_needs)],
+          ["不安・気になること", r.concerns ?? r.questions],
+          ["希望連絡", r.preferred_contact],
+          ["自由記述", r.free_text],
+          [
+            "流入",
+            [r.utm_source, r.utm_medium, r.utm_campaign].filter(Boolean).join(" / ") || null,
+          ],
+          ["landing", r.landing_path],
         ]}
       />
       <StatusAndNotes

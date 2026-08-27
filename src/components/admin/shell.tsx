@@ -29,8 +29,7 @@ export function AdminShell({ pathname }: { pathname: string }) {
               type="button"
               className="text-sm text-muted hover:text-ink"
               onClick={() => {
-                signOutStaff();
-                window.location.assign("/");
+                void signOutStaff().then(() => window.location.assign("/"));
               }}
             >
               ログアウト

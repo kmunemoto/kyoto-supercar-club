@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MemberForm } from "@/components/forms/member-form";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
-import { pageTitle } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/apply/member")({
   component: Page,
-  head: () => ({
-    meta: [
-      { title: pageTitle("会員事前登録") },
-      { name: "description", content: "招待制サービスの事前登録。予約ではありません。" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "京都の会員制スーパーカーシェア｜会員事前登録",
+      description: "招待制サービスの事前登録。サービス開始前で、車両未確定、予約はできません。",
+      path: "/apply/member",
+      noindex: true,
+    }),
 });
 
 function Page() {

@@ -45,7 +45,9 @@ export function CheckRow({
   className?: string | undefined;
 }) {
   return (
-    <label className={cn("flex cursor-pointer items-start gap-3 text-base leading-snug", className)}>
+    <label
+      className={cn("flex cursor-pointer items-start gap-3 text-base leading-snug", className)}
+    >
       {children}
     </label>
   );

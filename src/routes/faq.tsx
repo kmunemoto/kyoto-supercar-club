@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
-import { pageTitle } from "@/lib/brand";
+import { FaqJsonLd } from "@/components/site/json-ld";
+import { pageHead } from "@/lib/seo";
 import { FAQS } from "@/lib/content";
 
 export const Route = createFileRoute("/faq")({
   component: Page,
-  head: () => ({
-    meta: [
-      { title: pageTitle("よくある質問") },
-      { name: "description", content: "準備中のサービスに関する質問。料金・車種・保険は未確定です。" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "よくある質問｜KYOTO SUPERCAR CLUB",
+      description: "京都府内限定の準備中サービスに関する質問。料金・車種・保険は未確定です。",
+      path: "/faq",
+    }),
 });
 
 function Page() {

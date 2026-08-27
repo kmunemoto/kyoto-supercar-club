@@ -11,8 +11,10 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
+import { AnalyticsGate } from "@/components/site/analytics";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { BRAND } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -33,7 +35,6 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
   const router = useRouter();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
@@ -66,36 +67,32 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+const fallbackHead = pageHead({
+  title: BRAND.name,
+  description:
+    "京都府内のスーパーカーオーナーへ。車両提供の先行相談を受け付けています。予約・貸出は行っていません。",
+  path: "/",
+});
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: BRAND.name },
-      {
-        name: "description",
-        content:
-          "京都発の招待制スーパーカーシェア。現在はサービス準備中です。車両提供の先行相談と会員事前登録を受け付けています。",
-      },
-      { name: "author", content: BRAND.name },
       { name: "theme-color", content: "#1C1A17" },
-      { property: "og:title", content: BRAND.name },
-      {
-        property: "og:description",
-        content: "サービス準備中。先行相談と事前登録を受け付けています。",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      ...fallbackHead.meta,
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/favicon.ico" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@500;600;700&display=swap",
       },
+      ...fallbackHead.links,
     ],
   }),
   shellComponent: RootShell,
@@ -124,6 +121,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <AnalyticsGate />
       <Toaster position="top-center" />
     </QueryClientProvider>
   );

@@ -1,16 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
-import { MEMBER_VALUES, pageTitle } from "@/lib/brand";
+import { MEMBER_VALUES } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 import { MEMBER_POINTS } from "@/lib/content";
 
 export const Route = createFileRoute("/membership")({
   component: Page,
-  head: () => ({
-    meta: [
-      { title: pageTitle("会員制度") },
-      { name: "description", content: "完全審査・招待制。事前登録は予約ではありません。" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "京都の会員制スーパーカーシェア｜会員事前登録",
+      description: "完全審査・招待制。サービス開始前、車両未確定、予約不可です。",
+      path: "/membership",
+    }),
 });
 
 function Page() {
@@ -23,13 +24,20 @@ function Page() {
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
-          <Photo src="/images/interior.jpg" alt="暗い車内のステアリング" className="aspect-[16/8]" />
+          <Photo
+            src="/images/interior.jpg"
+            alt="暗い車内のステアリング"
+            className="aspect-[16/8]"
+          />
         </div>
       </div>
       <Section>
         <ul className="grid gap-4 md:grid-cols-3">
           {MEMBER_VALUES.map((v) => (
-            <li key={v} className="rounded-lg border border-line bg-cream p-6 font-serif text-xl leading-snug">
+            <li
+              key={v}
+              className="rounded-lg border border-line bg-cream p-6 font-serif text-xl leading-snug"
+            >
               {v}
             </li>
           ))}

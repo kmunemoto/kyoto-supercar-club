@@ -5,7 +5,8 @@ import { Checkbox, CheckRow, Field } from "@/components/ui/field";
 import { Input, NativeSelect, Textarea } from "@/components/ui/native";
 import { Button } from "@/components/ui/button";
 import { submitContact } from "@/lib/data/public";
-import { CONTACT_TOPICS, contactSchema, fieldErrors } from "@/lib/schemas";
+import { readAttribution } from "@/lib/attribution";
+import { CONTACT_TOPICS, contactSchema, fieldErrors, focusFirstError } from "@/lib/schemas";
 import { Honeypot, SuccessPanel } from "./form-status";
 
 export function ContactForm() {
@@ -28,10 +29,13 @@ export function ContactForm() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const parsed = contactSchema.safeParse(form);
+    const attr = readAttribution();
+    const parsed = contactSchema.safeParse({ ...form, ...attr });
     if (!parsed.success) {
-      setErrors(fieldErrors(parsed.error));
+      const nextErrors = fieldErrors(parsed.error);
+      setErrors(nextErrors);
       toast.error("入力内容を確認してください。");
+      focusFirstError(nextErrors);
       return;
     }
     setErrors({});
@@ -41,6 +45,7 @@ export function ContactForm() {
       if (!res.ok) {
         setErrors(res.fields ?? {});
         toast.error(res.error);
+        focusFirstError(res.fields ?? {});
         return;
       }
       setDone(true);
@@ -52,22 +57,34 @@ export function ContactForm() {
   }
 
   if (done) {
-    return (
-      <SuccessPanel title="送信しました" body="内容を確認し、必要な場合のみご連絡します。" />
-    );
+    return <SuccessPanel title="送信しました" body="内容を確認し、必要な場合のみご連絡します。" />;
   }
 
   return (
     <form onSubmit={onSubmit} className="relative space-y-8" noValidate>
       <Honeypot value={form.companyUrl} onChange={(v) => set("companyUrl", v)} />
       <Field label="氏名" htmlFor="fullName" required error={errors["fullName"]}>
-        <Input id="fullName" value={form.fullName} onChange={(e) => set("fullName", e.target.value)} />
+        <Input
+          id="fullName"
+          value={form.fullName}
+          onChange={(e) => set("fullName", e.target.value)}
+        />
       </Field>
       <Field label="メールアドレス" htmlFor="email" required error={errors["email"]}>
-        <Input id="email" type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
+        <Input
+          id="email"
+          type="email"
+          value={form.email}
+          onChange={(e) => set("email", e.target.value)}
+        />
       </Field>
       <Field label="電話番号" htmlFor="phone" error={errors["phone"]}>
-        <Input id="phone" type="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
+        <Input
+          id="phone"
+          type="tel"
+          value={form.phone}
+          onChange={(e) => set("phone", e.target.value)}
+        />
       </Field>
       <Field label="種別" htmlFor="topic" required error={errors["topic"]}>
         <NativeSelect id="topic" value={form.topic} onChange={(e) => set("topic", e.target.value)}>
@@ -77,10 +94,17 @@ export function ContactForm() {
         </NativeSelect>
       </Field>
       <Field label="内容" htmlFor="message" required error={errors["message"]}>
-        <Textarea id="message" value={form.message} onChange={(e) => set("message", e.target.value)} />
+        <Textarea
+          id="message"
+          value={form.message}
+          onChange={(e) => set("message", e.target.value)}
+        />
       </Field>
       <CheckRow>
-        <Checkbox checked={form.privacyAgreed} onChange={(e) => set("privacyAgreed", e.target.checked)} />
+        <Checkbox
+          checked={form.privacyAgreed}
+          onChange={(e) => set("privacyAgreed", e.target.checked)}
+        />
         <span>
           <Link to="/privacy" className="underline underline-offset-4">
             プライバシーポリシー
@@ -88,7 +112,9 @@ export function ContactForm() {
           に同意します
         </span>
       </CheckRow>
-      {errors["privacyAgreed"] ? <p className="text-sm text-oxblood">{errors["privacyAgreed"]}</p> : null}
+      {errors["privacyAgreed"] ? (
+        <p className="text-sm text-oxblood">{errors["privacyAgreed"]}</p>
+      ) : null}
       <Button type="submit" disabled={pending}>
         {pending ? "送信中…" : "送信する"}
       </Button>

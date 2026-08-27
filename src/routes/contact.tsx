@@ -1,13 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ContactForm } from "@/components/forms/contact-form";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
-import { pageTitle } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact")({
   component: Page,
-  head: () => ({
-    meta: [{ title: pageTitle("お問い合わせ") }],
-  }),
+  head: () =>
+    pageHead({
+      title: "お問い合わせ｜KYOTO SUPERCAR CLUB",
+      description: "取材、提携、フォームに書ききれないご質問。車両の予約依頼は受け付けていません。",
+      path: "/contact",
+    }),
 });
 
 function Page() {

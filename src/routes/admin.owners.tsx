@@ -92,7 +92,11 @@ function Page() {
                   <td className="py-3">
                     {r.make} {r.model}
                     <p className="text-xs text-muted">
-                      {r.year} / {r.mileage_km.toLocaleString()} km
+                      {r.year ?? "年式未記入"} /{" "}
+                      {r.mileage_band ||
+                        (r.mileage_km != null
+                          ? `${r.mileage_km.toLocaleString()} km`
+                          : "距離未記入")}
                     </p>
                   </td>
                   <td className="py-3">{r.region}</td>

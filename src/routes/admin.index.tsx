@@ -35,7 +35,7 @@ function Dashboard() {
     <div className="space-y-12">
       <header>
         <h1 className="font-serif text-3xl">概況</h1>
-        <p className="mt-2 text-ink-soft">ダミーデータを含む検証用の集計です。</p>
+        <p className="mt-2 text-ink-soft">Lovable Cloud に保存された実データです。</p>
       </header>
       <div className="grid gap-4 sm:grid-cols-3">
         {cards.map((c) => (
@@ -61,9 +61,15 @@ function Dashboard() {
               {APPLICATION_STATUSES.map((s) => (
                 <tr key={s} className="border-b border-line/70">
                   <td className="py-2">{STATUS_LABEL[s]}</td>
-                  <td className="py-2 tabular-nums">{data.owners.find((x) => x.status === s)?.n ?? 0}</td>
-                  <td className="py-2 tabular-nums">{data.members.find((x) => x.status === s)?.n ?? 0}</td>
-                  <td className="py-2 tabular-nums">{data.contacts.find((x) => x.status === s)?.n ?? 0}</td>
+                  <td className="py-2 tabular-nums">
+                    {data.owners.find((x) => x.status === s)?.n ?? 0}
+                  </td>
+                  <td className="py-2 tabular-nums">
+                    {data.members.find((x) => x.status === s)?.n ?? 0}
+                  </td>
+                  <td className="py-2 tabular-nums">
+                    {data.contacts.find((x) => x.status === s)?.n ?? 0}
+                  </td>
                 </tr>
               ))}
             </tbody>

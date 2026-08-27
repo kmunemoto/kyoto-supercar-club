@@ -1,16 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
-import { BRAND, pageTitle } from "@/lib/brand";
+import { BRAND } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 import { HOW_IT_WORKS } from "@/lib/content";
 
 export const Route = createFileRoute("/how-it-works")({
   component: Page,
-  head: () => ({
-    meta: [
-      { title: pageTitle("サービスの仕組み") },
-      { name: "description", content: `${BRAND.name}の準備段階での流れ。相談、確認、開始判断。` },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "仕組み｜KYOTO SUPERCAR CLUB",
+      description: `${BRAND.name}の準備段階での流れ。相談、確認、開始判断。`,
+      path: "/how-it-works",
+    }),
 });
 
 function Page() {

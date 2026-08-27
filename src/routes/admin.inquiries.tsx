@@ -65,7 +65,11 @@ function Page() {
               rows.map((r) => (
                 <tr key={r.id} className="border-b border-line/70">
                   <td className="py-3">
-                    <Link to="/admin/inquiries/$id" params={{ id: r.id }} className="hover:underline">
+                    <Link
+                      to="/admin/inquiries/$id"
+                      params={{ id: r.id }}
+                      className="hover:underline"
+                    >
                       {r.full_name}
                     </Link>
                     <p className="text-xs text-muted">{r.email}</p>

@@ -3,7 +3,12 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { NativeSelect, Textarea } from "@/components/ui/native";
 import { addNote, updateStatus, type EventRow, type NoteRow } from "@/lib/data/admin";
-import { APPLICATION_STATUSES, STATUS_LABEL, type ApplicationStatus, type SubjectType } from "@/lib/status";
+import {
+  APPLICATION_STATUSES,
+  STATUS_LABEL,
+  type ApplicationStatus,
+  type SubjectType,
+} from "@/lib/status";
 import { formatDateTime } from "@/lib/utils";
 import { StatusBadge } from "./status-badge";
 
@@ -97,7 +102,13 @@ export function StatusAndNotes({
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
         />
-        <Button className="mt-4" type="button" variant="outline" disabled={pending} onClick={saveMemo}>
+        <Button
+          className="mt-4"
+          type="button"
+          variant="outline"
+          disabled={pending}
+          onClick={saveMemo}
+        >
           メモを追加
         </Button>
       </section>
@@ -111,8 +122,10 @@ export function StatusAndNotes({
               <li key={ev.id} className="py-4 text-sm">
                 <p className="text-muted">{formatDateTime(ev.created_at)}</p>
                 <p className="mt-1">
-                  {ev.from_status ? STATUS_LABEL[ev.from_status as ApplicationStatus] ?? ev.from_status : "—"} →{" "}
-                  {STATUS_LABEL[ev.to_status as ApplicationStatus] ?? ev.to_status}
+                  {ev.from_status
+                    ? (STATUS_LABEL[ev.from_status as ApplicationStatus] ?? ev.from_status)
+                    : "—"}{" "}
+                  → {STATUS_LABEL[ev.to_status as ApplicationStatus] ?? ev.to_status}
                 </p>
                 {ev.note ? <p className="mt-1 text-ink-soft">{ev.note}</p> : null}
               </li>

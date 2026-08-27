@@ -1,16 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
-import { OWNER_VALUE, pageTitle } from "@/lib/brand";
+import { OWNER_VALUE } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 import { OWNER_BENEFITS } from "@/lib/content";
 
 export const Route = createFileRoute("/owners")({
   component: Page,
-  head: () => ({
-    meta: [
-      { title: pageTitle("車両オーナーの方へ") },
-      { name: "description", content: OWNER_VALUE },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "京都のスーパーカー車両提供・保管相談｜KYOTO SUPERCAR CLUB",
+      description:
+        "京都 スーパーカークラブとして、スーパーカー 車両提供とスーパーカー 保管 京都、高級車 保管 京都、スーパーカー 維持管理の先行相談を受け付けています。保管サービス提供中ではありません。",
+      path: "/owners",
+    }),
 });
 
 function Page() {
@@ -23,7 +25,11 @@ function Page() {
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
-          <Photo src="/images/garage.jpg" alt="カバーをかけた車のある保管庫" className="aspect-[16/8]" />
+          <Photo
+            src="/images/garage.jpg"
+            alt="カバーをかけた車のある保管庫"
+            className="aspect-[16/8]"
+          />
         </div>
       </div>
       <Section>

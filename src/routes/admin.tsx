@@ -1,17 +1,18 @@
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AdminShell } from "@/components/admin/shell";
-import { pageTitle } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 import { getStaffSession } from "@/lib/staff";
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayout,
-  head: () => ({
-    meta: [
-      { title: pageTitle("運営") },
-      { name: "robots", content: "noindex,nofollow" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "運営",
+      description: "運営向け管理画面",
+      path: "/admin",
+      noindex: true,
+    }),
 });
 
 function AdminLayout() {
@@ -19,7 +20,7 @@ function AdminLayout() {
   const [ok, setOk] = useState<boolean | null>(null);
 
   useEffect(() => {
-    setOk(Boolean(getStaffSession()));
+    void getStaffSession().then((session) => setOk(Boolean(session)));
   }, []);
 
   if (ok === null) return <div className="min-h-dvh bg-paper" />;

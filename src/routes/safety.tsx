@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
-import { pageTitle } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 import { SAFETY_ITEMS } from "@/lib/content";
 
 export const Route = createFileRoute("/safety")({
   component: Page,
-  head: () => ({
-    meta: [
-      { title: pageTitle("安全管理") },
-      { name: "description", content: "人を選び、使い方を決め、状態を残す。保険と許認可は確認中です。" },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      title: "安全管理｜KYOTO SUPERCAR CLUB",
+      description: "人を選び、使い方を決め、状態を残す。保険と許認可は確認中です。",
+      path: "/safety",
+    }),
 });
 
 function Page() {

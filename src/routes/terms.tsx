@@ -1,12 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
-import { BRAND, pageTitle } from "@/lib/brand";
+import { BRAND } from "@/lib/brand";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/terms")({
   component: Page,
-  head: () => ({
-    meta: [{ title: pageTitle("利用条件（準備中）") }],
-  }),
+  head: () =>
+    pageHead({
+      title: "利用条件（準備中）｜KYOTO SUPERCAR CLUB",
+      description: "会員規約とオーナー契約は弁護士確認後に公開します。",
+      path: "/terms",
+    }),
 });
 
 function Page() {
@@ -19,7 +23,8 @@ function Page() {
       />
       <Section className="max-w-3xl space-y-8 pt-0">
         <p className="text-ink-soft">
-          {BRAND.name}は招待制スーパーカーシェアの検証中であり、車両の予約・貸出・課金は行っていません。フォーム送信は相談または事前登録の意思表示であり、契約の成立ではありません。
+          {BRAND.name}
+          は招待制スーパーカーシェアの検証中であり、車両の予約・貸出・課金は行っていません。フォーム送信は相談または事前登録の意思表示であり、契約の成立ではありません。
         </p>
         <ul className="space-y-3 text-ink-soft">
           <li>登録ご本人以外の運転、又貸しを禁じる方針です。</li>
