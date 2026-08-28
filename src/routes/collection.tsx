@@ -3,22 +3,35 @@ import { InquiryCta } from "@/components/site/inquiry-cta";
 import { WebPageJsonLd } from "@/components/site/json-ld";
 import { BulletList, ConditionsAccordion, PlanBanner, SpecTable } from "@/components/site/conditions";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
+import { BRAND } from "@/lib/brand";
 import {
+  COLLECTION_CORE,
+  COLLECTION_CORE_NOTES,
   COLLECTION_DUTIES,
   COLLECTION_ELIGIBILITY,
   COLLECTION_EXIT,
+  COLLECTION_FEE_TIMING,
   COLLECTION_FIRST_CAR,
   COLLECTION_FLOW,
   COLLECTION_HANDOVER,
+  COLLECTION_HOLDING_DEPOSIT,
   COLLECTION_IDEA,
+  COLLECTION_INHERITANCE,
   COLLECTION_PHASE,
   COLLECTION_PLAN_FEES,
+  COLLECTION_REPAIR,
+  COLLECTION_RESERVE_NON_USES,
+  COLLECTION_RESERVE_USES,
   COLLECTION_RISKS,
+  COLLECTION_SOURCING,
   COLLECTION_UNDECIDED,
+  COLLECTION_UNPAID,
   COLLECTION_USE_SPECS,
   FAQS,
+  LEGAL_BANNER,
   NORMAL_WASH_INCLUDES,
   SPECIAL_CLEANING_EXAMPLES,
+  VALUE_CHECK,
 } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 import { lineCtaLabel } from "@/lib/site";
@@ -29,7 +42,7 @@ export const Route = createFileRoute("/collection")({
     pageHead({
       title: "京都でスーパーカーを共同所有｜KSC COLLECTION",
       description:
-        "6人で一台のスーパーカーを共同購入・共同所有するKSC COLLECTION。1人約500万円、年間24日の利用を基本計画として、京都で共同オーナー候補の興味登録を受け付けています。",
+        "6人で一台を共同購入・共同所有するKSC COLLECTION。約500万円は車両・登録・初期予備資金を含む上限の目安。KSC VALUE CHECKで単独所有と比較し、基準を満たす場合のみ進めます。いまは無料の興味登録のみです。",
       path: "/collection",
     }),
 });
@@ -41,7 +54,7 @@ function Ctas() {
         to="/apply/collection"
         className="inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream type-cta"
       >
-        共同購入の事前登録をする
+        共同購入の興味登録をする
       </Link>
       <InquiryCta
         topic="共同所有について"
@@ -58,13 +71,13 @@ function Page() {
     <SiteShell>
       <WebPageJsonLd
         name="京都でスーパーカーを共同所有｜KSC COLLECTION"
-        description="6人で一台のスーパーカーを共同購入・共同所有する構想。いまは興味登録のみです。"
+        description="6人で一台のスーパーカーを共同購入・共同所有する構想。いまは無料の興味登録のみです。"
         path="/collection"
       />
       <PageIntro
         kicker="COLLECTION｜興味登録受付"
         title="欲しい一台を、6人で共同購入する。"
-        lead="参加者6人が購入資金を出し、車両を共同所有する仕組みです。KSCが選定、保管、予約、受け渡しを管理します。一般会員へは貸し出しません。"
+        lead={COLLECTION_CORE}
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
@@ -76,13 +89,20 @@ function Page() {
         </div>
       </div>
       <Section>
-        <PlanBanner>{COLLECTION_PHASE}</PlanBanner>
+        <PlanBanner>{LEGAL_BANNER}</PlanBanner>
+        <p className="mt-6 max-w-3xl text-sm text-ink-soft">{BRAND.kyotoDefinition}</p>
         <div className="mt-8">
           <Ctas />
         </div>
         <p className="mt-4 text-sm text-muted">契約・購入・出資ではありません。代金は受け取りません。</p>
 
         <h2 className="mt-20 font-serif text-3xl">共同所有の考え方</h2>
+        <p className="mt-4 max-w-3xl text-ink-soft">{COLLECTION_PHASE}</p>
+        <ul className="mt-6 max-w-3xl space-y-2 text-ink-soft">
+          {COLLECTION_CORE_NOTES.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
         <div className="mt-10 grid gap-10 md:grid-cols-2">
           {COLLECTION_IDEA.map((item) => (
             <article key={item.title} className="border-t border-line pt-6">
@@ -93,9 +113,63 @@ function Page() {
         </div>
         <p className="mt-10 max-w-3xl text-ink-soft">{COLLECTION_FIRST_CAR}</p>
 
+        <h2 className="mt-20 font-serif text-3xl">新車と中古車</h2>
+        <p className="mt-4 max-w-3xl text-sm text-muted">
+          新車、認定中古、専門店在庫、公開中古在庫を対象にします。特定サイトとの提携はありません。
+        </p>
+        <div className="mt-10 grid gap-10 md:grid-cols-3">
+          {COLLECTION_SOURCING.map((item) => (
+            <article key={item.title} className="border-t border-line pt-6">
+              <h3 className="font-serif text-2xl">{item.title}</h3>
+              <p className="mt-3 text-ink-soft">{item.body}</p>
+            </article>
+          ))}
+        </div>
+
+        <h2 className="mt-20 font-serif text-3xl">{VALUE_CHECK.heading}</h2>
+        <p className="mt-4 max-w-3xl text-lg text-ink-soft">{VALUE_CHECK.lead}</p>
+        <p className="mt-4 max-w-3xl text-ink-soft">{VALUE_CHECK.purpose}</p>
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {VALUE_CHECK.criteria.map((item) => (
+            <article key={item.label} className="rounded-xl border border-line bg-cream px-5 py-6">
+              <p className="text-xs tracking-[0.18em] text-copper">{item.label}</p>
+              <p className="mt-3 font-serif text-xl leading-snug">{item.value}</p>
+            </article>
+          ))}
+        </div>
+        <h3 className="mt-12 font-serif text-2xl">比較に含めるもの</h3>
+        <BulletList items={VALUE_CHECK.items} />
+        <p className="mt-6 max-w-3xl text-ink-soft">{VALUE_CHECK.kmNote}</p>
+        <h3 className="mt-12 font-serif text-2xl">再販の3シナリオ</h3>
+        <div className="mt-8 grid gap-8 md:grid-cols-3">
+          {VALUE_CHECK.scenarios.map((item) => (
+            <article key={item.title} className="border-t border-line pt-5">
+              <h4 className="font-serif text-xl">{item.title}</h4>
+              <p className="mt-3 text-sm text-ink-soft">{item.body}</p>
+            </article>
+          ))}
+        </div>
+        <h3 className="mt-12 font-serif text-2xl">基準を満たさないとき</h3>
+        <BulletList items={VALUE_CHECK.ifNotMet} />
+        <p className="mt-6 max-w-3xl text-sm text-muted">{VALUE_CHECK.disclaimer}</p>
+
         <h2 className="mt-20 font-serif text-3xl">予定する基本条件</h2>
         <p className="mt-4 text-sm text-muted">税込か税別かは未確定です。金額を勝手に税込表示していません。</p>
         <SpecTable className="mt-8" rows={COLLECTION_PLAN_FEES} />
+        <h3 className="mt-12 font-serif text-2xl">料金が発生する時期</h3>
+        <SpecTable className="mt-8" rows={COLLECTION_FEE_TIMING} />
+
+        <h2 className="mt-20 font-serif text-3xl">参加申込預り金</h2>
+        <BulletList items={COLLECTION_HOLDING_DEPOSIT} />
+
+        <h2 className="mt-20 font-serif text-3xl">初期共有予備資金</h2>
+        <p className="mt-4 max-w-3xl text-ink-soft">
+          共同オーナーの車両資金であり、KSCの売上ではありません。金額を固定では表示しません。購入後に余った資金をここに充てます。
+        </p>
+        <h3 className="mt-10 font-serif text-xl">使うもの</h3>
+        <BulletList items={COLLECTION_RESERVE_USES} />
+        <h3 className="mt-8 font-serif text-xl">使わないもの</h3>
+        <BulletList items={COLLECTION_RESERVE_NON_USES} />
 
         <h2 className="mt-20 font-serif text-3xl">車両決定の流れ</h2>
         <ol className="mt-10 grid gap-8 md:grid-cols-2">
@@ -107,9 +181,6 @@ function Page() {
             </li>
           ))}
         </ol>
-        <p className="mt-8 text-sm text-muted">
-          正式募集期間は90日。6人集まらない場合は全員同意で30日延長。成立しない場合は申込金を返金する計画です。現在は申込金を受け取りません。
-        </p>
 
         <h2 className="mt-20 font-serif text-3xl">KSCが担当すること</h2>
         <ul className="mt-8 grid gap-6 md:grid-cols-2">
@@ -149,8 +220,20 @@ function Page() {
               ),
             },
             {
+              title: "修理の判断",
+              body: <BulletList items={COLLECTION_REPAIR} />,
+            },
+            {
               title: "最低参加期間と退出",
               body: <BulletList items={COLLECTION_EXIT} />,
+            },
+            {
+              title: "相続",
+              body: <BulletList items={COLLECTION_INHERITANCE} />,
+            },
+            {
+              title: "未払い",
+              body: <BulletList items={COLLECTION_UNPAID} />,
             },
           ]}
         />
@@ -177,6 +260,12 @@ function Page() {
               "投資になりますか？",
               "いま代金や申込金は必要ですか？",
               "COLLECTIONの費用はいくらですか？",
+              "約500万円は車両代だけですか？",
+              "常に単独所有より安いですか？",
+              "KSC VALUE CHECKとは何ですか？",
+              "中古車も対象ですか？",
+              "参加申込預り金は何ですか？",
+              "京都在住でないと参加できませんか？",
               "審査はどのように行いますか？",
             ].includes(f.q),
           ).map((f) => (
@@ -188,16 +277,16 @@ function Page() {
         </dl>
 
         <div className="mt-16 rounded-xl bg-charcoal px-6 py-10 text-cream md:px-10">
-          <h2 className="font-serif text-2xl">共同購入の事前登録</h2>
+          <h2 className="font-serif text-2xl">共同購入の興味登録</h2>
           <p className="mt-3 max-w-2xl text-cream/75">
-            関心のある方の意向確認です。契約でも予約でもありません。申込金は受け取りません。
+            関心のある方の意向確認です。契約でも予約でもありません。参加申込預り金は受け取りません。
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/apply/collection"
               className="inline-flex h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta"
             >
-              共同購入の事前登録をする
+              共同購入の興味登録をする
             </Link>
             <InquiryCta
               topic="共同所有について"

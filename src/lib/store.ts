@@ -66,6 +66,12 @@ export type CollectionRow = {
   kyoto_connection: string;
   current_vehicle_status: string;
   desired_models: string;
+  desired_make?: string | null;
+  desired_model?: string | null;
+  vehicle_condition?: string | null;
+  want_value_check?: string | null;
+  resale_priorities?: string[];
+  prefer_line?: boolean | null;
   budget_band: string;
   desired_days_per_year: string;
   desired_km_per_year: string;

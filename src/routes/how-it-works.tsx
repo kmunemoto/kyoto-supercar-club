@@ -5,6 +5,7 @@ import { BRAND } from "@/lib/brand";
 import {
   COLLECTION_PHASE,
   HOW_IT_WORKS,
+  LEGAL_BANNER,
   OWNER_PHASE,
   OWNER_VS_COLLECTION,
 } from "@/lib/content";
@@ -26,7 +27,7 @@ function Page() {
       <PageIntro
         kicker="HOW IT WORKS"
         title="2つのサービスの違い"
-        lead="まだ車を貸し出す段階ではありません。いま集めているのは、共同購入への関心と、既存スーパーカーオーナーからの相談です。"
+        lead="まだ車を貸し出す段階ではありません。いま集めているのは、共同購入への関心と、既存スーパーカーオーナーからの相談です。住所が京都である必要はありません。"
       />
       <div className="mx-auto max-w-6xl px-5 pb-8">
         <div className="overflow-hidden rounded-xl">
@@ -56,6 +57,8 @@ function Page() {
             <PlanBanner>{OWNER_PHASE}</PlanBanner>
           </article>
         </div>
+        <p className="mt-10 max-w-3xl text-sm text-ink-soft">{BRAND.kyotoDefinition}</p>
+        <p className="mt-4 max-w-3xl text-sm text-muted">{LEGAL_BANNER}</p>
 
         <h2 className="mt-20 font-serif text-3xl">比較</h2>
         <div className="mt-8 overflow-x-auto">

@@ -24,7 +24,7 @@ function Page() {
     <div className="space-y-6">
       <header>
         <h1 className="font-serif text-3xl">共同オーナー候補</h1>
-        <p className="mt-2 text-ink-soft">共同所有の事前登録一覧です。契約ではありません。</p>
+        <p className="mt-2 text-ink-soft">共同所有の興味登録一覧です。契約ではありません。</p>
       </header>
       <AdminToolbar
         q={q}

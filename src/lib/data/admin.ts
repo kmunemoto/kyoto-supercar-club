@@ -176,6 +176,17 @@ function asCollection(row: Record<string, unknown>): CollectionRow {
     kyoto_connection: String(row["kyoto_connection"] ?? ""),
     current_vehicle_status: String(row["current_vehicle_status"] ?? ""),
     desired_models: String(row["desired_models"] ?? ""),
+    desired_make: row["desired_make"] == null ? null : String(row["desired_make"]),
+    desired_model: row["desired_model"] == null ? null : String(row["desired_model"]),
+    vehicle_condition: row["vehicle_condition"] == null ? null : String(row["vehicle_condition"]),
+    want_value_check: row["want_value_check"] == null ? null : String(row["want_value_check"]),
+    resale_priorities: asStringList(row["resale_priorities"]),
+    prefer_line:
+      typeof row["prefer_line"] === "boolean"
+        ? row["prefer_line"]
+        : row["prefer_line"] == null
+          ? null
+          : Boolean(row["prefer_line"]),
     budget_band: String(row["budget_band"] ?? ""),
     desired_days_per_year: String(row["desired_days_per_year"] ?? ""),
     desired_km_per_year: String(row["desired_km_per_year"] ?? ""),

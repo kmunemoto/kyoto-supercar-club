@@ -3,7 +3,7 @@ import { Photo, Section, SiteShell } from "@/components/site/shell";
 import { FaqJsonLd, SiteJsonLd } from "@/components/site/json-ld";
 import { InquiryCta } from "@/components/site/inquiry-cta";
 import { BRAND } from "@/lib/brand";
-import { BRAND_PURPOSE, BUSINESS_PATHS, FAQS, HERO_PILLARS, MANAGEMENT_ITEMS } from "@/lib/content";
+import { BRAND_PURPOSE, BUSINESS_PATHS, FAQS, HERO_PILLARS, LEGAL_BANNER, MANAGEMENT_ITEMS } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 import { lineCtaLabel } from "@/lib/site";
 
@@ -35,7 +35,7 @@ function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/55 to-charcoal/20" />
         <div className="relative mx-auto flex min-h-[62dvh] max-w-6xl flex-col justify-end px-5 pb-16 pt-28 text-cream md:min-h-[88dvh] md:pb-24">
           <p className="text-xs font-medium tracking-[0.28em] text-cream/80">
-            京都府内限定｜{BRAND.phaseLabel}
+            京都を拠点に｜{BRAND.phaseLabel}
           </p>
           <h1 className="mt-5 max-w-3xl font-serif text-[2.1rem] leading-[1.2] md:text-6xl">
             {BRAND.tagline}
@@ -103,7 +103,7 @@ function Home() {
         <p className="text-xs tracking-[0.22em] text-copper">CARE</p>
         <h2 className="mt-4 font-serif text-3xl">KSCが担当する車両管理</h2>
         <p className="mt-4 max-w-2xl text-ink-soft">
-          COLLECTION車両はKSCが保管する計画です。OWNER NETWORKの車両は各オーナーが普段どおり保管します。実施場所と保険の補償額は未確定です。
+          COLLECTION車両はKSCが京都府内で保管する計画です。OWNER NETWORKの車両は各オーナーが普段どおり保管し、鍵の受け取りと受け渡しは京都府内です。実施場所と保険の補償額は未確定です。
         </p>
         <ul className="mt-12 grid gap-8 md:grid-cols-2">
           {MANAGEMENT_ITEMS.map((item) => (
@@ -128,6 +128,7 @@ function Home() {
               "今すぐ車を借りられますか？",
               "COLLECTIONとOWNER NETWORKの違いは何ですか？",
               "いま代金や申込金は必要ですか？",
+              "京都在住でないと参加できませんか？",
               "審査はどのように行いますか？",
             ].includes(f.q),
           ).map((f) => (
@@ -148,17 +149,15 @@ function Home() {
           height={900}
         />
         <div className="relative mx-auto max-w-3xl px-5 text-center">
-          <p className="text-xs tracking-[0.22em] text-cream/70">{BRAND.region}で準備中</p>
+          <p className="text-xs tracking-[0.22em] text-cream/70">{BRAND.region}</p>
           <h2 className="mt-5 font-serif text-3xl md:text-4xl">話を聞いてみたい方へ</h2>
-          <p className="mt-4 text-sm text-cream/70">
-            法務・保険・運用条件は確認中です。事前登録は契約ではありません。
-          </p>
+          <p className="mt-4 text-sm text-cream/70">{LEGAL_BANNER}</p>
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               to="/apply/collection"
               className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta`}
             >
-              共同購入の事前登録をする
+              共同購入の興味登録をする
             </Link>
             <InquiryCta
               topic="共同所有について"

@@ -19,7 +19,11 @@ const requiredPhone = z
   .max(20, "電話番号が長すぎます")
   .regex(/^[0-9+\-() ]+$/, "電話番号の形式を確認してください");
 
+/** OWNER NETWORK: Kyoto storage / handover region only. */
 export const REGIONS = ["京都市", "京都府内（京都市以外）"] as const;
+
+/** Residence may be outside Kyoto. Storage/handover is still Kyoto. */
+export const RESIDENCE_REGIONS = ["京都市", "京都府内（京都市以外）", "京都府外"] as const;
 
 export const OWNS_VEHICLE = ["はい", "いいえ"] as const;
 
@@ -147,10 +151,9 @@ export const CONTACT_TOPICS = [
 export const APPLICANT_TYPES = ["個人", "法人"] as const;
 
 export const KYOTO_CONNECTIONS = [
-  "京都市在住",
-  "京都府内在住",
-  "京都で定期的に利用できる",
+  "京都で定期的に車両を利用できる",
   "これから京都での利用を検討",
+  "保管・受け渡しは京都で問題ない",
   "その他",
 ] as const;
 
@@ -163,7 +166,7 @@ export const CURRENT_VEHICLE_STATUS = [
 
 export const COLLECTION_BUDGETS = [
   "未定・相談したい",
-  "計画の約500万円を検討したい",
+  "約500万円の上限目安で検討したい",
   "500万円より抑えたい",
   "車両による",
 ] as const;
@@ -199,6 +202,16 @@ export const COLLECTION_PRIORITIES = [
   "まだ決めていない",
 ] as const;
 
+export const VEHICLE_CONDITIONS = ["新車", "中古", "どちらでも"] as const;
+
+export const RESALE_PRIORITIES = [
+  "できるだけ長く乗る",
+  "3年程度での売却も視野",
+  "残価より乗り味",
+  "再販しやすい車種を優先",
+  "まだ決めていない",
+] as const;
+
 const honeypot = z.string().optional();
 
 const attribution = {
@@ -224,11 +237,6 @@ const optionalLicenseYears = z.preprocess((value) => {
   if (value === "" || value === null || value === undefined) return undefined;
   return value;
 }, z.coerce.number().int().min(0, "免許取得年数を確認してください").max(70).optional());
-
-const requiredLicenseYears = z.preprocess((value) => {
-  if (value === "" || value === null || value === undefined) return undefined;
-  return value;
-}, z.coerce.number().int().min(0, "免許取得年数を入力してください").max(70));
 
 const optionalAge = z.preprocess((value) => {
   if (value === "" || value === null || value === undefined) return undefined;
@@ -304,14 +312,19 @@ export const collectionInquirySchema = z.object({
   applicantType: z.enum(APPLICANT_TYPES, {
     message: "個人または法人を選択してください",
   }),
-  region: z.enum(REGIONS, { message: "居住地域を選択してください" }),
+  region: z.enum(RESIDENCE_REGIONS, { message: "居住地域を選択してください" }),
   kyotoConnection: z.enum(KYOTO_CONNECTIONS, {
-    message: "京都との関係を選択してください",
+    message: "京都での利用・受け渡しについて選択してください",
   }),
   currentVehicleStatus: z.enum(CURRENT_VEHICLE_STATUS, {
     message: "現在の車両所有状況を選択してください",
   }),
+  desiredMake: z.string().trim().min(1, "希望メーカーを入力してください").max(80),
+  desiredModel: z.string().trim().min(1, "希望車種を入力してください").max(80),
   desiredModels: z.string().trim().min(1, "希望する車種・メーカーを入力してください").max(500),
+  vehicleCondition: z.enum(VEHICLE_CONDITIONS, {
+    message: "新車・中古の希望を選択してください",
+  }),
   budgetBand: z.enum(COLLECTION_BUDGETS, {
     message: "予算感を選択してください",
   }),
@@ -324,12 +337,15 @@ export const collectionInquirySchema = z.object({
   desiredStartTiming: z.enum(START_TIMING, {
     message: "希望する開始時期を選択してください",
   }),
-  licenseYears: requiredLicenseYears,
-  incidentHistory: z.enum(INCIDENT_OPTIONS, {
-    message: "自己申告を選択してください",
+  wantValueCheck: z.enum(YES_NO, {
+    message: "VALUE CHECKの希望を選択してください",
   }),
+  resalePriorities: z.array(z.string()).min(1, "再販・保有の考え方を1つ以上選んでください"),
+  licenseYears: optionalLicenseYears,
+  incidentHistory: z.enum(INCIDENT_OPTIONS).optional().or(z.literal("")),
   priorities: z.array(z.string()).min(1, "重視する条件を1つ以上選んでください"),
   concerns: z.string().trim().max(2000).optional().or(z.literal("")),
+  preferLine: z.boolean().optional(),
   privacyAgreed: z.literal(true, {
     message: "プライバシーポリシーへの同意が必要です",
   }),

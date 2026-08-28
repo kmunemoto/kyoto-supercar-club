@@ -84,7 +84,7 @@ export function SiteHeader({
               "type-cta",
             )}
           >
-            共同購入の事前登録
+            共同購入の興味登録
           </Link>
         </div>
         <button
@@ -159,7 +159,8 @@ export function SiteFooter() {
         <div>
           <p className="font-serif text-xl tracking-[0.16em]">{BRAND.name}</p>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-cream/70">{BRAND.phaseNote}</p>
-          <p className="mt-4 text-sm text-cream/55">{BRAND.region}で準備中</p>
+          <p className="mt-4 text-sm text-cream/55">{BRAND.region}</p>
+          <p className="mt-3 max-w-md text-xs leading-relaxed text-cream/45">{BRAND.kyotoDefinition}</p>
         </div>
         <div className="flex flex-col gap-3 text-sm">
           {FOOTER_LINKS.map((l) => (
@@ -219,7 +220,7 @@ function MobileStickyCta({ hidden }: { hidden: boolean }) {
           onClick={() => track("collection_cta_click", { place: "sticky" })}
           className={className}
         >
-          共同購入の事前登録
+          共同購入の興味登録
         </Link>
       ) : null}
       {kind === "owner" ? (

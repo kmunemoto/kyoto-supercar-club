@@ -198,9 +198,10 @@ export function OwnerForm() {
             </NativeSelect>
           </Field>
           <Field
-            label="京都府内の居住・保管地域"
+            label="京都府内の車両保管地域"
             htmlFor="region"
             required
+            hint="オーナーの住所は京都府外でも構いません。保管・受け渡しは京都府内です。"
             error={errors["region"]}
           >
             <NativeSelect

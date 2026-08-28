@@ -10,6 +10,7 @@ import {
   OWNER_CANCEL,
   OWNER_CREDITS,
   OWNER_DELAY,
+  OWNER_DEPOSITS,
   OWNER_ELIGIBILITY,
   OWNER_EXIT,
   OWNER_FEES,
@@ -25,6 +26,7 @@ import {
   OWNER_VS_COLLECTION,
   SPECIAL_CLEANING_EXAMPLES,
 } from "@/lib/content";
+import { BRAND } from "@/lib/brand";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/owners")({
@@ -33,7 +35,7 @@ export const Route = createFileRoute("/owners")({
     pageHead({
       title: "京都のスーパーカーオーナーネットワーク｜車両登録・先行相談｜KSC",
       description:
-        "京都のスーパーカー所有者限定。愛車を登録し、登録オーナー同士で他の車両を相互利用するKSC OWNER NETWORK。現在は許認可・保険体制の確認と車両登録の先行相談を受け付けています。",
+        "スーパーカー所有者限定。愛車を登録し、登録オーナー同士で他の車両を相互利用するKSC OWNER NETWORK。保管・鍵の受け渡し拠点は京都府内。現在は許認可・保険体制の確認と車両登録の先行相談を受け付けています。",
       path: "/owners",
     }),
 });
@@ -68,7 +70,7 @@ function Page() {
       <PageIntro
         kicker="OWNER NETWORK｜既存スーパーカーオーナー限定"
         title="愛車を登録し、次の一台を体験する。"
-        lead="京都のスーパーカーオーナーだけが参加できる、登録制の相互利用ネットワーク。車両はそれぞれのオーナーが所有・保管したまま、利用申請ごとに承認し、KSCが鍵の受け取りから対面受け渡し、利用前後の確認まで管理します。"
+        lead="スーパーカーオーナーだけが参加できる、登録制の相互利用ネットワーク。車両はそれぞれのオーナーが所有・保管したまま、利用申請ごとに承認し、KSCが鍵の受け取りから対面受け渡し、利用前後の確認まで管理します。保管・受け渡し拠点は京都府内です。"
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
@@ -81,6 +83,7 @@ function Page() {
       </div>
       <Section>
         <PlanBanner>{OWNER_PHASE}</PlanBanner>
+        <p className="mt-6 max-w-3xl text-sm text-ink-soft">{BRAND.kyotoDefinition}</p>
         <p className="mt-8 max-w-3xl text-lg text-ink-soft">{OWNER_HANDOVER_SUMMARY}</p>
         <div className="mt-8">
           <Ctas />
@@ -129,8 +132,13 @@ function Page() {
         <p className="mt-4 text-sm text-muted">登録車両を外した場合、クレジットは一時凍結します。</p>
 
         <h2 className="mt-20 font-serif text-3xl">料金</h2>
-        <p className="mt-4 text-sm text-muted">税込か税別かは未確定です。保証金はありません。</p>
+        <p className="mt-4 text-sm text-muted">税込か税別かは未確定です。保証金は他車利用時のみです。</p>
         <SpecTable className="mt-8" rows={OWNER_FEES} />
+        <h3 className="mt-12 font-serif text-2xl">他車利用時の保証金</h3>
+        <p className="mt-4 max-w-3xl text-sm text-ink-soft">
+          愛車の登録だけなら保証金はありません。他の登録車両を利用する場合に、そのクラスを初めて使う前に預けます。返還対象であり、KSCの売上ではありません。事故責任の上限でもありません。
+        </p>
+        <SpecTable className="mt-8" rows={OWNER_DEPOSITS} />
         <h3 className="mt-12 font-serif text-2xl">月額管理費に含むもの</h3>
         <BulletList items={OWNER_MONTHLY_INCLUDES} />
         <h3 className="mt-10 font-serif text-2xl">月額管理費に含まないもの</h3>

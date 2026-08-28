@@ -11,7 +11,7 @@ export const Route = createFileRoute("/apply/owner")({
   head: () =>
     pageHead({
       title: "京都のスーパーカーオーナーネットワーク｜先行相談",
-      description: `${OWNER_VALUE}。京都府内限定の先行相談。登録や相互利用は始まりません。`,
+      description: `${OWNER_VALUE}。先行相談であり、登録や相互利用は始まりません。`,
       path: "/apply/owner",
       noindex: true,
     }),

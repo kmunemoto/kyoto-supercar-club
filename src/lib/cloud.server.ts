@@ -221,7 +221,20 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     return { ok: false, error: "送信が集中しています。しばらくしてから再度お試しください。" };
   const id = newId("col");
   const now = new Date().toISOString();
-  const row = {
+  const extra = [
+    `希望メーカー: ${data.desiredMake}`,
+    `希望車種: ${data.desiredModel}`,
+    `新車／中古: ${data.vehicleCondition}`,
+    `VALUE CHECK希望: ${data.wantValueCheck}`,
+    `再販・保有: ${(data.resalePriorities ?? []).join("、") || "未記入"}`,
+    `LINEでの連絡希望: ${data.preferLine ? "はい" : "いいえ"}`,
+  ].join("\n");
+  const concerns = [data.concerns, extra].filter(Boolean).join("\n\n");
+  const desiredModels =
+    data.desiredModels ||
+    [data.desiredMake, data.desiredModel].filter(Boolean).join(" ").trim() ||
+    "未定";
+  const base = {
     id,
     full_name: data.fullName,
     email: data.email,
@@ -230,35 +243,50 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     region: data.region,
     kyoto_connection: data.kyotoConnection,
     current_vehicle_status: data.currentVehicleStatus,
-    desired_models: data.desiredModels,
+    desired_models: desiredModels,
     budget_band: data.budgetBand,
     desired_days_per_year: data.desiredDaysPerYear,
     desired_km_per_year: data.desiredKmPerYear,
     desired_start_timing: data.desiredStartTiming,
     license_years: data.licenseYears ?? null,
-    incident_history: data.incidentHistory,
+    incident_history: data.incidentHistory || "興味登録のため未申告",
     priorities: data.priorities,
-    concerns: data.concerns || null,
+    concerns,
     privacy_agreed: true,
     status: "new",
     created_at: now,
     updated_at: now,
     ...attr(data),
   };
+  const withNewColumns = {
+    ...base,
+    desired_make: data.desiredMake,
+    desired_model: data.desiredModel,
+    vehicle_condition: data.vehicleCondition,
+    want_value_check: data.wantValueCheck,
+    resale_priorities: data.resalePriorities ?? [],
+    prefer_line: Boolean(data.preferLine),
+  };
   if (!cloudReady()) {
-    const local = localDevInsert("collections", row);
+    const local = localDevInsert("collections", withNewColumns);
     if (local.ok) {
-      await notify("【COLLECTION】新しい共同オーナー候補（ローカル）", `地域: ${data.region}\n希望: ${data.desiredModels}\nID: ${id}`);
+      await notify(
+        "【COLLECTION】新しい共同オーナー候補（ローカル）",
+        `地域: ${data.region}\n希望: ${desiredModels}\n新車／中古: ${data.vehicleCondition}\nID: ${id}`,
+      );
     }
     return local;
   }
   const client = insertClient();
   if (!client) return { ok: false, error: UNCONFIGURED };
-  const { error } = await client.from("collection_inquiries").insert(row);
-  if (error) return { ok: false, error: SAVE_FAILED };
+  const first = await client.from("collection_inquiries").insert(withNewColumns);
+  if (first.error) {
+    const fallback = await client.from("collection_inquiries").insert(base);
+    if (fallback.error) return { ok: false, error: SAVE_FAILED };
+  }
   await notify(
     "【COLLECTION】新しい共同オーナー候補",
-    `地域: ${data.region}\n希望: ${data.desiredModels}\nID: ${id}`,
+    `地域: ${data.region}\n希望: ${desiredModels}\n新車／中古: ${data.vehicleCondition}\nID: ${id}`,
   );
   return { ok: true, id };
 }

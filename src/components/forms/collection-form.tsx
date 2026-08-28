@@ -14,10 +14,12 @@ import {
   CURRENT_VEHICLE_STATUS,
   DESIRED_DAYS,
   DESIRED_KM,
-  INCIDENT_OPTIONS,
   KYOTO_CONNECTIONS,
-  REGIONS,
+  RESALE_PRIORITIES,
+  RESIDENCE_REGIONS,
   START_TIMING,
+  VEHICLE_CONDITIONS,
+  YES_NO,
   collectionInquirySchema,
   fieldErrors,
   focusFirstError,
@@ -30,20 +32,23 @@ export function CollectionForm() {
   const [form, setForm] = useState({
     applicantType: "個人" as CollectionInquiryInput["applicantType"],
     region: "京都市" as CollectionInquiryInput["region"],
-    kyotoConnection: "京都市在住" as CollectionInquiryInput["kyotoConnection"],
+    kyotoConnection: "京都で定期的に車両を利用できる" as CollectionInquiryInput["kyotoConnection"],
     currentVehicleStatus: "所有していない" as CollectionInquiryInput["currentVehicleStatus"],
-    desiredModels: "",
+    desiredMake: "",
+    desiredModel: "",
+    vehicleCondition: "どちらでも" as CollectionInquiryInput["vehicleCondition"],
     budgetBand: "未定・相談したい" as CollectionInquiryInput["budgetBand"],
     desiredDaysPerYear: "まだ決めていない" as CollectionInquiryInput["desiredDaysPerYear"],
     desiredKmPerYear: "まだ決めていない" as CollectionInquiryInput["desiredKmPerYear"],
     desiredStartTiming: "まだ決めていない" as CollectionInquiryInput["desiredStartTiming"],
-    licenseYears: "" as string | number,
-    incidentHistory: "" as string,
+    wantValueCheck: "はい" as CollectionInquiryInput["wantValueCheck"],
+    resalePriorities: [] as string[],
     priorities: [] as string[],
     concerns: "",
     fullName: "",
     email: "",
     phone: "",
+    preferLine: false,
     privacyAgreed: false,
     companyUrl: "",
   });
@@ -55,21 +60,19 @@ export function CollectionForm() {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  function toggle(opt: string) {
+  function toggle(list: "priorities" | "resalePriorities", opt: string) {
     setForm((f) => ({
       ...f,
-      priorities: f.priorities.includes(opt)
-        ? f.priorities.filter((x) => x !== opt)
-        : [...f.priorities, opt],
+      [list]: f[list].includes(opt) ? f[list].filter((x) => x !== opt) : [...f[list], opt],
     }));
   }
 
   function payload() {
     const attr = readAttribution();
+    const desiredModels = [form.desiredMake, form.desiredModel].filter(Boolean).join(" ").trim() || "未定";
     return {
       ...form,
-      licenseYears: form.licenseYears === "" ? undefined : form.licenseYears,
-      incidentHistory: form.incidentHistory || undefined,
+      desiredModels,
       ...attr,
     };
   }
@@ -81,13 +84,16 @@ export function CollectionForm() {
         region: true,
         kyotoConnection: true,
         currentVehicleStatus: true,
+        desiredMake: true,
+        desiredModel: true,
         desiredModels: true,
+        vehicleCondition: true,
         budgetBand: true,
         desiredDaysPerYear: true,
         desiredKmPerYear: true,
         desiredStartTiming: true,
-        licenseYears: true,
-        incidentHistory: true,
+        wantValueCheck: true,
+        resalePriorities: true,
         priorities: true,
         concerns: true,
       })
@@ -135,8 +141,8 @@ export function CollectionForm() {
   if (done) {
     return (
       <SuccessPanel
-        title="事前登録を受け付けました"
-        body="契約、購入申込、出資、予約ではありません。共同所有に関心があることの確認です。車両代や申込金は受け取っていません。"
+        title="興味登録を受け付けました"
+        body="契約、購入申込、出資、予約ではありません。共同所有に関心があることの確認です。車両代や参加申込預り金は受け取っていません。"
       />
     );
   }
@@ -145,7 +151,7 @@ export function CollectionForm() {
     <form onSubmit={onSubmit} className="relative space-y-8" noValidate>
       <Honeypot value={form.companyUrl} onChange={(v) => set("companyUrl", v)} />
       <p className="text-sm text-ink-soft">
-        これは共同所有に関心がある人の意向確認です。契約・購入・出資・予約ではありません。免許証、本人確認書類、資産証明、車両代、申込金は受け取りません。
+        無料の興味登録です。契約・購入・出資・予約ではありません。免許証、本人確認書類、資産証明、車両代、参加申込預り金、決済情報は受け取りません。
       </p>
       <div className="flex gap-2 text-xs tracking-[0.16em] text-muted">
         <span className={step === 1 ? "text-oxblood" : ""}>01 希望条件</span>
@@ -171,19 +177,25 @@ export function CollectionForm() {
                 ))}
               </NativeSelect>
             </Field>
-            <Field label="居住地域" htmlFor="region" required error={errors["region"]}>
+            <Field
+              label="居住地域"
+              htmlFor="region"
+              required
+              hint="京都府外在住でも登録できます。受け渡し拠点は京都府内です。"
+              error={errors["region"]}
+            >
               <NativeSelect
                 id="region"
                 value={form.region}
                 onChange={(e) => set("region", e.target.value)}
               >
-                {REGIONS.map((r) => (
+                {RESIDENCE_REGIONS.map((r) => (
                   <option key={r}>{r}</option>
                 ))}
               </NativeSelect>
             </Field>
             <Field
-              label="京都との関係 / 京都での利用"
+              label="京都での利用・受け渡し"
               htmlFor="kyotoConnection"
               required
               error={errors["kyotoConnection"]}
@@ -215,25 +227,56 @@ export function CollectionForm() {
               </NativeSelect>
             </Field>
           </div>
-          <Field
-            label="希望する車種・メーカー"
-            htmlFor="desiredModels"
-            required
-            hint="未定でも構いません。"
-            error={errors["desiredModels"]}
-          >
-            <Input
-              id="desiredModels"
-              value={form.desiredModels}
-              onChange={(e) => set("desiredModels", e.target.value)}
-            />
-          </Field>
           <div className="grid gap-6 md:grid-cols-2">
+            <Field
+              label="希望メーカー"
+              htmlFor="desiredMake"
+              required
+              hint="未定でも構いません。"
+              error={errors["desiredMake"]}
+            >
+              <Input
+                id="desiredMake"
+                value={form.desiredMake}
+                onChange={(e) => set("desiredMake", e.target.value)}
+                placeholder="例：ポルシェ／未定"
+              />
+            </Field>
+            <Field
+              label="希望車種"
+              htmlFor="desiredModel"
+              required
+              hint="未定でも構いません。"
+              error={errors["desiredModel"]}
+            >
+              <Input
+                id="desiredModel"
+                value={form.desiredModel}
+                onChange={(e) => set("desiredModel", e.target.value)}
+                placeholder="例：911カレラ系／未定"
+              />
+            </Field>
+            <Field
+              label="新車／中古"
+              htmlFor="vehicleCondition"
+              required
+              error={errors["vehicleCondition"]}
+            >
+              <NativeSelect
+                id="vehicleCondition"
+                value={form.vehicleCondition}
+                onChange={(e) => set("vehicleCondition", e.target.value)}
+              >
+                {VEHICLE_CONDITIONS.map((r) => (
+                  <option key={r}>{r}</option>
+                ))}
+              </NativeSelect>
+            </Field>
             <Field
               label="共同購入に充てられる予算感"
               htmlFor="budgetBand"
               required
-              hint="現在の計画は1人あたり約500万円です。いまは興味登録のみで、決済しません。"
+              hint="約500万円は車両・登録・陸送・購入前点検・初期共有予備資金を含む上限の目安です。いまは興味登録のみで、決済しません。"
               error={errors["budgetBand"]}
             >
               <NativeSelect
@@ -297,32 +340,18 @@ export function CollectionForm() {
               </NativeSelect>
             </Field>
             <Field
-              label="免許取得年数"
-              htmlFor="licenseYears"
+              label="KSC VALUE CHECKを希望しますか"
+              htmlFor="wantValueCheck"
               required
-              error={errors["licenseYears"]}
-            >
-              <Input
-                id="licenseYears"
-                type="number"
-                value={form.licenseYears}
-                onChange={(e) => set("licenseYears", e.target.value)}
-              />
-            </Field>
-            <Field
-              label="事故・重大違反歴の自己申告"
-              htmlFor="incidentHistory"
-              required
-              hint="証明書の提出は不要です。"
-              error={errors["incidentHistory"]}
+              hint="単独所有との3年負担比較です。仮の車両価格はサイトに載せていません。"
+              error={errors["wantValueCheck"]}
             >
               <NativeSelect
-                id="incidentHistory"
-                value={form.incidentHistory}
-                onChange={(e) => set("incidentHistory", e.target.value)}
+                id="wantValueCheck"
+                value={form.wantValueCheck}
+                onChange={(e) => set("wantValueCheck", e.target.value)}
               >
-                <option value="">選択してください</option>
-                {INCIDENT_OPTIONS.map((r) => (
+                {YES_NO.map((r) => (
                   <option key={r}>{r}</option>
                 ))}
               </NativeSelect>
@@ -330,12 +359,34 @@ export function CollectionForm() {
           </div>
           <fieldset>
             <legend className="mb-3 text-sm font-medium">
+              再販・保有の考え方 <span className="ml-2 text-xs font-normal text-oxblood">必須</span>
+            </legend>
+            <div className="grid gap-3">
+              {RESALE_PRIORITIES.map((opt) => (
+                <CheckRow key={opt}>
+                  <Checkbox
+                    checked={form.resalePriorities.includes(opt)}
+                    onChange={() => toggle("resalePriorities", opt)}
+                  />
+                  <span>{opt}</span>
+                </CheckRow>
+              ))}
+            </div>
+            {errors["resalePriorities"] ? (
+              <p className="mt-2 text-sm text-oxblood">{errors["resalePriorities"]}</p>
+            ) : null}
+          </fieldset>
+          <fieldset>
+            <legend className="mb-3 text-sm font-medium">
               重視する条件 <span className="ml-2 text-xs font-normal text-oxblood">必須</span>
             </legend>
             <div className="grid gap-3">
               {COLLECTION_PRIORITIES.map((opt) => (
                 <CheckRow key={opt}>
-                  <Checkbox checked={form.priorities.includes(opt)} onChange={() => toggle(opt)} />
+                  <Checkbox
+                    checked={form.priorities.includes(opt)}
+                    onChange={() => toggle("priorities", opt)}
+                  />
                   <span>{opt}</span>
                 </CheckRow>
               ))}
@@ -387,6 +438,13 @@ export function CollectionForm() {
           </div>
           <CheckRow>
             <Checkbox
+              checked={form.preferLine}
+              onChange={(e) => set("preferLine", e.target.checked)}
+            />
+            <span>LINEでの連絡を希望する</span>
+          </CheckRow>
+          <CheckRow>
+            <Checkbox
               checked={form.privacyAgreed}
               onChange={(e) => set("privacyAgreed", e.target.checked)}
             />
@@ -405,7 +463,7 @@ export function CollectionForm() {
               戻る
             </Button>
             <Button type="submit" disabled={pending} className="w-full sm:w-auto">
-              {pending ? "送信中…" : "事前登録を送る"}
+              {pending ? "送信中…" : "興味登録を送る"}
             </Button>
           </div>
         </>
