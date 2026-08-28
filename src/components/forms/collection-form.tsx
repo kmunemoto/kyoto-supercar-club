@@ -142,7 +142,7 @@ export function CollectionForm() {
     return (
       <SuccessPanel
         title="興味登録を受け付けました"
-        body="契約、購入申込、出資、予約ではありません。共同所有に関心があることの確認です。車両代や参加申込預り金は受け取っていません。"
+        body="内容を確認のうえ、必要に応じてご連絡します。契約や決済は発生していません。"
       />
     );
   }
@@ -151,7 +151,7 @@ export function CollectionForm() {
     <form onSubmit={onSubmit} className="relative space-y-8" noValidate>
       <Honeypot value={form.companyUrl} onChange={(v) => set("companyUrl", v)} />
       <p className="text-sm text-ink-soft">
-        無料の興味登録です。契約・購入・出資・予約ではありません。免許証、本人確認書類、資産証明、車両代、参加申込預り金、決済情報は受け取りません。
+        無料の興味登録です。契約や決済は発生しません。
       </p>
       <div className="flex gap-2 text-xs tracking-[0.16em] text-muted">
         <span className={step === 1 ? "text-oxblood" : ""}>01 希望条件</span>

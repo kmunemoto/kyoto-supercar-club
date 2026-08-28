@@ -162,7 +162,7 @@ export function OwnerForm() {
     return (
       <SuccessPanel
         title="お問い合わせありがとうございます"
-        body="車両登録や相互利用の確定ではありません。内容を確認後、必要に応じてご連絡します。正確な保管場所は、相談後に個別確認します。"
+        body="内容を確認のうえ、必要に応じてご連絡します。正確な保管場所は、相談後に個別確認します。"
       />
     );
   }
@@ -171,7 +171,7 @@ export function OwnerForm() {
     <form onSubmit={onSubmit} className="relative space-y-8" noValidate>
       <Honeypot value={form.companyUrl} onChange={(v) => set("companyUrl", v)} />
       <p className="text-sm text-ink-soft">
-        既存スーパーカーオーナー限定の先行相談です。一般の方への貸し出しではありません。初回では正確な保管住所・ナンバー・車検証・免許証画像は不要です。
+        既存スーパーカーオーナー向けの先行相談です。初回は正確な保管住所、ナンバー、車検証、免許証画像は不要です。
       </p>
       <div className="flex gap-2 text-xs tracking-[0.16em] text-muted">
         <span className={step === 1 ? "text-oxblood" : ""}>01 車両と希望</span>

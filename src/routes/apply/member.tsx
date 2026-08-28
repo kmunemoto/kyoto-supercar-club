@@ -6,8 +6,8 @@ export const Route = createFileRoute("/apply/member")({
   component: Page,
   head: () =>
     pageHead({
-      title: "一般会員向けサービスは募集停止｜KYOTO SUPERCAR CLUB",
-      description: "一般会員の事前登録は停止しています。",
+      title: "参加のご案内｜KYOTO SUPERCAR CLUB",
+      description: "現在は、KSC COLLECTIONとKSC OWNER NETWORKの準備に注力しています。",
       path: "/apply/member",
       noindex: true,
     }),
@@ -17,11 +17,12 @@ function Page() {
   return (
     <SiteShell>
       <PageIntro
-        kicker="PAUSED"
-        title="一般会員向けサービスは現在募集していません"
-        lead="新規の会員事前登録は停止しています。過去にいただいた登録は保管しています。"
+        kicker="MEMBERSHIP"
+        title="参加のご案内"
+        lead="現在は、KSC COLLECTIONとKSC OWNER NETWORKの準備に注力しています。"
       />
       <Section className="max-w-3xl pt-0">
+        <p className="mb-8 text-ink-soft">共同購入の興味登録と、既存オーナーからの先行相談をご覧ください。</p>
         <Link
           to="/collection"
           className="inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"

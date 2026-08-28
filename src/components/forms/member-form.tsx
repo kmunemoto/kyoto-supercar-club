@@ -249,7 +249,7 @@ export function MemberForm() {
           <Field
             label="希望する料金帯"
             htmlFor="budgetBand"
-            hint="料金は未確定です。"
+            hint="料金は正式募集時にご案内します。"
             error={errors["budgetBand"]}
           >
             <NativeSelect

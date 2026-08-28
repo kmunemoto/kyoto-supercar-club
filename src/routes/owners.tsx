@@ -4,8 +4,11 @@ import { WebPageJsonLd } from "@/components/site/json-ld";
 import { BulletList, ConditionsAccordion, PlanBanner, SpecTable } from "@/components/site/conditions";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
 import {
+  ACCIDENT_POLICY,
   DRIVER_BURDEN_ITEMS,
   FAQS,
+  FEE_NOTE,
+  LEGAL_BANNER,
   NORMAL_WASH_INCLUDES,
   OWNER_CANCEL,
   OWNER_CREDITS,
@@ -20,10 +23,8 @@ import {
   OWNER_MONTHLY_INCLUDES,
   OWNER_NETWORK_POINTS,
   OWNER_OWNER_CONDITIONS,
-  OWNER_PHASE,
   OWNER_PROHIBITED,
   OWNER_USE_SPECS,
-  OWNER_VS_COLLECTION,
   SPECIAL_CLEANING_EXAMPLES,
 } from "@/lib/content";
 import { BRAND } from "@/lib/brand";
@@ -35,7 +36,7 @@ export const Route = createFileRoute("/owners")({
     pageHead({
       title: "京都のスーパーカーオーナーネットワーク｜車両登録・先行相談｜KSC",
       description:
-        "スーパーカー所有者限定。愛車を登録し、登録オーナー同士で他の車両を相互利用するKSC OWNER NETWORK。保管・鍵の受け渡し拠点は京都府内。現在は許認可・保険体制の確認と車両登録の先行相談を受け付けています。",
+        "スーパーカー所有者限定。愛車を登録し、登録オーナー同士で他の車両を相互利用するKSC OWNER NETWORK。保管・鍵の受け渡し拠点は京都府内。現在は興味登録と先行相談を受け付けています。",
       path: "/owners",
     }),
 });
@@ -70,7 +71,7 @@ function Page() {
       <PageIntro
         kicker="OWNER NETWORK｜既存スーパーカーオーナー限定"
         title="愛車を登録し、次の一台を体験する。"
-        lead="スーパーカーオーナーだけが参加できる、登録制の相互利用ネットワーク。車両はそれぞれのオーナーが所有・保管したまま、利用申請ごとに承認し、KSCが鍵の受け取りから対面受け渡し、利用前後の確認まで管理します。保管・受け渡し拠点は京都府内です。"
+        lead="審査対象となるスーパーカーを所有する方のための登録制サービスです。車両はそれぞれのオーナーが所有・保管したまま、利用申請ごとに承認し、KSCが鍵の受け取りから対面受け渡しまで管理します。保管・受け渡し拠点は京都府内です。"
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
@@ -82,7 +83,7 @@ function Page() {
         </div>
       </div>
       <Section>
-        <PlanBanner>{OWNER_PHASE}</PlanBanner>
+        <PlanBanner>{LEGAL_BANNER}</PlanBanner>
         <p className="mt-6 max-w-3xl text-sm text-ink-soft">{BRAND.kyotoDefinition}</p>
         <p className="mt-8 max-w-3xl text-lg text-ink-soft">{OWNER_HANDOVER_SUMMARY}</p>
         <div className="mt-8">
@@ -99,28 +100,6 @@ function Page() {
           ))}
         </div>
 
-        <h2 className="mt-20 font-serif text-3xl">COLLECTIONとの違い</h2>
-        <div className="mt-8 overflow-x-auto">
-          <table className="w-full min-w-[36rem] text-left text-sm">
-            <thead>
-              <tr className="border-b border-line">
-                <th className="py-3 pr-4 font-medium">項目</th>
-                <th className="py-3 pr-4 font-medium">COLLECTION</th>
-                <th className="py-3 font-medium">OWNER NETWORK</th>
-              </tr>
-            </thead>
-            <tbody>
-              {OWNER_VS_COLLECTION.map((row) => (
-                <tr key={row.label} className="border-b border-line align-top">
-                  <td className="py-4 pr-4 font-medium">{row.label}</td>
-                  <td className="py-4 pr-4 text-ink-soft">{row.collection}</td>
-                  <td className="py-4 text-ink-soft">{row.owner}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
         <h2 className="mt-20 font-serif text-3xl">登録できる人</h2>
         <BulletList items={OWNER_ELIGIBILITY} />
         <p className="mt-4 max-w-3xl text-sm text-muted">
@@ -132,11 +111,11 @@ function Page() {
         <p className="mt-4 text-sm text-muted">登録車両を外した場合、クレジットは一時凍結します。</p>
 
         <h2 className="mt-20 font-serif text-3xl">料金</h2>
-        <p className="mt-4 text-sm text-muted">税込か税別かは未確定です。保証金は他車利用時のみです。</p>
+        <p className="mt-4 text-sm text-muted">{FEE_NOTE}</p>
         <SpecTable className="mt-8" rows={OWNER_FEES} />
         <h3 className="mt-12 font-serif text-2xl">他車利用時の保証金</h3>
         <p className="mt-4 max-w-3xl text-sm text-ink-soft">
-          愛車の登録だけなら保証金はありません。他の登録車両を利用する場合に、そのクラスを初めて使う前に預けます。返還対象であり、KSCの売上ではありません。事故責任の上限でもありません。
+          愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合に、そのクラスを初めて使う前にお預かりします。返還対象であり、事故時の責任上限ではありません。
         </p>
         <SpecTable className="mt-8" rows={OWNER_DEPOSITS} />
         <h3 className="mt-12 font-serif text-2xl">月額管理費に含むもの</h3>
@@ -182,7 +161,7 @@ function Page() {
               body: (
                 <div className="space-y-4">
                   <p>
-                    通常洗車は1予約1万1,000円のKSC利用管理費に含みます。普通に利用しただけで特別清掃費が発生する想定ではありません。利用前後の写真などで状態を確認し、専門清掃が必要になった合理的な実費を請求する方針です。
+                    通常洗車は1予約1万1,000円のKSC利用管理費に含みます。普通に利用しただけで特別清掃費が発生する想定ではありません。
                   </p>
                   <p className="font-medium text-ink">通常洗車に含むもの</p>
                   <BulletList items={NORMAL_WASH_INCLUDES} />
@@ -202,10 +181,10 @@ function Page() {
               ),
             },
             {
-              title: "事故時に契約で検討する負担",
+              title: "事故時の精算",
               body: (
                 <div>
-                  <p>保険を優先します。すべて無条件で利用者責任、とは書いていません。</p>
+                  <p>{ACCIDENT_POLICY}</p>
                   <BulletList items={DRIVER_BURDEN_ITEMS} />
                 </div>
               ),
@@ -232,7 +211,6 @@ function Page() {
         <dl className="mt-8 divide-y divide-line border-y border-line">
           {FAQS.filter((f) =>
             [
-              "COLLECTIONとOWNER NETWORKの違いは何ですか？",
               "OWNER NETWORKの月額管理費は何に使いますか？",
               "OWNER NETWORKに保証金はありますか？",
               "特別清掃費はいつ発生しますか？",
@@ -249,7 +227,9 @@ function Page() {
 
         <div className="mt-16 rounded-xl bg-charcoal px-6 py-10 text-cream md:px-10">
           <h2 className="font-serif text-2xl">既存スーパーカーオーナーの先行相談</h2>
-          <p className="mt-3 max-w-2xl text-cream/75">{OWNER_PHASE}</p>
+          <p className="mt-3 max-w-2xl text-cream/75">
+            愛車の登録について、まず話を伺います。
+          </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/apply/owner"

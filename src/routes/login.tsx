@@ -57,8 +57,7 @@ function Login() {
         </p>
         {!configured ? (
           <p className="mt-10 rounded-md border border-cream/20 p-4 text-sm leading-relaxed text-cream/80">
-            現在、受付設定を確認中です。Lovable Cloud Auth の接続後に、staff
-            へ登録されたアカウントだけがログインできます。
+            現在、受付設定を確認中です。接続後に、登録された運営担当者だけがログインできます。
           </p>
         ) : signedIn ? (
           <Link

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/privacy")({
   head: () =>
     pageHead({
       title: "プライバシーポリシー｜KYOTO SUPERCAR CLUB",
-      description: "事前登録と相談でお預かりする個人情報の取扱い。",
+      description: "興味登録と相談でお預かりする個人情報の取扱い。",
       path: "/privacy",
     }),
 });
@@ -38,15 +38,13 @@ function Page() {
         <article>
           <h2 className="font-serif text-2xl">3. 保管と開示</h2>
           <p className="mt-3 text-ink-soft">
-            申込内容は、Lovable Cloud（データベース）へ保存し、staff
-            テーブルに登録された運営担当者のみが管理画面で閲覧できます。一般のサイト訪問者および一般の認証ユーザーは申込一覧を閲覧できません。開示、訂正、削除の請求はお問い合わせフォームから受け付けます。
+            お預かりした情報は、適切なアクセス制限を設けたシステムで管理し、業務上必要な運営担当者のみが取り扱います。開示、訂正、削除の請求はお問い合わせフォームから受け付けます。
           </p>
         </article>
         <article>
           <h2 className="font-serif text-2xl">4. 委託</h2>
           <p className="mt-3 text-ink-soft">
-            ホスティング（Lovable
-            Cloud）、および通知メールを設定した場合のメール配信に必要な範囲で委託します。委託先の正式名称は運用確定後に追記します。
+            サイトのホスティング、および通知メールを設定した場合のメール配信に必要な範囲で委託します。委託先の正式名称は運用確定後に追記します。
           </p>
         </article>
         <article>
@@ -74,7 +72,7 @@ function Page() {
           <article>
             <h2 className="font-serif text-2xl">6. 運営者</h2>
             <p className="mt-3 text-ink-soft">
-              運営者の正式名称・住所・電話番号は確認後に掲載します。現時点では架空の会社情報を記載しません。
+              運営者の正式名称・住所・電話番号は確認後に掲載します。
             </p>
           </article>
         )}

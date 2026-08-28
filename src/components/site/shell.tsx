@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 import { BRAND, FOOTER_LINKS, MOBILE_AUX_NAV, MOBILE_SERVICE_CARDS, NAV } from "@/lib/brand";
+import { PHOTO_NOTE } from "@/lib/content";
 import { track } from "@/lib/analytics";
 import { getLineUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -160,7 +161,6 @@ export function SiteFooter() {
           <p className="font-serif text-xl tracking-[0.16em]">{BRAND.name}</p>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-cream/70">{BRAND.phaseNote}</p>
           <p className="mt-4 text-sm text-cream/55">{BRAND.region}</p>
-          <p className="mt-3 max-w-md text-xs leading-relaxed text-cream/45">{BRAND.kyotoDefinition}</p>
         </div>
         <div className="flex flex-col gap-3 text-sm">
           {FOOTER_LINKS.map((l) => (
@@ -175,9 +175,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-cream/10 px-5 py-5 text-center text-xs leading-relaxed tracking-wide text-cream/45">
-        <p>
-          掲載の車両写真は雰囲気を伝えるためのもので、特定メーカーとの提携や取り扱いを意味しません。
-        </p>
+        <p>{PHOTO_NOTE}</p>
         <p className="mt-2">
           © {new Date().getFullYear()} {BRAND.name}
         </p>
