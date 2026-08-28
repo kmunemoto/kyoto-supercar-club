@@ -122,13 +122,17 @@ function ownerExtraSummary(data: OwnerInquiryInput): string {
     .join("\n");
 }
 
-const localDevStore: { owners: unknown[]; collections: unknown[]; members: unknown[]; contacts: unknown[] } =
-  {
-    owners: [],
-    collections: [],
-    members: [],
-    contacts: [],
-  };
+const localDevStore: {
+  owners: unknown[];
+  collections: unknown[];
+  members: unknown[];
+  contacts: unknown[];
+} = {
+  owners: [],
+  collections: [],
+  members: [],
+  contacts: [],
+};
 
 function localDevInsert(kind: keyof typeof localDevStore, row: unknown): Result {
   if (!import.meta.env.DEV) return { ok: false, error: UNCONFIGURED };

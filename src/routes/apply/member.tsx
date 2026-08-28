@@ -22,7 +22,9 @@ function Page() {
         lead="現在は、KSC COLLECTIONとKSC OWNER NETWORKの準備に注力しています。"
       />
       <Section className="max-w-3xl pt-0">
-        <p className="mb-8 text-ink-soft">共同購入の興味登録と、既存オーナーからの先行相談をご覧ください。</p>
+        <p className="mb-8 text-ink-soft">
+          共同購入の興味登録と、既存オーナーからの先行相談をご覧ください。
+        </p>
         <Link
           to="/collection"
           className="inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"

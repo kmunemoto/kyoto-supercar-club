@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { InquiryCta } from "@/components/site/inquiry-cta";
 import { WebPageJsonLd } from "@/components/site/json-ld";
-import { BulletList, ConditionsAccordion, PlanBanner, SpecTable } from "@/components/site/conditions";
+import {
+  BulletList,
+  ConditionsAccordion,
+  PlanBanner,
+  SpecTable,
+} from "@/components/site/conditions";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
 import { BRAND } from "@/lib/brand";
 import {
@@ -201,7 +206,9 @@ function Page() {
               title: "通常洗車と特別清掃",
               body: (
                 <div className="space-y-4">
-                  <p>通常洗車は予約管理の一環として手配します。普通に利用しただけで特別清掃費が発生する想定ではありません。</p>
+                  <p>
+                    通常洗車は予約管理の一環として手配します。普通に利用しただけで特別清掃費が発生する想定ではありません。
+                  </p>
                   <p className="font-medium text-ink">通常洗車に含むもの</p>
                   <BulletList items={NORMAL_WASH_INCLUDES} />
                   <p className="font-medium text-ink">特別清掃の例（合理的な実費）</p>

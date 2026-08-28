@@ -75,7 +75,8 @@ function asOwner(row: Record<string, unknown>): OwnerRow {
     annual_km_cap: row["annual_km_cap"] == null ? null : String(row["annual_km_cap"]),
     other_driver_conditions:
       row["other_driver_conditions"] == null ? null : String(row["other_driver_conditions"]),
-    want_to_use_others: row["want_to_use_others"] == null ? null : String(row["want_to_use_others"]),
+    want_to_use_others:
+      row["want_to_use_others"] == null ? null : String(row["want_to_use_others"]),
     want_to_register_car:
       row["want_to_register_car"] == null ? null : String(row["want_to_register_car"]),
     daily_km_preference:

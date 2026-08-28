@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
 import { BRAND } from "@/lib/brand";
 import { OPERATOR } from "@/lib/operator";
@@ -20,7 +20,7 @@ function Page() {
       <PageIntro
         kicker="PRIVACY"
         title="プライバシーポリシー"
-        lead={`${BRAND.name}（以下「当サービス」）は、準備段階でお預かりする個人情報の取扱いを、次のとおり定めます。法令に基づき、専門家確認のうえ更新します。`}
+        lead={`${BRAND.name}（以下「当サービス」）は、事前登録、先行相談、お問い合わせを通じてお預かりする個人情報を、以下の方針に基づいて取り扱います。`}
       />
       <Section className="prose-like max-w-3xl space-y-10 pt-0">
         <article>
@@ -31,51 +31,66 @@ function Page() {
         </article>
         <article>
           <h2 className="font-serif text-2xl">2. 利用目的</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+            <li>お問い合わせへの回答</li>
+            <li>興味登録・先行相談への対応</li>
+            <li>サービス設計と運営改善</li>
+            <li>利用状況や流入経路の把握</li>
+            <li>法令上必要となる確認</li>
+          </ul>
+        </article>
+        <article>
+          <h2 className="font-serif text-2xl">3. 第三者提供</h2>
           <p className="mt-3 text-ink-soft">
-            お申し込みへの返答、追加確認、サービス設計のための集計、流入元の把握、法令上必要な確認に限ります。販売目的の第三者提供は行いません。
+            法令に基づく場合を除き、ご本人の同意なく個人情報を第三者へ提供しません。
           </p>
         </article>
         <article>
-          <h2 className="font-serif text-2xl">3. 保管と開示</h2>
+          <h2 className="font-serif text-2xl">4. 保管と安全管理</h2>
           <p className="mt-3 text-ink-soft">
-            お預かりした情報は、適切なアクセス制限を設けたシステムで管理し、業務上必要な運営担当者のみが取り扱います。開示、訂正、削除の請求はお問い合わせフォームから受け付けます。
+            お預かりした情報は、適切なアクセス制限を設けたシステムで管理し、業務上必要な運営担当者のみが取り扱います。個人情報の開示、訂正、削除に関するご相談は、お問い合わせフォームから受け付けます。
           </p>
         </article>
         <article>
-          <h2 className="font-serif text-2xl">4. 委託</h2>
+          <h2 className="font-serif text-2xl">5. 委託</h2>
           <p className="mt-3 text-ink-soft">
-            サイトのホスティング、および通知メールを設定した場合のメール配信に必要な範囲で委託します。委託先の正式名称は運用確定後に追記します。
+            当サービスは、サイト運営やメール配信など、業務の一部を外部事業者へ委託する場合があります。委託する場合は、必要な範囲でのみ情報を取り扱い、適切な管理を行います。
           </p>
         </article>
         <article>
-          <h2 className="font-serif text-2xl">5. クッキーと計測</h2>
+          <h2 className="font-serif text-2xl">6. Cookieとアクセス解析</h2>
           <p className="mt-3 text-ink-soft">
-            サイトの動作と、運営者ログイン状態の維持に必要な範囲でクッキーを使うことがあります。Google
-            Analytics または Meta Pixel
-            の識別子が設定されている場合のみ、同意後に広告・分析クッキーを読み込みます。未設定の場合は読み込みません。フォームに添付するUTM情報は、同意バナーとは別に申込データとして保存します。
+            当サイトでは、利便性の向上と利用状況の把握のため、Cookieなどの技術を利用する場合があります。任意の分析・広告Cookieは、利用者の同意が得られた場合にのみ使用します。
           </p>
         </article>
-        {OPERATOR.legalName || OPERATOR.contactEmail ? (
-          <article>
-            <h2 className="font-serif text-2xl">6. 運営者</h2>
+        <article>
+          <h2 className="font-serif text-2xl">7. 運営者</h2>
+          {OPERATOR.legalName || OPERATOR.contactEmail ? (
             <p className="mt-3 text-ink-soft">
-              {OPERATOR.legalName ? <>名称: {OPERATOR.legalName}</> : null}
+              {OPERATOR.legalName ? <>名称: {OPERATOR.legalName}</> : <>運営：{BRAND.name}</>}
+              <br />
               {OPERATOR.contactEmail ? (
+                <>連絡先: {OPERATOR.contactEmail}</>
+              ) : (
                 <>
-                  <br />
-                  連絡先: {OPERATOR.contactEmail}
+                  個人情報に関するお問い合わせ：
+                  <Link to="/contact" className="text-oxblood underline underline-offset-4">
+                    お問い合わせフォーム
+                  </Link>
                 </>
-              ) : null}
+              )}
             </p>
-          </article>
-        ) : (
-          <article>
-            <h2 className="font-serif text-2xl">6. 運営者</h2>
+          ) : (
             <p className="mt-3 text-ink-soft">
-              運営者の正式名称・住所・電話番号は確認後に掲載します。
+              運営：{BRAND.name}
+              <br />
+              個人情報に関するお問い合わせ：
+              <Link to="/contact" className="text-oxblood underline underline-offset-4">
+                お問い合わせフォーム
+              </Link>
             </p>
-          </article>
-        )}
+          )}
+        </article>
       </Section>
     </SiteShell>
   );

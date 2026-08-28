@@ -7,7 +7,6 @@ import {
   DRIVER_BURDEN_ITEMS,
   OPERATOR_SIDE_RESPONSIBILITY,
   OWNER_PROHIBITED,
-  REVIEW_COPY,
   SAFETY_ITEMS,
 } from "@/lib/content";
 
@@ -27,7 +26,7 @@ function Page() {
       <PageIntro
         kicker="SAFETY"
         title="安全・保険について"
-        lead="スーパーカーを預かり、他人が乗る以上、速度や見た目より先に、誰が・どこまで・どう記録するかを決める必要があります。"
+        lead="大切な車両を共同で利用するサービスだからこそ、利用者の資格、車両ごとの利用条件、利用前後の状態を明確にします。"
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
@@ -74,9 +73,9 @@ function Page() {
           <p className="mt-3 text-ink-soft">
             COLLECTIONでは、記名運転者1人につき100万円の保証金を予定しています。OWNER
             NETWORKでは、愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合は、STANDARD
-            50万円、PREMIUM 100万円、ICON 200万円を、そのクラスを初めて利用する前にお預かりします。いずれも返還対象であり、事故責任の上限ではありません。
+            50万円、PREMIUM 100万円、ICON
+            200万円を、そのクラスを初めて利用する前にお預かりします。いずれも返還対象であり、事故責任の上限ではありません。
           </p>
-          <p className="mt-4 text-ink-soft">{REVIEW_COPY}</p>
         </aside>
       </Section>
     </SiteShell>

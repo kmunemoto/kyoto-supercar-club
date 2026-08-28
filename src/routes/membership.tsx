@@ -26,18 +26,18 @@ function Page() {
           共同購入の興味登録と、既存スーパーカーオーナーからの先行相談を受け付けています。
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Link
-          to="/collection"
-          className="inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"
-        >
-          共同所有を見る
-        </Link>
-        <Link
-          to="/owners"
-          className="inline-flex h-12 items-center rounded-md border border-line px-6"
-        >
-          オーナーネットワークを見る
-        </Link>
+          <Link
+            to="/collection"
+            className="inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"
+          >
+            共同所有を見る
+          </Link>
+          <Link
+            to="/owners"
+            className="inline-flex h-12 items-center rounded-md border border-line px-6"
+          >
+            オーナーネットワークを見る
+          </Link>
         </div>
       </Section>
     </SiteShell>

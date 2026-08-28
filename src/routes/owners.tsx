@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { InquiryCta } from "@/components/site/inquiry-cta";
 import { WebPageJsonLd } from "@/components/site/json-ld";
-import { BulletList, ConditionsAccordion, PlanBanner, SpecTable } from "@/components/site/conditions";
+import {
+  BulletList,
+  ConditionsAccordion,
+  PlanBanner,
+  SpecTable,
+} from "@/components/site/conditions";
 import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
 import {
   ACCIDENT_POLICY,
@@ -108,7 +113,9 @@ function Page() {
 
         <h2 className="mt-20 font-serif text-3xl">クレジット制度</h2>
         <SpecTable className="mt-8" rows={OWNER_CREDITS} />
-        <p className="mt-4 text-sm text-muted">登録車両を外した場合、クレジットは一時凍結します。</p>
+        <p className="mt-4 text-sm text-muted">
+          登録車両を外した場合、クレジットは一時凍結します。
+        </p>
 
         <h2 className="mt-20 font-serif text-3xl">料金</h2>
         <p className="mt-4 text-sm text-muted">{FEE_NOTE}</p>
@@ -227,9 +234,7 @@ function Page() {
 
         <div className="mt-16 rounded-xl bg-charcoal px-6 py-10 text-cream md:px-10">
           <h2 className="font-serif text-2xl">既存スーパーカーオーナーの先行相談</h2>
-          <p className="mt-3 max-w-2xl text-cream/75">
-            愛車の登録について、まず話を伺います。
-          </p>
+          <p className="mt-3 max-w-2xl text-cream/75">愛車の登録について、まず話を伺います。</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/apply/owner"

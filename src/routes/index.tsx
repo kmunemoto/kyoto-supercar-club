@@ -3,7 +3,15 @@ import { Photo, Section, SiteShell } from "@/components/site/shell";
 import { FaqJsonLd, SiteJsonLd } from "@/components/site/json-ld";
 import { InquiryCta } from "@/components/site/inquiry-cta";
 import { BRAND } from "@/lib/brand";
-import { BRAND_PURPOSE, BUSINESS_PATHS, FAQS, HERO_PILLARS, LEGAL_BANNER, MANAGEMENT_INTRO, MANAGEMENT_ITEMS } from "@/lib/content";
+import {
+  BRAND_PURPOSE,
+  BUSINESS_PATHS,
+  FAQS,
+  HERO_PILLARS,
+  LEGAL_BANNER,
+  MANAGEMENT_INTRO,
+  MANAGEMENT_ITEMS,
+} from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 import { lineCtaLabel } from "@/lib/site";
 

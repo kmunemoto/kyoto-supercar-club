@@ -69,7 +69,8 @@ export function CollectionForm() {
 
   function payload() {
     const attr = readAttribution();
-    const desiredModels = [form.desiredMake, form.desiredModel].filter(Boolean).join(" ").trim() || "未定";
+    const desiredModels =
+      [form.desiredMake, form.desiredModel].filter(Boolean).join(" ").trim() || "未定";
     return {
       ...form,
       desiredModels,
@@ -150,9 +151,7 @@ export function CollectionForm() {
   return (
     <form onSubmit={onSubmit} className="relative space-y-8" noValidate>
       <Honeypot value={form.companyUrl} onChange={(v) => set("companyUrl", v)} />
-      <p className="text-sm text-ink-soft">
-        無料の興味登録です。契約や決済は発生しません。
-      </p>
+      <p className="text-sm text-ink-soft">無料の興味登録です。契約や決済は発生しません。</p>
       <div className="flex gap-2 text-xs tracking-[0.16em] text-muted">
         <span className={step === 1 ? "text-oxblood" : ""}>01 希望条件</span>
         <span>/</span>
