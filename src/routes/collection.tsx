@@ -15,12 +15,14 @@ import {
   COLLECTION_ELIGIBILITY,
   COLLECTION_EXIT,
   COLLECTION_FEE_TIMING,
-  COLLECTION_FIRST_CAR,
   COLLECTION_FLOW,
+  COLLECTION_GOVERNANCE,
   COLLECTION_HANDOVER,
+  COLLECTION_HEADCOUNT,
   COLLECTION_HOLDING_DEPOSIT,
   COLLECTION_IDEA,
   COLLECTION_INHERITANCE,
+  COLLECTION_LEAD_SUPPLEMENT,
   COLLECTION_PLAN_FEES,
   COLLECTION_REPAIR,
   COLLECTION_RESERVE_LEAD,
@@ -29,6 +31,7 @@ import {
   COLLECTION_RISKS,
   COLLECTION_SOURCING,
   COLLECTION_UNPAID,
+  COLLECTION_USE_ALLOCATION,
   COLLECTION_USE_SPECS,
   FAQS,
   FEE_NOTE,
@@ -46,7 +49,7 @@ export const Route = createFileRoute("/collection")({
     pageHead({
       title: "京都でスーパーカーを共同所有｜KSC COLLECTION",
       description:
-        "6人で一台を共同購入・共同所有するKSC COLLECTION。約500万円は車両・登録・初期予備資金を含む上限の目安。KSC VALUE CHECKで単独所有と比較し、基準を満たす場合のみ進めます。いまは無料の興味登録のみです。",
+        "欲しい一台を少人数で共同購入するKSC COLLECTION。車両ごとに共同オーナー数と1人あたりの購入負担を設計し、KSC VALUE CHECKで基準を満たす場合のみ進めます。いまは無料の興味登録のみです。",
       path: "/collection",
     }),
 });
@@ -75,12 +78,12 @@ function Page() {
     <SiteShell>
       <WebPageJsonLd
         name="京都でスーパーカーを共同所有｜KSC COLLECTION"
-        description="6人で一台のスーパーカーを共同購入・共同所有する構想。いまは無料の興味登録のみです。"
+        description="欲しい一台を少人数で共同購入・共同所有する構想。いまは無料の興味登録のみです。"
         path="/collection"
       />
       <PageIntro
         kicker="COLLECTION｜興味登録受付"
-        title="欲しい一台を、6人で共同購入する。"
+        title="欲しい一台を、少人数で共同購入する。"
         lead={COLLECTION_CORE}
       />
       <div className="mx-auto max-w-6xl px-5">
@@ -94,7 +97,8 @@ function Page() {
       </div>
       <Section>
         <PlanBanner>{LEGAL_BANNER}</PlanBanner>
-        <p className="mt-6 max-w-3xl text-sm text-ink-soft">{BRAND.kyotoDefinition}</p>
+        <p className="mt-6 max-w-3xl text-ink-soft">{COLLECTION_LEAD_SUPPLEMENT}</p>
+        <p className="mt-4 max-w-3xl text-sm text-ink-soft">{BRAND.kyotoDefinition}</p>
         <div className="mt-8">
           <Ctas />
         </div>
@@ -108,7 +112,9 @@ function Page() {
             </article>
           ))}
         </div>
-        <p className="mt-10 max-w-3xl text-ink-soft">{COLLECTION_FIRST_CAR}</p>
+        <h2 className="mt-20 font-serif text-3xl">{COLLECTION_HEADCOUNT.heading}</h2>
+        <p className="mt-4 max-w-3xl text-ink-soft">{COLLECTION_HEADCOUNT.body}</p>
+        <p className="mt-4 max-w-3xl text-ink-soft">{COLLECTION_HEADCOUNT.range}</p>
 
         <h2 className="mt-20 font-serif text-3xl">新車と中古車</h2>
         <p className="mt-4 max-w-3xl text-ink-soft">
@@ -153,6 +159,18 @@ function Page() {
         <h2 className="mt-20 font-serif text-3xl">予定する基本条件</h2>
         <p className="mt-4 text-sm text-muted">{FEE_NOTE}</p>
         <SpecTable className="mt-8" rows={COLLECTION_PLAN_FEES} />
+        <h3 className="mt-12 font-serif text-2xl">年間利用日数と走行距離の設計例</h3>
+        <p className="mt-4 max-w-3xl text-ink-soft">{COLLECTION_USE_ALLOCATION.lead}</p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {COLLECTION_USE_ALLOCATION.rows.map((row) => (
+            <article key={row.owners} className="rounded-xl border border-line bg-cream px-5 py-6">
+              <p className="text-xs tracking-[0.18em] text-copper">共同オーナー {row.owners}</p>
+              <p className="mt-3 font-serif text-xl">年 {row.days}</p>
+              <p className="mt-1 text-ink-soft">{row.km}</p>
+            </article>
+          ))}
+        </div>
+        <p className="mt-4 max-w-3xl text-sm text-muted">{COLLECTION_USE_ALLOCATION.note}</p>
         <h3 className="mt-12 font-serif text-2xl">料金が発生する時期</h3>
         <SpecTable className="mt-8" rows={COLLECTION_FEE_TIMING} />
 
@@ -221,6 +239,10 @@ function Page() {
               body: <BulletList items={COLLECTION_REPAIR} />,
             },
             {
+              title: "議決",
+              body: <BulletList items={COLLECTION_GOVERNANCE} />,
+            },
+            {
               title: "最低参加期間と退出",
               body: <BulletList items={COLLECTION_EXIT} />,
             },
@@ -244,7 +266,8 @@ function Page() {
             [
               "KSCが車を買って、利用権だけ売るのですか？",
               "COLLECTIONの費用はいくらですか？",
-              "約500万円は車両代だけですか？",
+              "1人あたりの購入負担はいくらですか？",
+              "共同オーナーは何人ですか？",
               "KSC VALUE CHECKとは何ですか？",
               "参加申込預り金は何ですか？",
               "京都在住でないと参加できませんか？",

@@ -47,13 +47,13 @@ test("collection inquiry accepts planned budget band and Kyoto-outside residence
     region: "京都府外",
     kyotoConnection: "京都で定期的に車両を利用できる",
     currentVehicleStatus: "所有していない",
-    desiredMake: "ポルシェ",
-    desiredModel: "911カレラ系",
-    desiredModels: "ポルシェ 911カレラ系",
+    desiredMake: "未定",
+    desiredModel: "未定",
+    desiredModels: "未定",
     vehicleCondition: "どちらでも",
-    budgetBand: "約500万円の上限目安で検討したい",
-    desiredDaysPerYear: "計画の年間24日でよい",
-    desiredKmPerYear: "計画の年間800kmでよい",
+    budgetBand: "車両によって判断したい",
+    desiredDaysPerYear: "車両プロジェクトの条件に合わせたい",
+    desiredKmPerYear: "車両プロジェクトの条件に合わせたい",
     desiredStartTiming: "まだ決めていない",
     wantValueCheck: "はい",
     resalePriorities: ["できるだけ長く乗る"],
@@ -62,6 +62,56 @@ test("collection inquiry accepts planned budget band and Kyoto-outside residence
     privacyAgreed: true,
   });
   assert.equal(result.success, true);
+});
+
+test("collection inquiry accepts new per-project budget and use bands", () => {
+  const result = collectionInquirySchema.safeParse({
+    fullName: "佐藤 花子",
+    email: "hanako@example.com",
+    phone: "090-0000-0000",
+    applicantType: "個人",
+    region: "京都市",
+    kyotoConnection: "京都で定期的に車両を利用できる",
+    currentVehicleStatus: "所有していない",
+    desiredMake: "未定",
+    desiredModel: "未定",
+    desiredModels: "未定",
+    vehicleCondition: "新車",
+    budgetBand: "800万〜1,200万円",
+    desiredDaysPerYear: "年間24日程度",
+    desiredKmPerYear: "年間800km程度",
+    desiredStartTiming: "まだ決めていない",
+    wantValueCheck: "はい",
+    resalePriorities: ["できるだけ長く乗る"],
+    priorities: ["少人数であること"],
+    privacyAgreed: true,
+  });
+  assert.equal(result.success, true);
+});
+
+test("collection inquiry rejects former fixed 5-million budget band", () => {
+  const result = collectionInquirySchema.safeParse({
+    fullName: "佐藤 花子",
+    email: "hanako@example.com",
+    phone: "090-0000-0000",
+    applicantType: "個人",
+    region: "京都市",
+    kyotoConnection: "京都で定期的に車両を利用できる",
+    currentVehicleStatus: "所有していない",
+    desiredMake: "未定",
+    desiredModel: "未定",
+    desiredModels: "未定",
+    vehicleCondition: "どちらでも",
+    budgetBand: "約500万円の上限目安で検討したい",
+    desiredDaysPerYear: "計画の年間24日でよい",
+    desiredKmPerYear: "計画の年間800kmでよい",
+    desiredStartTiming: "まだ決めていない",
+    wantValueCheck: "はい",
+    resalePriorities: ["できるだけ長く乗る"],
+    priorities: ["保管の質"],
+    privacyAgreed: true,
+  });
+  assert.equal(result.success, false);
 });
 
 test("collection inquiry rejects missing vehicle condition", () => {

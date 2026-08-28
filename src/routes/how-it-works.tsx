@@ -39,7 +39,7 @@ function Page() {
             <p className="text-xs tracking-[0.22em] text-copper">KSC COLLECTION</p>
             <h2 className="mt-3 font-serif text-2xl">共同購入・共同所有</h2>
             <p className="mt-4 text-ink-soft">
-              欲しい一台を、6人で共同購入する仕組みです。運転できるのはその車両の審査済み共同オーナーだけです。
+              欲しい一台を、少人数で共同購入する仕組みです。運転できるのはその車両の審査済み共同オーナーだけです。
             </p>
           </article>
           <article className="border-t border-line pt-6">

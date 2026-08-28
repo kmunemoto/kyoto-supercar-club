@@ -238,7 +238,7 @@ export function CollectionForm() {
                 id="desiredMake"
                 value={form.desiredMake}
                 onChange={(e) => set("desiredMake", e.target.value)}
-                placeholder="例：ポルシェ／未定"
+                placeholder="例：未定"
               />
             </Field>
             <Field
@@ -252,7 +252,7 @@ export function CollectionForm() {
                 id="desiredModel"
                 value={form.desiredModel}
                 onChange={(e) => set("desiredModel", e.target.value)}
-                placeholder="例：911カレラ系／未定"
+                placeholder="例：未定"
               />
             </Field>
             <Field
@@ -275,7 +275,7 @@ export function CollectionForm() {
               label="共同購入に充てられる予算感"
               htmlFor="budgetBand"
               required
-              hint="約500万円は車両・登録・陸送・購入前点検・初期共有予備資金を含む上限の目安です。いまは興味登録のみで、決済しません。"
+              hint="車両価格と共同オーナー数によって、1人あたりの購入負担は変わります。現在は無料の興味登録であり、決済は発生しません。"
               error={errors["budgetBand"]}
             >
               <NativeSelect
@@ -292,7 +292,7 @@ export function CollectionForm() {
               label="希望する年間利用日数"
               htmlFor="desiredDaysPerYear"
               required
-              hint="現在の計画は1人あたり年間24日です。"
+              hint="実際の年間利用日数は、車両と共同オーナー数に応じて決定します。"
               error={errors["desiredDaysPerYear"]}
             >
               <NativeSelect
@@ -309,7 +309,7 @@ export function CollectionForm() {
               label="希望する年間走行距離"
               htmlFor="desiredKmPerYear"
               required
-              hint="現在の計画は1人あたり年間800kmです。"
+              hint="実際の年間走行距離は、車両の利用計画と共同オーナー数に応じて決定します。"
               error={errors["desiredKmPerYear"]}
             >
               <NativeSelect

@@ -31,7 +31,7 @@ export const MOBILE_SERVICE_CARDS = [
     href: "/collection",
     kicker: "KSC COLLECTION｜共同所有",
     title: "スーパーカーを共同購入したい方",
-    body: "欲しい一台を、6人で共同購入・共同所有する仕組み",
+    body: "欲しい一台を、少人数で共同購入・共同所有する仕組み",
   },
   {
     href: "/owners",
