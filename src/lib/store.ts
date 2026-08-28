@@ -33,6 +33,17 @@ export type OwnerRow = {
   priority_use_period: string | null;
   annual_km_cap: string | null;
   other_driver_conditions: string | null;
+  want_to_use_others: string | null;
+  want_to_register_car: string | null;
+  daily_km_preference: string | null;
+  min_driver_age: string | null;
+  license_years_pref: string | null;
+  rain_use: string | null;
+  snow_use: string | null;
+  region_limit: string | null;
+  outdoor_night_parking: string | null;
+  handover_access_ok: string | null;
+  prefer_line: boolean | null;
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;

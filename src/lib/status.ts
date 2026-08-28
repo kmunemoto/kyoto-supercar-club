@@ -13,7 +13,7 @@ export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 export const STATUS_LABEL: Record<ApplicationStatus, string> = {
   new: "新規",
   reviewing: "確認中",
-  interview_scheduled: "面談予定",
+  interview_scheduled: "追加確認",
   terms_adjusting: "条件調整中",
   approved: "承認",
   on_hold: "保留",

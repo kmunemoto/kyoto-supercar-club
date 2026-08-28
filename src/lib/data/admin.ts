@@ -75,6 +75,27 @@ function asOwner(row: Record<string, unknown>): OwnerRow {
     annual_km_cap: row["annual_km_cap"] == null ? null : String(row["annual_km_cap"]),
     other_driver_conditions:
       row["other_driver_conditions"] == null ? null : String(row["other_driver_conditions"]),
+    want_to_use_others: row["want_to_use_others"] == null ? null : String(row["want_to_use_others"]),
+    want_to_register_car:
+      row["want_to_register_car"] == null ? null : String(row["want_to_register_car"]),
+    daily_km_preference:
+      row["daily_km_preference"] == null ? null : String(row["daily_km_preference"]),
+    min_driver_age: row["min_driver_age"] == null ? null : String(row["min_driver_age"]),
+    license_years_pref:
+      row["license_years_pref"] == null ? null : String(row["license_years_pref"]),
+    rain_use: row["rain_use"] == null ? null : String(row["rain_use"]),
+    snow_use: row["snow_use"] == null ? null : String(row["snow_use"]),
+    region_limit: row["region_limit"] == null ? null : String(row["region_limit"]),
+    outdoor_night_parking:
+      row["outdoor_night_parking"] == null ? null : String(row["outdoor_night_parking"]),
+    handover_access_ok:
+      row["handover_access_ok"] == null ? null : String(row["handover_access_ok"]),
+    prefer_line:
+      typeof row["prefer_line"] === "boolean"
+        ? row["prefer_line"]
+        : row["prefer_line"] == null
+          ? null
+          : Boolean(row["prefer_line"]),
     utm_source: row["utm_source"] == null ? null : String(row["utm_source"]),
     utm_medium: row["utm_medium"] == null ? null : String(row["utm_medium"]),
     utm_campaign: row["utm_campaign"] == null ? null : String(row["utm_campaign"]),

@@ -30,7 +30,7 @@ export function SiteJsonLd() {
           url: absUrl("/"),
           areaServed: { "@type": "AdministrativeArea", name: "京都府" },
           description:
-            "京都からスーパーカーの共同所有とオーナーネットワークを準備しているカーライフブランド。",
+            "京都からスーパーカーの共同購入と、既存オーナー限定の相互利用を準備しているカーライフブランド。",
         },
       ]}
     />

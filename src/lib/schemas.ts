@@ -48,15 +48,13 @@ export const MILEAGE_BANDS = [
 ] as const;
 
 export const OWNER_PURPOSES = [
-  "車両管理について相談したい",
-  "オーナー相互利用に関心がある",
+  "他の登録車両を利用したい",
+  "愛車を登録したい",
   "両方",
   "まず説明を聞きたい",
 ] as const;
 
 export const OWNER_MANAGEMENT = [
-  "保管・日常管理",
-  "バッテリー管理",
   "洗車・整備手配",
   "予約と受け渡し",
   "利用前後の記録",
@@ -65,6 +63,23 @@ export const OWNER_MANAGEMENT = [
 
 /** @deprecated kept for archived member records */
 export const OWNER_INTERESTS = OWNER_MANAGEMENT;
+
+export const YES_NO = ["はい", "いいえ"] as const;
+
+export const YES_NO_UNDECIDED = ["可", "不可", "未定"] as const;
+
+export const HANDOVER_ACCESS = ["はい", "確認が必要", "未定"] as const;
+
+export const DAILY_KM_PREFS = [
+  "1日200kmを基準でよい",
+  "200kmより短くしたい",
+  "200kmより長くしたい",
+  "車両ごとに相談したい",
+] as const;
+
+export const MIN_DRIVER_AGE_OPTIONS = ["KSC基準（25歳）でよい", "30歳以上", "未定"] as const;
+
+export const LICENSE_YEAR_OPTIONS = ["KSC基準（5年以上）でよい", "10年以上", "未定"] as const;
 
 export const PREFERRED_CONTACT = ["メール", "電話", "どちらでもよい"] as const;
 
@@ -119,7 +134,7 @@ export const INCIDENT_OPTIONS = [
   "ない",
   "軽微な違反がある",
   "重大な違反または事故歴がある",
-  "面談で詳しく話したい",
+  "詳しく話したい",
 ] as const;
 
 export const CONTACT_TOPICS = [
@@ -148,17 +163,22 @@ export const CURRENT_VEHICLE_STATUS = [
 
 export const COLLECTION_BUDGETS = [
   "未定・相談したい",
-  "まずは少額から検討したい",
-  "本格的に1台の共同所有を検討したい",
+  "計画の約500万円を検討したい",
+  "500万円より抑えたい",
   "車両による",
 ] as const;
 
-export const DESIRED_DAYS = ["年に数日", "月1回程度", "月2回以上", "まだ決めていない"] as const;
+export const DESIRED_DAYS = [
+  "計画の年間24日でよい",
+  "24日より少なくしたい",
+  "24日より多くしたい",
+  "まだ決めていない",
+] as const;
 
 export const DESIRED_KM = [
-  "1,000km未満",
-  "1,000〜3,000km",
-  "3,000km以上",
+  "計画の年間800kmでよい",
+  "800kmより少なくしたい",
+  "800kmより多くしたい",
   "まだ決めていない",
 ] as const;
 
@@ -217,36 +237,61 @@ const optionalAge = z.preprocess((value) => {
 
 export const ownerInquirySchema = z.object({
   ownsVehicle: z.enum(OWNS_VEHICLE, {
-    errorMap: () => ({ message: "所有の有無を選択してください" }),
+    message: "所有の有無を選択してください",
   }),
-  region: z.enum(REGIONS, { errorMap: () => ({ message: "保管地域を選択してください" }) }),
+  region: z.enum(REGIONS, { message: "保管地域を選択してください" }),
   make: z.string().trim().min(1, "メーカーを入力してください").max(80),
   model: z.string().trim().min(1, "車種を入力してください").max(80),
   year: optionalYear,
   mileageBand: z.enum(MILEAGE_BANDS).optional().or(z.literal("")),
   annualUseCount: z.enum(ANNUAL_USE, {
-    errorMap: () => ({ message: "利用頻度を選択してください" }),
+    message: "利用頻度を選択してください",
   }),
   storageType: z.enum(STORAGE_TYPES, {
-    errorMap: () => ({ message: "保管形態を選択してください" }),
+    message: "保管形態を選択してください",
   }),
   participationPurpose: z.enum(OWNER_PURPOSES, {
-    errorMap: () => ({ message: "参加目的を選択してください" }),
+    message: "参加目的を選択してください",
   }),
-  priorityUsePeriod: z.string().trim().min(1, "優先したい時期を入力してください").max(500),
-  annualKmCap: z.string().trim().min(1, "走行距離の上限希望を入力してください").max(200),
-  otherDriverConditions: z
-    .string()
-    .trim()
-    .min(1, "他の運転者に求める条件を入力してください")
-    .max(2000),
-  managementNeeds: z.array(z.string()).min(1, "希望する管理内容を1つ以上選んでください"),
+  wantToUseOthers: z.enum(YES_NO, {
+    message: "他車利用の希望を選択してください",
+  }),
+  wantToRegisterCar: z.enum(YES_NO, {
+    message: "愛車登録の希望を選択してください",
+  }),
+  priorityUsePeriod: z.string().trim().min(1, "希望する利用可能日を入力してください").max(500),
+  dailyKmPreference: z.enum(DAILY_KM_PREFS, {
+    message: "距離の希望を選択してください",
+  }),
+  minDriverAge: z.enum(MIN_DRIVER_AGE_OPTIONS, {
+    message: "運転者の最低年齢希望を選択してください",
+  }),
+  requiredLicenseYears: z.enum(LICENSE_YEAR_OPTIONS, {
+    message: "免許歴の希望を選択してください",
+  }),
+  rainUse: z.enum(YES_NO_UNDECIDED, {
+    message: "雨天利用の可否を選択してください",
+  }),
+  snowUse: z.enum(YES_NO_UNDECIDED, {
+    message: "降雪時利用の可否を選択してください",
+  }),
+  regionLimit: z.string().trim().max(500).optional().or(z.literal("")),
+  outdoorNightParking: z.enum(YES_NO_UNDECIDED, {
+    message: "屋外夜間保管の可否を選択してください",
+  }),
+  handoverAccessOk: z.enum(HANDOVER_ACCESS, {
+    message: "受け渡し時のアクセス可否を選択してください",
+  }),
+  otherDriverConditions: z.string().trim().max(2000).optional().or(z.literal("")),
+  managementNeeds: z.array(z.string()).optional(),
+  annualKmCap: z.string().trim().max(200).optional().or(z.literal("")),
   concerns: z.string().trim().min(1, "気になること・質問を入力してください").max(2000),
   fullName: name,
   email,
   phone: requiredPhone,
+  preferLine: z.boolean().optional(),
   privacyAgreed: z.literal(true, {
-    errorMap: () => ({ message: "プライバシーポリシーへの同意が必要です" }),
+    message: "プライバシーポリシーへの同意が必要です",
   }),
   companyUrl: honeypot,
   ...attribution,
@@ -257,36 +302,36 @@ export const collectionInquirySchema = z.object({
   email,
   phone: requiredPhone,
   applicantType: z.enum(APPLICANT_TYPES, {
-    errorMap: () => ({ message: "個人または法人を選択してください" }),
+    message: "個人または法人を選択してください",
   }),
-  region: z.enum(REGIONS, { errorMap: () => ({ message: "居住地域を選択してください" }) }),
+  region: z.enum(REGIONS, { message: "居住地域を選択してください" }),
   kyotoConnection: z.enum(KYOTO_CONNECTIONS, {
-    errorMap: () => ({ message: "京都との関係を選択してください" }),
+    message: "京都との関係を選択してください",
   }),
   currentVehicleStatus: z.enum(CURRENT_VEHICLE_STATUS, {
-    errorMap: () => ({ message: "現在の車両所有状況を選択してください" }),
+    message: "現在の車両所有状況を選択してください",
   }),
   desiredModels: z.string().trim().min(1, "希望する車種・メーカーを入力してください").max(500),
   budgetBand: z.enum(COLLECTION_BUDGETS, {
-    errorMap: () => ({ message: "予算感を選択してください" }),
+    message: "予算感を選択してください",
   }),
   desiredDaysPerYear: z.enum(DESIRED_DAYS, {
-    errorMap: () => ({ message: "希望する年間利用日数を選択してください" }),
+    message: "希望する年間利用日数を選択してください",
   }),
   desiredKmPerYear: z.enum(DESIRED_KM, {
-    errorMap: () => ({ message: "希望する年間走行距離を選択してください" }),
+    message: "希望する年間走行距離を選択してください",
   }),
   desiredStartTiming: z.enum(START_TIMING, {
-    errorMap: () => ({ message: "希望する開始時期を選択してください" }),
+    message: "希望する開始時期を選択してください",
   }),
   licenseYears: requiredLicenseYears,
   incidentHistory: z.enum(INCIDENT_OPTIONS, {
-    errorMap: () => ({ message: "自己申告を選択してください" }),
+    message: "自己申告を選択してください",
   }),
   priorities: z.array(z.string()).min(1, "重視する条件を1つ以上選んでください"),
   concerns: z.string().trim().max(2000).optional().or(z.literal("")),
   privacyAgreed: z.literal(true, {
-    errorMap: () => ({ message: "プライバシーポリシーへの同意が必要です" }),
+    message: "プライバシーポリシーへの同意が必要です",
   }),
   companyUrl: honeypot,
   ...attribution,
@@ -299,7 +344,7 @@ export const memberPreregSchema = z
     email,
     phone: requiredPhone,
     age: optionalAge,
-    region: z.enum(REGIONS, { errorMap: () => ({ message: "居住地域を選択してください" }) }),
+    region: z.enum(REGIONS, { message: "居住地域を選択してください" }),
     licenseYears: optionalLicenseYears,
     useFrequency: z.enum(USE_FREQUENCY).optional().or(z.literal("")),
     interestModels: z.array(z.string()).optional(),
@@ -308,7 +353,7 @@ export const memberPreregSchema = z
     incidentHistory: z.enum(INCIDENT_OPTIONS).optional().or(z.literal("")),
     requests: z.string().trim().max(2000).optional().or(z.literal("")),
     privacyAgreed: z.literal(true, {
-      errorMap: () => ({ message: "プライバシーポリシーへの同意が必要です" }),
+      message: "プライバシーポリシーへの同意が必要です",
     }),
     companyUrl: honeypot,
     ...attribution,
@@ -342,10 +387,10 @@ export const contactSchema = z.object({
   fullName: name,
   email,
   phone: optionalPhone,
-  topic: z.enum(CONTACT_TOPICS, { errorMap: () => ({ message: "種別を選択してください" }) }),
+  topic: z.enum(CONTACT_TOPICS, { message: "種別を選択してください" }),
   message: z.string().trim().min(10, "内容を10文字以上入力してください").max(3000),
   privacyAgreed: z.literal(true, {
-    errorMap: () => ({ message: "プライバシーポリシーへの同意が必要です" }),
+    message: "プライバシーポリシーへの同意が必要です",
   }),
   companyUrl: honeypot,
   ...attribution,

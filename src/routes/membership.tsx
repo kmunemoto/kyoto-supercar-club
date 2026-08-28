@@ -23,14 +23,22 @@ function Page() {
       />
       <Section className="max-w-3xl pt-0">
         <p className="text-ink-soft">
-          いま準備しているのは、少人数での共同所有と、オーナー同士の相互利用です。
+          いま準備しているのは、少人数での共同所有と、既存スーパーカーオーナー限定の相互利用です。一般会員向けレンタカーは当面保留です。
         </p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Link
           to="/collection"
-          className="mt-8 inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"
+          className="inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"
         >
-          共同購入を見る
+          共同所有を見る
         </Link>
+        <Link
+          to="/owners"
+          className="inline-flex h-12 items-center rounded-md border border-line px-6"
+        >
+          オーナーネットワークを見る
+        </Link>
+        </div>
       </Section>
     </SiteShell>
   );

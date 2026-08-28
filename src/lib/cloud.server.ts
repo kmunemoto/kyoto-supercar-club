@@ -103,15 +103,47 @@ async function notify(subject: string, text: string) {
   }
 }
 
+function ownerExtraSummary(data: OwnerInquiryInput): string {
+  return [
+    `他の登録車両を利用したいか: ${data.wantToUseOthers}`,
+    `愛車を登録したいか: ${data.wantToRegisterCar}`,
+    `1日200km基準の希望: ${data.dailyKmPreference}`,
+    `運転者最低年齢: ${data.minDriverAge}`,
+    `免許歴希望: ${data.requiredLicenseYears}`,
+    `雨天利用: ${data.rainUse}`,
+    `降雪時利用: ${data.snowUse}`,
+    `走行地域の制限: ${data.regionLimit || "未記入"}`,
+    `屋外夜間保管: ${data.outdoorNightParking}`,
+    `受け渡し時の保管場所アクセス: ${data.handoverAccessOk}`,
+    `LINEでの連絡希望: ${data.preferLine ? "はい" : "いいえ"}`,
+    data.otherDriverConditions ? `その他の運転者条件: ${data.otherDriverConditions}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+const localDevStore: { owners: unknown[]; collections: unknown[]; members: unknown[]; contacts: unknown[] } =
+  {
+    owners: [],
+    collections: [],
+    members: [],
+    contacts: [],
+  };
+
+function localDevInsert(kind: keyof typeof localDevStore, row: unknown): Result {
+  if (!import.meta.env.DEV) return { ok: false, error: UNCONFIGURED };
+  const id = (row as { id?: string }).id ?? newId("loc");
+  localDevStore[kind].unshift(row);
+  return { ok: true, id };
+}
+
 export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Result> {
-  if (!cloudReady()) return { ok: false, error: UNCONFIGURED };
   if (rateLimited("owner"))
     return { ok: false, error: "送信が集中しています。しばらくしてから再度お試しください。" };
-  const client = insertClient();
-  if (!client) return { ok: false, error: UNCONFIGURED };
   const id = newId("own");
   const now = new Date().toISOString();
-  const { error } = await client.from("owner_inquiries").insert({
+  const extra = ownerExtraSummary(data);
+  const base = {
     id,
     full_name: data.fullName,
     email: data.email,
@@ -124,7 +156,7 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     storage_location: null,
     annual_use_count: data.annualUseCount,
     lendable_period: data.priorityUsePeriod,
-    management_needs: data.managementNeeds,
+    management_needs: data.managementNeeds ?? [],
     reward_preference: null,
     photo_notes: null,
     questions: data.concerns,
@@ -133,19 +165,50 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     owns_vehicle: data.ownsVehicle,
     mileage_band: data.mileageBand || null,
     storage_type: data.storageType,
-    interests: data.managementNeeds,
+    interests: data.managementNeeds ?? [],
     concerns: data.concerns,
-    preferred_contact: null,
-    free_text: null,
+    preferred_contact: data.preferLine ? "LINE希望" : null,
+    free_text: extra,
     participation_purpose: data.participationPurpose,
     priority_use_period: data.priorityUsePeriod,
-    annual_km_cap: data.annualKmCap,
-    other_driver_conditions: data.otherDriverConditions,
+    annual_km_cap: data.dailyKmPreference,
+    other_driver_conditions: extra,
     created_at: now,
     updated_at: now,
     ...attr(data),
-  });
-  if (error) return { ok: false, error: SAVE_FAILED };
+  };
+  const withNewColumns = {
+    ...base,
+    want_to_use_others: data.wantToUseOthers,
+    want_to_register_car: data.wantToRegisterCar,
+    daily_km_preference: data.dailyKmPreference,
+    min_driver_age: data.minDriverAge,
+    license_years_pref: data.requiredLicenseYears,
+    rain_use: data.rainUse,
+    snow_use: data.snowUse,
+    region_limit: data.regionLimit || null,
+    outdoor_night_parking: data.outdoorNightParking,
+    handover_access_ok: data.handoverAccessOk,
+    prefer_line: Boolean(data.preferLine),
+  };
+
+  if (!cloudReady()) {
+    const local = localDevInsert("owners", withNewColumns);
+    if (local.ok) {
+      await notify(
+        "【OWNER NETWORK】新しい先行相談（ローカル）",
+        `地域: ${data.region}\nメーカー: ${data.make}\n車種: ${data.model}\n目的: ${data.participationPurpose}\nID: ${id}`,
+      );
+    }
+    return local;
+  }
+  const client = insertClient();
+  if (!client) return { ok: false, error: UNCONFIGURED };
+  const first = await client.from("owner_inquiries").insert(withNewColumns);
+  if (first.error) {
+    const fallback = await client.from("owner_inquiries").insert(base);
+    if (fallback.error) return { ok: false, error: SAVE_FAILED };
+  }
   await notify(
     "【OWNER NETWORK】新しい先行相談",
     `地域: ${data.region}\nメーカー: ${data.make}\n車種: ${data.model}\n目的: ${data.participationPurpose}\nID: ${id}`,
@@ -154,14 +217,11 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
 }
 
 export async function insertCollectionInquiry(data: CollectionInquiryInput): Promise<Result> {
-  if (!cloudReady()) return { ok: false, error: UNCONFIGURED };
   if (rateLimited("collection"))
     return { ok: false, error: "送信が集中しています。しばらくしてから再度お試しください。" };
-  const client = insertClient();
-  if (!client) return { ok: false, error: UNCONFIGURED };
   const id = newId("col");
   const now = new Date().toISOString();
-  const { error } = await client.from("collection_inquiries").insert({
+  const row = {
     id,
     full_name: data.fullName,
     email: data.email,
@@ -184,7 +244,17 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     created_at: now,
     updated_at: now,
     ...attr(data),
-  });
+  };
+  if (!cloudReady()) {
+    const local = localDevInsert("collections", row);
+    if (local.ok) {
+      await notify("【COLLECTION】新しい共同オーナー候補（ローカル）", `地域: ${data.region}\n希望: ${data.desiredModels}\nID: ${id}`);
+    }
+    return local;
+  }
+  const client = insertClient();
+  if (!client) return { ok: false, error: UNCONFIGURED };
+  const { error } = await client.from("collection_inquiries").insert(row);
   if (error) return { ok: false, error: SAVE_FAILED };
   await notify(
     "【COLLECTION】新しい共同オーナー候補",
@@ -194,14 +264,11 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
 }
 
 export async function insertMemberPrereg(data: MemberPreregInput): Promise<Result> {
-  if (!cloudReady()) return { ok: false, error: UNCONFIGURED };
   if (rateLimited("member"))
     return { ok: false, error: "送信が集中しています。しばらくしてから再度お試しください。" };
-  const client = insertClient();
-  if (!client) return { ok: false, error: UNCONFIGURED };
   const id = newId("mem");
   const now = new Date().toISOString();
-  const { error } = await client.from("member_preregistrations").insert({
+  const row = {
     id,
     full_name: data.fullName,
     email: data.email,
@@ -221,7 +288,11 @@ export async function insertMemberPrereg(data: MemberPreregInput): Promise<Resul
     created_at: now,
     updated_at: now,
     ...attr(data),
-  });
+  };
+  if (!cloudReady()) return localDevInsert("members", row);
+  const client = insertClient();
+  if (!client) return { ok: false, error: UNCONFIGURED };
+  const { error } = await client.from("member_preregistrations").insert(row);
   if (error) return { ok: false, error: SAVE_FAILED };
   await notify(
     "【会員事前登録】新しい登録",
@@ -231,14 +302,11 @@ export async function insertMemberPrereg(data: MemberPreregInput): Promise<Resul
 }
 
 export async function insertContact(data: ContactInput): Promise<Result> {
-  if (!cloudReady()) return { ok: false, error: UNCONFIGURED };
   if (rateLimited("contact"))
     return { ok: false, error: "送信が集中しています。しばらくしてから再度お試しください。" };
-  const client = insertClient();
-  if (!client) return { ok: false, error: UNCONFIGURED };
   const id = newId("inq");
   const now = new Date().toISOString();
-  const { error } = await client.from("contact_inquiries").insert({
+  const row = {
     id,
     full_name: data.fullName,
     email: data.email,
@@ -250,7 +318,11 @@ export async function insertContact(data: ContactInput): Promise<Result> {
     created_at: now,
     updated_at: now,
     ...attr(data),
-  });
+  };
+  if (!cloudReady()) return localDevInsert("contacts", row);
+  const client = insertClient();
+  if (!client) return { ok: false, error: UNCONFIGURED };
+  const { error } = await client.from("contact_inquiries").insert(row);
   if (error) return { ok: false, error: SAVE_FAILED };
   await notify("【お問い合わせ】新しいメッセージ", `種別: ${data.topic}\nID: ${id}`);
   return { ok: true, id };

@@ -32,7 +32,7 @@ function Page() {
         <article>
           <h2 className="font-serif text-2xl">2. 利用目的</h2>
           <p className="mt-3 text-ink-soft">
-            お申し込みへの返答、面談の調整、サービス設計のための集計、流入元の把握、法令上必要な確認に限ります。販売目的の第三者提供は行いません。
+            お申し込みへの返答、追加確認、サービス設計のための集計、流入元の把握、法令上必要な確認に限ります。販売目的の第三者提供は行いません。
           </p>
         </article>
         <article>

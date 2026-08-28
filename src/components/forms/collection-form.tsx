@@ -233,6 +233,7 @@ export function CollectionForm() {
               label="共同購入に充てられる予算感"
               htmlFor="budgetBand"
               required
+              hint="現在の計画は1人あたり約500万円です。いまは興味登録のみで、決済しません。"
               error={errors["budgetBand"]}
             >
               <NativeSelect
@@ -249,6 +250,7 @@ export function CollectionForm() {
               label="希望する年間利用日数"
               htmlFor="desiredDaysPerYear"
               required
+              hint="現在の計画は1人あたり年間24日です。"
               error={errors["desiredDaysPerYear"]}
             >
               <NativeSelect
@@ -265,6 +267,7 @@ export function CollectionForm() {
               label="希望する年間走行距離"
               htmlFor="desiredKmPerYear"
               required
+              hint="現在の計画は1人あたり年間800kmです。"
               error={errors["desiredKmPerYear"]}
             >
               <NativeSelect

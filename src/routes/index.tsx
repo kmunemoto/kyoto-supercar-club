@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
     pageHead({
       title: "京都のスーパーカー共同所有｜KYOTO SUPERCAR CLUB",
       description:
-        "車を、もう一度憧れに。京都からスーパーカーの共同所有とオーナーネットワークを準備しているカーライフブランドです。サービス準備中。",
+        "京都から、車に憧れる文化をもう一度。6人での共同購入と、既存オーナー限定の相互利用を準備しています。先行登録・相談のみ。",
       path: "/",
     }),
 });
@@ -73,7 +73,7 @@ function Home() {
 
       <Section>
         <p className="text-xs tracking-[0.22em] text-copper">PURPOSE</p>
-        <h2 className="mt-4 max-w-3xl font-serif text-3xl md:text-4xl">{BRAND.purpose}</h2>
+        <h2 className="mt-4 max-w-3xl font-serif text-3xl md:text-4xl">{BRAND_PURPOSE.heading}</h2>
         <div className="mt-6 max-w-3xl space-y-4 text-ink-soft">
           {BRAND_PURPOSE.paragraphs.slice(1).map((p) => (
             <p key={p}>{p}</p>
@@ -103,7 +103,7 @@ function Home() {
         <p className="text-xs tracking-[0.22em] text-copper">CARE</p>
         <h2 className="mt-4 font-serif text-3xl">KSCが担当する車両管理</h2>
         <p className="mt-4 max-w-2xl text-ink-soft">
-          保管、手入れ、予約、記録。実施場所と費用は未確定です。いまは方針の確認段階です。
+          COLLECTION車両はKSCが保管する計画です。OWNER NETWORKの車両は各オーナーが普段どおり保管します。実施場所と保険の補償額は未確定です。
         </p>
         <ul className="mt-12 grid gap-8 md:grid-cols-2">
           {MANAGEMENT_ITEMS.map((item) => (
@@ -123,7 +123,14 @@ function Home() {
           </Link>
         </div>
         <dl className="mt-10 divide-y divide-line border-y border-line">
-          {FAQS.slice(0, 4).map((f) => (
+          {FAQS.filter((f) =>
+            [
+              "今すぐ車を借りられますか？",
+              "COLLECTIONとOWNER NETWORKの違いは何ですか？",
+              "いま代金や申込金は必要ですか？",
+              "審査はどのように行いますか？",
+            ].includes(f.q),
+          ).map((f) => (
             <div key={f.q} className="grid gap-3 py-6 md:grid-cols-[0.9fr_1.3fr]">
               <dt className="font-medium">{f.q}</dt>
               <dd className="text-ink-soft">{f.a}</dd>

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/faq")({
     pageHead({
       title: "よくある質問｜KYOTO SUPERCAR CLUB",
       description:
-        "京都のスーパーカー共同所有とオーナーネットワーク。料金・車種・保険は未確定です。",
+        "京都のスーパーカー共同購入と、既存オーナー限定の相互利用。料金は計画値、保険と許認可は確認中です。先行登録・相談のみ。",
       path: "/faq",
     }),
 });
@@ -22,7 +22,7 @@ function Page() {
       <PageIntro
         kicker="FAQ"
         title="よくある質問"
-        lead="予約できる状態ではありません。料金、車種、保険、名義は確定次第、改めてご案内します。"
+        lead="予約できる状態ではありません。掲載の料金は現在の計画です。保険、名義、税込表示は確定次第ご案内します。"
       />
       <Section className="pt-0">
         <dl className="divide-y divide-line border-y border-line">
