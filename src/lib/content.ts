@@ -1,5 +1,13 @@
 import { BRAND, COLLECTION_VALUE, OWNER_VALUE } from "./brand";
 
+/**
+ * Stamped onto every lead so it is possible to say afterwards which privacy
+ * policy and which published fees that person actually saw. Bump it whenever
+ * the policy wording changes or the fees stop being provisional — the previous
+ * value stays on the rows written under it.
+ */
+export const POLICY_VERSION = "2026-08-29";
+
 export const LEGAL_BANNER =
   "現在は、共同購入の興味登録とオーナー車両の先行相談を受け付けています。サービスの提供は、必要な許認可・保険・契約体制を整えた後に開始します。";
 

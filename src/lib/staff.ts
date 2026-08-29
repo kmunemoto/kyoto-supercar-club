@@ -67,6 +67,41 @@ export async function signInStaff(
   return { ok: true };
 }
 
+/**
+ * There was no way to recover an account: a forgotten password meant editing
+ * the auth user by hand in the Supabase dashboard. The reply always reads the
+ * same whether or not the address exists, so this cannot be used to find out
+ * who has an account.
+ */
+export async function requestStaffPasswordReset(
+  email: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: "現在、受付設定を確認中です。" };
+  const options =
+    typeof window === "undefined" ? {} : { redirectTo: `${window.location.origin}/login/reset` };
+  const { error } = await sb.auth.resetPasswordForEmail(email.trim(), options);
+  // A failure here usually means rate limiting rather than an unknown address,
+  // and saying so would leak which addresses are registered.
+  if (error) console.error("[staff] password reset request failed", error.message);
+  return { ok: true };
+}
+
+/** Completes a reset. Only works while the recovery link's session is active. */
+export async function setStaffPassword(
+  password: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: "現在、受付設定を確認中です。" };
+  const { data } = await sb.auth.getSession();
+  if (!data.session) {
+    return { ok: false, error: "リンクの有効期限が切れています。もう一度お試しください。" };
+  }
+  const { error } = await sb.auth.updateUser({ password });
+  if (error) return { ok: false, error: "パスワードを変更できませんでした。" };
+  return { ok: true };
+}
+
 export async function signOutStaff() {
   const sb = getSupabase();
   if (sb) await sb.auth.signOut();

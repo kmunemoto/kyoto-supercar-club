@@ -3,15 +3,19 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { StatusBadge } from "@/components/admin/status-badge";
 import {
+  CHANNEL_LABEL,
   LEGAL_STATUSES,
   LEGAL_STATUS_LABEL,
   STALE_NEW_DAYS,
+  STALE_OPEN_DAYS,
+  exportAll,
   getDashboard,
   isLegalStatus,
   setLegalStatus,
   type LegalStatus,
 } from "@/lib/data/admin";
 import { APPLICATION_STATUSES, STATUS_LABEL } from "@/lib/status";
+import { downloadText, formatDateTime } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/")({
   component: Dashboard,
@@ -25,12 +29,32 @@ function Dashboard() {
   const [data, setData] = useState<Awaited<ReturnType<typeof getDashboard>> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     getDashboard()
       .then(setData)
       .catch(() => setError("読み込めませんでした"));
   }, []);
+
+  async function onExport() {
+    setExporting(true);
+    try {
+      const res = await exportAll();
+      const stamp = new Date().toISOString().slice(0, 10);
+      downloadText(`ksc-backup-${stamp}.json`, res.json, "application/json;charset=utf-8");
+      const total = Object.values(res.counts).reduce((a, n) => a + n, 0);
+      if (res.failed.length) {
+        toast.error(`${res.failed.join(", ")} を読み出せませんでした`);
+      } else {
+        toast.success(`${total}件を書き出しました`);
+      }
+    } catch {
+      toast.error("書き出しに失敗しました");
+    } finally {
+      setExporting(false);
+    }
+  }
 
   async function onLegalChange(id: string, next: string) {
     if (!isLegalStatus(next)) return;
@@ -93,9 +117,37 @@ function Dashboard() {
         <h1 className="font-serif text-3xl">概況</h1>
         <p className="mt-2 text-ink-soft">Lovable Cloud に保存された実データです。</p>
       </header>
+      {data.environmentWarnings.length > 0 ? (
+        <section className="rounded-lg border border-warn/40 bg-warn/5 px-4 py-3">
+          <h2 className="text-sm font-medium text-warn">設定を確認してください</h2>
+          <ul className="mt-2 space-y-1 text-sm text-ink-soft">
+            {data.environmentWarnings.map((w) => (
+              <li key={w}>{w}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      {data.failedNotifications.length > 0 ? (
+        <section className="rounded-lg border border-oxblood/30 bg-oxblood/5 px-4 py-3">
+          <h2 className="text-sm font-medium text-oxblood">
+            送信できなかった通知が {data.failedNotifications.length} 件あります
+          </h2>
+          <ul className="mt-2 space-y-1 text-sm text-ink-soft">
+            {data.failedNotifications.slice(0, 5).map((n) => (
+              <li key={n.id}>
+                {formatDateTime(n.created_at)} ・ {n.channel} ・ {n.subject_type}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-sm text-muted">
+            該当のリードには自分から連絡してください。原因はメールの設定です。
+          </p>
+        </section>
+      ) : null}
       {staleTotal > 0 ? (
         <p className="rounded-lg border border-oxblood/30 bg-oxblood/5 px-4 py-3 text-sm text-oxblood">
-          {STALE_NEW_DAYS}日以上「新規」のままの申込が {staleTotal} 件あります。
+          {STALE_NEW_DAYS}日以上「新規」のまま、または{STALE_OPEN_DAYS}
+          日以上動きのない申込が {staleTotal} 件あります。
         </p>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -109,7 +161,7 @@ function Dashboard() {
               </span>
               {c.stale > 0 ? (
                 <span className="ml-3 text-oxblood">
-                  ／{STALE_NEW_DAYS}日超 <span className="tabular-nums">{c.stale}</span>
+                  ／要対応 <span className="tabular-nums">{c.stale}</span>
                 </span>
               ) : null}
             </p>
@@ -189,7 +241,12 @@ function Dashboard() {
               <li key={r.id} className="flex items-center justify-between gap-3 py-3">
                 <Link to="/admin/inquiries/$id" params={{ id: r.id }} className="hover:underline">
                   {r.full_name}
-                  <span className="ml-2 text-sm text-muted">{r.topic}</span>
+                  <span className="ml-2 text-sm text-muted">
+                    {r.topic}
+                    {r.channel && r.channel !== "form"
+                      ? ` ・ ${CHANNEL_LABEL[r.channel] ?? r.channel}`
+                      : ""}
+                  </span>
                 </Link>
                 <StatusBadge status={r.status} />
               </li>
@@ -210,6 +267,20 @@ function Dashboard() {
             ))}
           </ul>
         </div>
+      </section>
+      <section className="rounded-xl border border-line bg-cream p-5">
+        <h2 className="font-serif text-xl">バックアップ</h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          全リードに加えて、メモ・対応履歴・要確認台帳・通知記録をまとめて書き出します。一覧ごとのCSVには含まれない項目です。書き出したファイルは個人情報そのものなので、暗号化した保管先に置いてください。
+        </p>
+        <button
+          type="button"
+          className="mt-4 inline-flex h-11 min-h-11 items-center rounded-md border border-line bg-paper px-4 text-sm hover:bg-cream disabled:opacity-60"
+          onClick={onExport}
+          disabled={exporting}
+        >
+          {exporting ? "書き出し中…" : "すべて書き出す（JSON）"}
+        </button>
       </section>
       <section>
         <h2 className="font-serif text-xl">要確認（法務・保険・運用）</h2>

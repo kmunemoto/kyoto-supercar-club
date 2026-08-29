@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/admin/owners", label: "オーナー", exact: false },
   { href: "/admin/members", label: "旧会員", exact: false },
   { href: "/admin/inquiries", label: "お問い合わせ", exact: false },
+  { href: "/admin/intake", label: "手動登録", exact: false },
 ] as const;
 
 export function AdminShell({ pathname }: { pathname: string }) {

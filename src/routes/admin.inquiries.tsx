@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDebouncedQuery, validateAdminSearch } from "@/components/admin/use-filters";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { AdminToolbar } from "@/components/admin/toolbar";
-import { listContacts, type ContactRow } from "@/lib/data/admin";
+import { CHANNEL_LABEL, listContacts, type ContactRow } from "@/lib/data/admin";
 import { downloadText, formatDateTime, toCsv } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/inquiries")({
@@ -49,7 +49,20 @@ function Page() {
           if (!rows) return;
           downloadText(
             "contact-inquiries.csv",
-            toCsv(rows, ["id", "full_name", "email", "phone", "topic", "status", "created_at"]),
+            // message is the enquiry itself; leaving it out made the export
+            // useless for anything but counting.
+            toCsv(rows, [
+              "id",
+              "full_name",
+              "email",
+              "phone",
+              "topic",
+              "message",
+              "channel",
+              "policy_version",
+              "status",
+              "created_at",
+            ]),
           );
         }}
       />
@@ -89,7 +102,14 @@ function Page() {
                     </Link>
                     <p className="text-xs text-muted">{r.email}</p>
                   </td>
-                  <td className="py-3">{r.topic}</td>
+                  <td className="py-3">
+                    {r.topic}
+                    {r.channel && r.channel !== "form" ? (
+                      <p className="text-xs text-copper">
+                        {CHANNEL_LABEL[r.channel] ?? r.channel}経由（手動登録）
+                      </p>
+                    ) : null}
+                  </td>
                   <td className="py-3">
                     <StatusBadge status={r.status} />
                   </td>

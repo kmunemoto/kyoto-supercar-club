@@ -25,11 +25,13 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCollectionRouteImport } from './routes/admin.collection'
 import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
+import { Route as AdminIntakeRouteImport } from './routes/admin.intake'
 import { Route as AdminMembersRouteImport } from './routes/admin.members'
 import { Route as AdminOwnersRouteImport } from './routes/admin.owners'
 import { Route as ApplyCollectionRouteImport } from './routes/apply/collection'
 import { Route as ApplyMemberRouteImport } from './routes/apply/member'
 import { Route as ApplyOwnerRouteImport } from './routes/apply/owner'
+import { Route as LoginResetRouteImport } from './routes/login_.reset'
 import { Route as AdminCollectionIdRouteImport } from './routes/admin.collection.$id'
 import { Route as AdminInquiriesIdRouteImport } from './routes/admin.inquiries.$id'
 import { Route as AdminMembersIdRouteImport } from './routes/admin.members.$id'
@@ -115,6 +117,11 @@ const AdminInquiriesRoute = AdminInquiriesRouteImport.update({
   path: '/inquiries',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminIntakeRoute = AdminIntakeRouteImport.update({
+  id: '/intake',
+  path: '/intake',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminMembersRoute = AdminMembersRouteImport.update({
   id: '/members',
   path: '/members',
@@ -138,6 +145,11 @@ const ApplyMemberRoute = ApplyMemberRouteImport.update({
 const ApplyOwnerRoute = ApplyOwnerRouteImport.update({
   id: '/apply/owner',
   path: '/apply/owner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginResetRoute = LoginResetRouteImport.update({
+  id: '/login_/reset',
+  path: '/login/reset',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCollectionIdRoute = AdminCollectionIdRouteImport.update({
@@ -177,11 +189,13 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
+  '/admin/intake': typeof AdminIntakeRoute
   '/admin/members': typeof AdminMembersRouteWithChildren
   '/admin/owners': typeof AdminOwnersRouteWithChildren
   '/apply/collection': typeof ApplyCollectionRoute
   '/apply/member': typeof ApplyMemberRoute
   '/apply/owner': typeof ApplyOwnerRoute
+  '/login/reset': typeof LoginResetRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/collection/$id': typeof AdminCollectionIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
@@ -203,11 +217,13 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
+  '/admin/intake': typeof AdminIntakeRoute
   '/admin/members': typeof AdminMembersRouteWithChildren
   '/admin/owners': typeof AdminOwnersRouteWithChildren
   '/apply/collection': typeof ApplyCollectionRoute
   '/apply/member': typeof ApplyMemberRoute
   '/apply/owner': typeof ApplyOwnerRoute
+  '/login/reset': typeof LoginResetRoute
   '/admin': typeof AdminIndexRoute
   '/admin/collection/$id': typeof AdminCollectionIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
@@ -231,11 +247,13 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
+  '/admin/intake': typeof AdminIntakeRoute
   '/admin/members': typeof AdminMembersRouteWithChildren
   '/admin/owners': typeof AdminOwnersRouteWithChildren
   '/apply/collection': typeof ApplyCollectionRoute
   '/apply/member': typeof ApplyMemberRoute
   '/apply/owner': typeof ApplyOwnerRoute
+  '/login_/reset': typeof LoginResetRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/collection/$id': typeof AdminCollectionIdRoute
   '/admin/inquiries/$id': typeof AdminInquiriesIdRoute
@@ -260,11 +278,13 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/collection'
     | '/admin/inquiries'
+    | '/admin/intake'
     | '/admin/members'
     | '/admin/owners'
     | '/apply/collection'
     | '/apply/member'
     | '/apply/owner'
+    | '/login/reset'
     | '/admin/'
     | '/admin/collection/$id'
     | '/admin/inquiries/$id'
@@ -286,11 +306,13 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/collection'
     | '/admin/inquiries'
+    | '/admin/intake'
     | '/admin/members'
     | '/admin/owners'
     | '/apply/collection'
     | '/apply/member'
     | '/apply/owner'
+    | '/login/reset'
     | '/admin'
     | '/admin/collection/$id'
     | '/admin/inquiries/$id'
@@ -313,11 +335,13 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/collection'
     | '/admin/inquiries'
+    | '/admin/intake'
     | '/admin/members'
     | '/admin/owners'
     | '/apply/collection'
     | '/apply/member'
     | '/apply/owner'
+    | '/login_/reset'
     | '/admin/'
     | '/admin/collection/$id'
     | '/admin/inquiries/$id'
@@ -342,6 +366,7 @@ export interface RootRouteChildren {
   ApplyCollectionRoute: typeof ApplyCollectionRoute
   ApplyMemberRoute: typeof ApplyMemberRoute
   ApplyOwnerRoute: typeof ApplyOwnerRoute
+  LoginResetRoute: typeof LoginResetRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -458,6 +483,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminInquiriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/intake': {
+      id: '/admin/intake'
+      path: '/intake'
+      fullPath: '/admin/intake'
+      preLoaderRoute: typeof AdminIntakeRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/members': {
       id: '/admin/members'
       path: '/members'
@@ -491,6 +523,13 @@ declare module '@tanstack/react-router' {
       path: '/apply/owner'
       fullPath: '/apply/owner'
       preLoaderRoute: typeof ApplyOwnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login_/reset': {
+      id: '/login_/reset'
+      path: '/login/reset'
+      fullPath: '/login/reset'
+      preLoaderRoute: typeof LoginResetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/collection/$id': {
@@ -575,6 +614,7 @@ const AdminOwnersRouteWithChildren = AdminOwnersRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminCollectionRoute: typeof AdminCollectionRouteWithChildren
   AdminInquiriesRoute: typeof AdminInquiriesRouteWithChildren
+  AdminIntakeRoute: typeof AdminIntakeRoute
   AdminMembersRoute: typeof AdminMembersRouteWithChildren
   AdminOwnersRoute: typeof AdminOwnersRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
@@ -583,6 +623,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCollectionRoute: AdminCollectionRouteWithChildren,
   AdminInquiriesRoute: AdminInquiriesRouteWithChildren,
+  AdminIntakeRoute: AdminIntakeRoute,
   AdminMembersRoute: AdminMembersRouteWithChildren,
   AdminOwnersRoute: AdminOwnersRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
@@ -607,6 +648,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApplyCollectionRoute: ApplyCollectionRoute,
   ApplyMemberRoute: ApplyMemberRoute,
   ApplyOwnerRoute: ApplyOwnerRoute,
+  LoginResetRoute: LoginResetRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,6 +1,8 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { BRAND } from "@/lib/brand";
+import { POLICY_VERSION } from "@/lib/content";
+import { opsWarnings, parseRecipients } from "@/lib/ops-policy";
 import { getSupabaseAnonKey, getSupabaseUrl, isCloudConfigured } from "@/lib/site";
 import { newId } from "@/lib/utils";
 import type {
@@ -90,6 +92,33 @@ export function cloudReady(): boolean {
   return isCloudConfigured();
 }
 
+/**
+ * Without a service role key, insertClient() falls back to the anon key, and
+ * two things stop working without saying so: notification_log writes (the
+ * table is deny-all under RLS) and the duplicate-lead check (staff-only
+ * SELECT). Both are wrapped in catches, so the only symptom is silence.
+ */
+export function serviceRoleConfigured(): boolean {
+  return serviceClient() !== null;
+}
+
+export function environmentWarnings(): string[] {
+  return opsWarnings({
+    serviceRoleKey: serviceRoleConfigured() ? "set" : undefined,
+    resendApiKey: env("RESEND_API_KEY"),
+    notifyFrom: mailFrom(),
+    notifyEmail: env("NOTIFY_EMAIL"),
+  });
+}
+
+/**
+ * Written onto every lead from a public form. Manual entries made by staff
+ * carry their own channel, so the console can tell the two apart.
+ */
+function provenance() {
+  return { channel: "form", policy_version: POLICY_VERSION };
+}
+
 function attr(input: {
   utmSource?: string | undefined;
   utmMedium?: string | undefined;
@@ -152,9 +181,15 @@ async function recordNotification(
   }
 }
 
-async function sendMail(to: string, subject: string, text: string): Promise<string | null> {
+async function sendMail(
+  to: string | string[],
+  subject: string,
+  text: string,
+): Promise<string | null> {
   const key = env("RESEND_API_KEY");
   if (!key) return null;
+  const recipients = Array.isArray(to) ? to : [to];
+  if (recipients.length === 0) return null;
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -162,7 +197,7 @@ async function sendMail(to: string, subject: string, text: string): Promise<stri
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ from: mailFrom(), to: [to], subject, text }),
+      body: JSON.stringify({ from: mailFrom(), to: recipients, subject, text }),
       // Resend being slow must not become the visitor's wait.
       signal: AbortSignal.timeout(MAIL_TIMEOUT_MS),
     });
@@ -179,8 +214,8 @@ async function sendMail(to: string, subject: string, text: string): Promise<stri
 
 /** Operator-facing new-lead alert. Deliberately carries no contact details. */
 async function notify(subject: string, text: string, subjectType = "unknown", subjectId = "") {
-  const to = env("NOTIFY_EMAIL");
-  if (!env("RESEND_API_KEY") || !to) {
+  const to = parseRecipients(env("NOTIFY_EMAIL"));
+  if (!env("RESEND_API_KEY") || to.length === 0) {
     console.error("[notify] RESEND_API_KEY or NOTIFY_EMAIL is not set; no alert was sent", {
       subjectType,
       subjectId,
@@ -390,6 +425,7 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     created_at: now,
     updated_at: now,
     ...attr(data),
+    ...provenance(),
   };
   const withNewColumns = {
     ...base,
@@ -483,6 +519,7 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     created_at: now,
     updated_at: now,
     ...attr(data),
+    ...provenance(),
   };
   const withNewColumns = {
     ...base,
@@ -559,6 +596,7 @@ export async function insertMemberPrereg(data: MemberPreregInput): Promise<Resul
     created_at: now,
     updated_at: now,
     ...attr(data),
+    ...provenance(),
   };
   const duplicate = await isDuplicateLead("member_preregistrations", data.email);
   const summary = `地域: ${data.region}\n参加: ${data.participationInterests.join("、")}\nID: ${id}`;
@@ -605,6 +643,7 @@ export async function insertContact(data: ContactInput): Promise<Result> {
     created_at: now,
     updated_at: now,
     ...attr(data),
+    ...provenance(),
   };
   const duplicate = await isDuplicateLead("contact_inquiries", data.email);
   const summary = `種別: ${data.topic}\nID: ${id}`;

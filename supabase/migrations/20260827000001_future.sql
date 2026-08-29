@@ -1,6 +1,25 @@
 -- Forward-looking tables. Unused in this MVP, kept so later features
 -- (review, vehicles, bookings, Stripe, GPS, contracts) can land without
 -- reshaping the inquiry records.
+--
+-- READ THIS BEFORE TREATING IT AS A DESIGN. It is a sketch, not a plan:
+--
+--   * The hardest rules the site publishes have no tables here at all —
+--     credit lots with 24-month expiry and retroactive return on cancellation,
+--     the annual day/distance allowance and its transfer between co-owners,
+--     per-vehicle owner conditions, and double-booking prevention. `bookings`
+--     is six columns with none of that.
+--   * At one to three vehicles the answer is very likely to buy or to do by
+--     hand: a shared calendar plus a timestamped request form for booking,
+--     hosted Stripe for payments, a telematics SaaS for GPS, an e-signature
+--     service for contracts, and a spreadsheet for the ledgers. See
+--     docs/LAUNCH_SYSTEMS.md.
+--   * If a SaaS is chosen instead, drop these with a new migration. Deleting
+--     this file does not remove the tables from a database that already ran it.
+--
+-- One exception: notification_log is NOT forward-looking. It is written on
+-- every send attempt by src/lib/cloud.server.ts and read by the admin
+-- dashboard. RLS is deny-all, so writes need SUPABASE_SERVICE_ROLE_KEY.
 
 create table if not exists members (
   id text primary key,

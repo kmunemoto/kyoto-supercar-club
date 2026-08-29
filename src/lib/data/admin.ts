@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { LEGAL_TODOS } from "@/lib/content";
+import { LEGAL_TODOS, POLICY_VERSION } from "@/lib/content";
+import { CONTACT_TOPICS } from "@/lib/schemas";
 import { getAccessToken } from "@/lib/staff";
 import {
   APPLICATION_STATUSES,
@@ -16,6 +17,7 @@ import type {
   NoteRow,
   OwnerRow,
 } from "@/lib/store";
+import { countStale, type StaleRow } from "@/lib/ops-policy";
 import { newId } from "@/lib/utils";
 
 export type { CollectionRow, ContactRow, EventRow, MemberRow, NoteRow, OwnerRow };
@@ -105,6 +107,8 @@ function asOwner(row: Record<string, unknown>): OwnerRow {
     utm_term: row["utm_term"] == null ? null : String(row["utm_term"]),
     landing_path: row["landing_path"] == null ? null : String(row["landing_path"]),
     referrer: row["referrer"] == null ? null : String(row["referrer"]),
+    channel: row["channel"] == null ? null : String(row["channel"]),
+    policy_version: row["policy_version"] == null ? null : String(row["policy_version"]),
     status: isApplicationStatus(String(row["status"]))
       ? (row["status"] as ApplicationStatus)
       : "new",
@@ -136,6 +140,8 @@ function asMember(row: Record<string, unknown>): MemberRow {
     utm_term: row["utm_term"] == null ? null : String(row["utm_term"]),
     landing_path: row["landing_path"] == null ? null : String(row["landing_path"]),
     referrer: row["referrer"] == null ? null : String(row["referrer"]),
+    channel: row["channel"] == null ? null : String(row["channel"]),
+    policy_version: row["policy_version"] == null ? null : String(row["policy_version"]),
     status: isApplicationStatus(String(row["status"]))
       ? (row["status"] as ApplicationStatus)
       : "new",
@@ -159,6 +165,8 @@ function asContact(row: Record<string, unknown>): ContactRow {
     utm_term: row["utm_term"] == null ? null : String(row["utm_term"]),
     landing_path: row["landing_path"] == null ? null : String(row["landing_path"]),
     referrer: row["referrer"] == null ? null : String(row["referrer"]),
+    channel: row["channel"] == null ? null : String(row["channel"]),
+    policy_version: row["policy_version"] == null ? null : String(row["policy_version"]),
     status: isApplicationStatus(String(row["status"]))
       ? (row["status"] as ApplicationStatus)
       : "new",
@@ -204,6 +212,8 @@ function asCollection(row: Record<string, unknown>): CollectionRow {
     utm_term: row["utm_term"] == null ? null : String(row["utm_term"]),
     landing_path: row["landing_path"] == null ? null : String(row["landing_path"]),
     referrer: row["referrer"] == null ? null : String(row["referrer"]),
+    channel: row["channel"] == null ? null : String(row["channel"]),
+    policy_version: row["policy_version"] == null ? null : String(row["policy_version"]),
     status: isApplicationStatus(String(row["status"]))
       ? (row["status"] as ApplicationStatus)
       : "new",
@@ -218,16 +228,10 @@ function counts(rows: { status: string }[]): StatusCount[] {
   return APPLICATION_STATUSES.map((status) => ({ status, n: map.get(status) ?? 0 }));
 }
 
-/** A lead still marked "new" after this many days needs chasing. */
-export const STALE_NEW_DAYS = 3;
+export { STALE_NEW_DAYS, STALE_OPEN_DAYS } from "@/lib/ops-policy";
 
-function staleCount(rows: { status: string; created_at?: string | null }[]): number {
-  const cutoff = Date.now() - STALE_NEW_DAYS * 24 * 60 * 60 * 1000;
-  return rows.filter((row) => {
-    if (row.status !== "new") return false;
-    const created = row.created_at ? Date.parse(row.created_at) : NaN;
-    return Number.isNaN(created) ? false : created < cutoff;
-  }).length;
+function staleCount(rows: StaleRow[]): number {
+  return countStale(rows, Date.now());
 }
 
 const getDashboardFn = createServerFn({ method: "POST" })
@@ -270,6 +274,27 @@ const getDashboardFn = createServerFn({ method: "POST" })
       ),
       ...storedLegal.filter((item) => item.id && !knownIds.has(item.id)),
     ];
+    // notification_log records every send attempt; sent_at null means it failed
+    // or was skipped. Nobody was reading it.
+    const notifyRes = await db
+      .from("notification_log")
+      .select("id, channel, subject_type, subject_id, sent_at, created_at")
+      .is("sent_at", null)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    const failedNotifications = notifyRes.error
+      ? []
+      : (notifyRes.data ?? []).map((r) => {
+          const row = r as Record<string, unknown>;
+          return {
+            id: String(row["id"] ?? ""),
+            channel: String(row["channel"] ?? ""),
+            subject_type: String(row["subject_type"] ?? ""),
+            subject_id: String(row["subject_id"] ?? ""),
+            created_at: String(row["created_at"] ?? ""),
+          };
+        });
+
     const stale = {
       collections: staleCount(collections),
       owners: staleCount(owners),
@@ -286,9 +311,16 @@ const getDashboardFn = createServerFn({ method: "POST" })
       recentCollections: collections.slice(0, 5),
       recentContacts: contacts.slice(0, 5),
       stale,
+      failedNotifications,
+      environmentWarnings: await environmentWarningList(),
       legal,
     };
   });
+
+async function environmentWarningList(): Promise<string[]> {
+  const { environmentWarnings } = await import("@/lib/cloud.server");
+  return environmentWarnings();
+}
 
 const listCollectionsFn = createServerFn({ method: "POST" })
   .validator((data: Token & { q?: string; status?: string }) => data)
@@ -602,6 +634,149 @@ const anonymiseFn = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+/**
+ * Everything, every column, including the notes and the status history that the
+ * per-table CSV exports leave behind entirely. This is the copy that would let
+ * the business carry on if the database were lost, so it must not be a subset:
+ * a lead without the record of what was said to it is only half a lead.
+ *
+ * The file is a JSON dump rather than CSV because notes and events are
+ * one-to-many and would need their own files otherwise.
+ */
+const exportAllFn = createServerFn({ method: "POST" })
+  .validator((data: Token) => data)
+  .handler(async ({ data }) => {
+    const { db } = await requireDb(data.accessToken);
+    const tables = [
+      "collection_inquiries",
+      "owner_inquiries",
+      "member_preregistrations",
+      "contact_inquiries",
+      "inquiry_notes",
+      "inquiry_status_events",
+      "legal_review_items",
+      "notification_log",
+    ];
+    const dump: Record<string, unknown[]> = {};
+    const failed: string[] = [];
+    for (const table of tables) {
+      const { data: rows, error } = await db
+        .from(table)
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) {
+        failed.push(table);
+        continue;
+      }
+      dump[table] = rows ?? [];
+    }
+    const counts = Object.fromEntries(Object.entries(dump).map(([t, rows]) => [t, rows.length]));
+    // Serialised here rather than returned as a structure: the payload is an
+    // arbitrary row shape, and the caller only ever writes it to a file.
+    const json = JSON.stringify(
+      {
+        exported_at: new Date().toISOString(),
+        // Recorded so an old dump cannot be mistaken for a complete one after
+        // the schema moves on.
+        tables: Object.keys(dump),
+        failed,
+        counts,
+        data: dump,
+      },
+      null,
+      2,
+    );
+    return { json, counts, failed };
+  });
+
+/** Where a manually recorded lead came from. Form submissions carry "form". */
+export const LEAD_CHANNELS = ["line", "phone", "in_person", "email", "referral", "other"] as const;
+export type LeadChannel = (typeof LEAD_CHANNELS)[number];
+export const LEAD_CHANNEL_LABEL: Record<LeadChannel, string> = {
+  line: "LINE",
+  phone: "電話",
+  in_person: "対面",
+  email: "メール",
+  referral: "紹介",
+  other: "その他",
+};
+export const CHANNEL_LABEL: Record<string, string> = { form: "フォーム", ...LEAD_CHANNEL_LABEL };
+
+function isLeadChannel(value: string): value is LeadChannel {
+  return (LEAD_CHANNELS as readonly string[]).includes(value);
+}
+
+/**
+ * Records a lead that arrived outside the public forms — a LINE message, a
+ * phone call, a conversation. Until this existed, those people had no row at
+ * all: no status, no stale check, and nothing for a deletion request to act on.
+ *
+ * It writes a contact_inquiries row whatever the enquiry is about. That table
+ * needs only a name, an address, a topic and the message, whereas the
+ * collection form's table has twelve non-null columns that only a completed
+ * form can supply. An intake conversation is an enquiry; if it turns into an
+ * application, the person fills in the real form.
+ *
+ * privacy_agreed is written from the operator's own confirmation that they told
+ * the person how their details would be used — it is not a claim that anyone
+ * ticked a box.
+ */
+const createLeadFn = createServerFn({ method: "POST" })
+  .validator(
+    (
+      data: Token & {
+        channel: string;
+        fullName: string;
+        email: string;
+        phone?: string | undefined;
+        topic: string;
+        message: string;
+        consentConfirmed: boolean;
+      },
+    ) => data,
+  )
+  .handler(async ({ data }) => {
+    if (!isLeadChannel(data.channel)) return { ok: false as const, error: "経路が不正です" };
+    const fullName = data.fullName.trim();
+    const message = data.message.trim();
+    if (!fullName) return { ok: false as const, error: "氏名を入力してください" };
+    if (!message) return { ok: false as const, error: "内容を入力してください" };
+    if (!(CONTACT_TOPICS as readonly string[]).includes(data.topic)) {
+      return { ok: false as const, error: "種別を選択してください" };
+    }
+
+    const { db, userId } = await requireDb(data.accessToken);
+    const id = newId("inq");
+    const now = new Date().toISOString();
+    const { error } = await db.from("contact_inquiries").insert({
+      id,
+      full_name: fullName,
+      // The address is optional for a phone lead; the column is not nullable.
+      email: data.email.trim() || "",
+      phone: data.phone?.trim() || null,
+      topic: data.topic,
+      message,
+      privacy_agreed: data.consentConfirmed,
+      status: "new",
+      channel: data.channel,
+      policy_version: POLICY_VERSION,
+      created_at: now,
+      updated_at: now,
+    });
+    if (error) return { ok: false as const, error: error.message };
+
+    await db.from("inquiry_status_events").insert({
+      id: newId("evt"),
+      subject_type: "contact",
+      subject_id: id,
+      to_status: "new",
+      author_user_id: userId,
+      note: `${LEAD_CHANNEL_LABEL[data.channel]}経由の相談を手動で登録${data.consentConfirmed ? "（利用目的を案内し同意を確認済み）" : "（同意の確認は未取得）"}`,
+      created_at: now,
+    });
+    return { ok: true as const, id };
+  });
+
 export const LEGAL_STATUSES = ["needs_review", "in_progress", "confirmed"] as const;
 export type LegalStatus = (typeof LEGAL_STATUSES)[number];
 export const LEGAL_STATUS_LABEL: Record<LegalStatus, string> = {
@@ -776,4 +951,22 @@ export async function anonymise(arg: { data: { subjectType: SubjectType; id: str
   return anonymiseFn({
     data: { accessToken: await token(), subjectType: arg.data.subjectType, id: arg.data.id },
   });
+}
+
+export async function createLead(arg: {
+  data: {
+    channel: LeadChannel;
+    fullName: string;
+    email: string;
+    phone?: string | undefined;
+    topic: string;
+    message: string;
+    consentConfirmed: boolean;
+  };
+}) {
+  return createLeadFn({ data: { accessToken: await token(), ...arg.data } });
+}
+
+export async function exportAll() {
+  return exportAllFn({ data: { accessToken: await token() } });
 }

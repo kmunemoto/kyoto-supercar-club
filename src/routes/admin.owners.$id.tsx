@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { ContactActions, Defs, StatusAndNotes } from "@/components/admin/detail-tools";
-import { getOwner } from "@/lib/data/admin";
+import { CHANNEL_LABEL, getOwner } from "@/lib/data/admin";
 import { formatDateTime, jsonList } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/owners/$id")({
@@ -74,6 +74,8 @@ function Page() {
           ["不安・気になること", r.concerns ?? r.questions],
           ["希望連絡", r.preferred_contact],
           ["自由記述", r.free_text],
+          ["受付経路", r.channel ? (CHANNEL_LABEL[r.channel] ?? r.channel) : null],
+          ["同意時の版", r.policy_version],
           [
             "流入",
             [r.utm_source, r.utm_medium, r.utm_campaign].filter(Boolean).join(" / ") || null,

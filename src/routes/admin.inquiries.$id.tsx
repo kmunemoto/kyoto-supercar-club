@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { ContactActions, Defs, StatusAndNotes } from "@/components/admin/detail-tools";
-import { getContact } from "@/lib/data/admin";
+import { CHANNEL_LABEL, getContact } from "@/lib/data/admin";
 import { formatDateTime } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/inquiries/$id")({
@@ -45,6 +45,8 @@ function Page() {
       </header>
       <Defs
         items={[
+          ["受付経路", r.channel ? (CHANNEL_LABEL[r.channel] ?? r.channel) : null],
+          ["同意時の版", r.policy_version],
           ["メール", r.email],
           ["電話", r.phone],
           ["種別", r.topic],

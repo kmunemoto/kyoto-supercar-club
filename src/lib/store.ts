@@ -51,6 +51,8 @@ export type OwnerRow = {
   utm_term: string | null;
   landing_path: string | null;
   referrer: string | null;
+  channel: string | null;
+  policy_version: string | null;
   status: ApplicationStatus;
   created_at: string;
   updated_at: string;
@@ -87,6 +89,8 @@ export type CollectionRow = {
   utm_term: string | null;
   landing_path: string | null;
   referrer: string | null;
+  channel: string | null;
+  policy_version: string | null;
   status: ApplicationStatus;
   created_at: string;
   updated_at: string;
@@ -114,6 +118,8 @@ export type MemberRow = {
   utm_term: string | null;
   landing_path: string | null;
   referrer: string | null;
+  channel: string | null;
+  policy_version: string | null;
   status: ApplicationStatus;
   created_at: string;
   updated_at: string;
@@ -133,6 +139,8 @@ export type ContactRow = {
   utm_term: string | null;
   landing_path: string | null;
   referrer: string | null;
+  channel: string | null;
+  policy_version: string | null;
   status: ApplicationStatus;
   created_at: string;
   updated_at: string;

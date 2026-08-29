@@ -2,7 +2,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { BRAND } from "@/lib/brand";
 import { pageHead } from "@/lib/seo";
-import { cloudAuthReady, getStaffSession, signInStaff } from "@/lib/staff";
+import {
+  cloudAuthReady,
+  getStaffSession,
+  requestStaffPasswordReset,
+  signInStaff,
+} from "@/lib/staff";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -23,6 +28,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const configured = cloudAuthReady();
 
   useEffect(() => {
@@ -43,6 +49,24 @@ function Login() {
       return;
     }
     void navigate({ to: "/admin" });
+  }
+
+  async function onReset() {
+    setError(null);
+    if (!email.trim()) {
+      setError("メールアドレスを入力してから押してください。");
+      return;
+    }
+    setPending(true);
+    const res = await requestStaffPasswordReset(email);
+    setPending(false);
+    if (!res.ok) {
+      setError(res.error);
+      return;
+    }
+    // Deliberately unconditional: confirming which addresses are registered
+    // would tell an outsider who the staff are.
+    setNotice("登録済みのアドレスであれば、再設定用のリンクを送りました。");
   }
 
   if (!ready) return <main className="min-h-dvh bg-charcoal" />;
@@ -91,12 +115,21 @@ function Login() {
               />
             </label>
             {error ? <p className="text-sm text-copper">{error}</p> : null}
+            {notice ? <p className="text-sm text-cream/80">{notice}</p> : null}
             <button
               type="submit"
               disabled={pending}
               className="flex h-12 w-full items-center justify-center rounded-md bg-oxblood text-cream disabled:opacity-60"
             >
               {pending ? "確認中…" : "ログイン"}
+            </button>
+            <button
+              type="button"
+              className="w-full text-center text-sm text-cream/60 underline-offset-4 hover:text-cream hover:underline"
+              onClick={onReset}
+              disabled={pending}
+            >
+              パスワードを忘れた場合
             </button>
           </form>
         )}

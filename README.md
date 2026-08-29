@@ -76,6 +76,25 @@ npm i --no-save sharp && node scripts/build-images.mjs
 
 管理画面の各詳細ページに「個人情報を削除する」があります。氏名・連絡先・自由記述を消し、
 件数・ステータス・受付日は統計のために残します。実行は対応履歴に記録されます。
+LINE 経由の相談はトーク履歴の削除も必要です。手順は [`docs/OPERATIONS.md`](docs/OPERATIONS.md)。
+
+## フォーム以外で受けた相談
+
+LINE・電話・対面で受けた相談は `/admin/intake` から登録してください。登録しない限り、
+その相談には対応状況・滞留の検知・削除請求への対応のどれも効きません。
+
+## バックアップ
+
+管理画面の概況にある「すべて書き出す（JSON）」で、全リードに加えてメモ・対応履歴・
+要確認台帳・通知記録を書き出します。一覧ごとの CSV には**メモと対応履歴が含まれません**。
+週次での実行を推奨します（[`docs/OPERATIONS.md`](docs/OPERATIONS.md)）。
+
+## ドキュメント
+
+- [`docs/SYSTEM_REVIEW.md`](docs/SYSTEM_REVIEW.md) — システム評価と変更提案
+- [`docs/LAUNCH_SYSTEMS.md`](docs/LAUNCH_SYSTEMS.md) — ローンチ時の作る/買う/人手の割り当て
+- [`docs/OPERATIONS.md`](docs/OPERATIONS.md) — 週次の運用、ドメイン移行チェックリスト、削除請求の手順
+- [`docs/IMPROVEMENT_IDEAS.md`](docs/IMPROVEMENT_IDEAS.md) — コードベースの改善提案（実装済み）
 
 ## 注意
 
