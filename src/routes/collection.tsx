@@ -42,6 +42,8 @@ import {
   SPECIAL_CLEANING_EXAMPLES,
   INVESTMENT_NOTE,
   VALUE_CHECK,
+  VALUE_CHECK_HEADLINE,
+  VALUE_CHECK_HEADLINE_NOTE,
 } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 import { lineCtaLabel } from "@/lib/site";
@@ -51,8 +53,7 @@ export const Route = createFileRoute("/collection")({
   head: () =>
     pageHead({
       title: "京都でスーパーカーを共同所有｜KSC COLLECTION",
-      description:
-        "欲しい一台を少人数で共同購入するKSC COLLECTION。車両ごとに共同オーナー数と1人あたりの購入負担を設計し、KSC VALUE CHECKで基準を満たす場合のみ進めます。いまは無料の興味登録のみです。",
+      description: `欲しい一台を少人数で共同購入するKSC COLLECTION。${VALUE_CHECK_HEADLINE}1人あたりの購入負担は車両ごとに設計します。いまは無料の興味登録のみです。`,
       path: "/collection",
     }),
 });
@@ -101,6 +102,13 @@ function Page() {
       </div>
       <Section>
         <PlanBanner>{LEGAL_BANNER}</PlanBanner>
+        <p className="mt-12 text-xs font-medium tracking-[0.22em] text-copper">
+          KSC VALUE CHECK｜最低基準
+        </p>
+        <p className="mt-4 max-w-3xl font-serif text-2xl leading-snug md:text-[2rem]">
+          {VALUE_CHECK_HEADLINE}
+        </p>
+        <p className="mt-5 max-w-3xl leading-relaxed text-ink-soft">{VALUE_CHECK_HEADLINE_NOTE}</p>
         <p className="mt-6 max-w-3xl text-ink-soft">{COLLECTION_LEAD_SUPPLEMENT}</p>
         <p className="mt-4 max-w-3xl text-sm text-ink-soft">{BRAND.kyotoDefinition}</p>
         <div className="mt-8">
