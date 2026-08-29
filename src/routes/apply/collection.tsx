@@ -9,8 +9,8 @@ export const Route = createFileRoute("/apply/collection")({
   component: Page,
   head: () =>
     pageHead({
-      title: "京都のスーパーカー共同所有｜共同オーナー興味登録",
-      description: "共同所有に関心がある人の無料の興味登録。契約や決済ではありません。",
+      title: "京都のスーパーカー共同所有｜共同オーナーの興味登録",
+      description: "共同所有に関心のある方向けの、無料の興味登録です。契約や決済ではありません。",
       path: "/apply/collection",
       noindex: true,
     }),
@@ -22,7 +22,7 @@ function Page() {
       <PageIntro
         kicker="COLLECTION PRE-REGISTER"
         title="共同購入の興味登録"
-        lead="欲しい一台への関心を伺います。契約や決済ではありません。"
+        lead="欲しい一台へのご関心をお聞かせください。契約や決済ではありません。"
       />
       <Section className="max-w-3xl pt-0">
         <PlanBanner>{LEGAL_BANNER}</PlanBanner>

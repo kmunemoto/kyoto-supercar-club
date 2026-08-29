@@ -76,7 +76,7 @@ function Reset() {
         <h1 className="mt-3 font-serif text-2xl tracking-[0.08em]">パスワードの再設定</h1>
         {!configured ? (
           <p className="mt-8 rounded-md border border-cream/20 p-4 text-sm text-cream/80">
-            現在、受付設定を確認中です。
+            現在、パスワードの再設定はご利用いただけません。
           </p>
         ) : done ? (
           <p className="mt-8 rounded-md border border-cream/20 p-4 text-sm text-cream/80">

@@ -66,7 +66,7 @@ function Login() {
     }
     // Deliberately unconditional: confirming which addresses are registered
     // would tell an outsider who the staff are.
-    setNotice("登録済みのアドレスであれば、再設定用のリンクを送りました。");
+    setNotice("ご入力のアドレスが登録済みの場合は、再設定用のリンクをお送りしました。");
   }
 
   if (!ready) return <main className="min-h-dvh bg-charcoal" />;
@@ -81,7 +81,7 @@ function Login() {
         </p>
         {!configured ? (
           <p className="mt-10 rounded-md border border-cream/20 p-4 text-sm leading-relaxed text-cream/80">
-            現在、受付設定を確認中です。接続後に、登録された運営担当者だけがログインできます。
+            現在、ログインの準備中です。登録された運営担当者のみご利用いただけます。
           </p>
         ) : signedIn ? (
           <Link

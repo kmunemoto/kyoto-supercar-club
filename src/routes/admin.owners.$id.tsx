@@ -80,7 +80,7 @@ function Page() {
             "流入",
             [r.utm_source, r.utm_medium, r.utm_campaign].filter(Boolean).join(" / ") || null,
           ],
-          ["landing", r.landing_path],
+          ["ランディングページ", r.landing_path],
         ]}
       />
       <StatusAndNotes

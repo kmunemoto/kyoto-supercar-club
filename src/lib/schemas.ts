@@ -41,7 +41,7 @@ const requiredPhone = z.preprocess(
   z
     .string()
     .trim()
-    .min(10, "電話番号を入力してください")
+    .min(10, "電話番号を正しく入力してください")
     .max(20, "電話番号が長すぎます")
     .regex(/^[0-9+\-() ]+$/, "電話番号の形式を確認してください"),
 );
@@ -390,10 +390,10 @@ export const collectionInquirySchema = z.object({
   wantValueCheck: z.enum(YES_NO, {
     message: "VALUE CHECKの希望を選択してください",
   }),
-  resalePriorities: z.array(z.string()).min(1, "再販・保有の考え方を1つ以上選んでください"),
+  resalePriorities: z.array(z.string()).min(1, "再販・保有の考え方を1つ以上選択してください"),
   licenseYears: optionalLicenseYears,
   incidentHistory: z.enum(INCIDENT_OPTIONS).optional().or(z.literal("")),
-  priorities: z.array(z.string()).min(1, "重視する条件を1つ以上選んでください"),
+  priorities: z.array(z.string()).min(1, "重視する条件を1つ以上選択してください"),
   concerns: z.string().trim().max(2000).optional().or(z.literal("")),
   preferLine: z.boolean().optional(),
   privacyAgreed: z.literal(true, {
@@ -405,7 +405,9 @@ export const collectionInquirySchema = z.object({
 
 export const memberPreregSchema = z
   .object({
-    participationInterests: z.array(z.string()).min(1, "興味のある参加方法を1つ以上選んでください"),
+    participationInterests: z
+      .array(z.string())
+      .min(1, "興味のある参加方法を1つ以上選択してください"),
     fullName: name,
     email,
     phone: requiredPhone,
@@ -444,7 +446,7 @@ export const memberPreregSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["incidentHistory"],
-        message: "自己申告を選択してください",
+        message: "違反・事故歴を選択してください",
       });
     }
   });

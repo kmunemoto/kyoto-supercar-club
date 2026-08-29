@@ -88,10 +88,10 @@ function Page() {
           <h2 className="font-serif text-2xl">8. 運営者</h2>
           {OPERATOR.legalName || OPERATOR.contactEmail ? (
             <p className="mt-3 text-ink-soft">
-              {OPERATOR.legalName ? <>名称: {OPERATOR.legalName}</> : <>運営：{BRAND.name}</>}
+              {OPERATOR.legalName ? <>名称：{OPERATOR.legalName}</> : <>運営：{BRAND.name}</>}
               <br />
               {OPERATOR.contactEmail ? (
-                <>連絡先: {OPERATOR.contactEmail}</>
+                <>連絡先：{OPERATOR.contactEmail}</>
               ) : (
                 <>
                   個人情報に関するお問い合わせ：

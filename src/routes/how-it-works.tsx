@@ -21,7 +21,7 @@ function Page() {
       <PageIntro
         kicker="HOW IT WORKS"
         title="2つのサービスの違い"
-        lead="京都を拠点に、共同購入とオーナー同士の相互利用を準備しています。居住地は問いません。"
+        lead="京都を拠点に、共同購入とオーナー同士の相互利用を準備しています。住所は問いません。"
       />
       <div className="mx-auto max-w-6xl px-5 pb-8">
         <div className="overflow-hidden rounded-xl">

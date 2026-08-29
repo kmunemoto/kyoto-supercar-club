@@ -48,7 +48,7 @@ export async function signInStaff(
   if (!sb) {
     return {
       ok: false,
-      error: "現在、受付設定を確認中です。Lovable Cloud の接続後にログインできます。",
+      error: "Lovable Cloud が未接続のためログインできません。接続後にもう一度お試しください。",
     };
   }
   const { data, error } = await sb.auth.signInWithPassword({ email: email.trim(), password });
@@ -77,7 +77,7 @@ export async function requestStaffPasswordReset(
   email: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const sb = getSupabase();
-  if (!sb) return { ok: false, error: "現在、受付設定を確認中です。" };
+  if (!sb) return { ok: false, error: "Lovable Cloud が未接続のため利用できません。" };
   const options =
     typeof window === "undefined" ? {} : { redirectTo: `${window.location.origin}/login/reset` };
   const { error } = await sb.auth.resetPasswordForEmail(email.trim(), options);
@@ -92,7 +92,7 @@ export async function setStaffPassword(
   password: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const sb = getSupabase();
-  if (!sb) return { ok: false, error: "現在、受付設定を確認中です。" };
+  if (!sb) return { ok: false, error: "Lovable Cloud が未接続のため利用できません。" };
   const { data } = await sb.auth.getSession();
   if (!data.session) {
     return { ok: false, error: "リンクの有効期限が切れています。もう一度お試しください。" };

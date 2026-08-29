@@ -247,7 +247,7 @@ export function OwnerForm() {
             <Field
               label="現在の走行距離帯"
               htmlFor="mileageBand"
-              hint="任意・概算"
+              hint="任意。概算で構いません。"
               error={errors["mileageBand"]}
             >
               <NativeSelect
@@ -266,7 +266,7 @@ export function OwnerForm() {
             label="普段の保管形態"
             htmlFor="storageType"
             required
-            hint="形態で構いません。正確な住所、駐車場の鍵、暗証番号は不要です。"
+            hint="保管形態を選ぶだけで構いません。正確な住所、駐車場の鍵、暗証番号は不要です。"
             error={errors["storageType"]}
           >
             <NativeSelect
@@ -330,7 +330,7 @@ export function OwnerForm() {
             </Field>
           </div>
           <Field
-            label="希望する利用可能日"
+            label="希望する利用頻度"
             htmlFor="annualUseCount"
             required
             error={errors["annualUseCount"]}
@@ -491,7 +491,7 @@ export function OwnerForm() {
           <Field
             label="質問・懸念事項"
             htmlFor="concerns"
-            hint="任意。相談時にうかがうこともできます。"
+            hint="任意。相談時に伺うこともできます。"
             error={errors["concerns"]}
           >
             <Textarea

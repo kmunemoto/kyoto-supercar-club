@@ -115,7 +115,6 @@ function Dashboard() {
     <div className="space-y-12">
       <header>
         <h1 className="font-serif text-3xl">概況</h1>
-        <p className="mt-2 text-ink-soft">Lovable Cloud に保存された実データです。</p>
       </header>
       {data.environmentWarnings.length > 0 ? (
         <section className="rounded-lg border border-warn/40 bg-warn/5 px-4 py-3">
@@ -140,7 +139,7 @@ function Dashboard() {
             ))}
           </ul>
           <p className="mt-2 text-sm text-muted">
-            該当のリードには自分から連絡してください。原因はメールの設定です。
+            メールの設定が原因で送信できていない可能性があります。該当のリードには自分から連絡してください。
           </p>
         </section>
       ) : null}
@@ -178,7 +177,7 @@ function Dashboard() {
                 <th className="py-2 font-medium">共同所有</th>
                 <th className="py-2 font-medium">オーナー</th>
                 <th className="py-2 font-medium">旧会員</th>
-                <th className="py-2 font-medium">問合せ</th>
+                <th className="py-2 font-medium">お問い合わせ</th>
               </tr>
             </thead>
             <tbody>
@@ -284,7 +283,9 @@ function Dashboard() {
       </section>
       <section>
         <h2 className="font-serif text-xl">要確認（法務・保険・運用）</h2>
-        <p className="mt-2 text-sm text-muted">断定せず、専門家確認が必要な項目です。</p>
+        <p className="mt-2 text-sm text-muted">
+          サイトでは断定を避け、専門家の確認が必要な項目です。
+        </p>
         <ul className="mt-4 space-y-4">
           {data.legal.map((item) => {
             const status: LegalStatus = isLegalStatus(item.status) ? item.status : "needs_review";

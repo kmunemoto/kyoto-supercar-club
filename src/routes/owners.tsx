@@ -34,14 +34,15 @@ import {
 } from "@/lib/content";
 import { BRAND } from "@/lib/brand";
 import { pageHead } from "@/lib/seo";
+import { lineCtaLabel } from "@/lib/site";
 
 export const Route = createFileRoute("/owners")({
   component: Page,
   head: () =>
     pageHead({
-      title: "京都のスーパーカーオーナーネットワーク｜車両登録・先行相談｜KSC",
+      title: "京都のスーパーカーオーナーネットワーク｜車両登録・先行相談｜KSC OWNER NETWORK",
       description:
-        "スーパーカー所有者限定。愛車を登録し、登録オーナー同士で他の車両を相互利用するKSC OWNER NETWORK。保管・鍵の受け渡し拠点は京都府内。現在は興味登録と先行相談を受け付けています。",
+        "既存スーパーカーオーナー限定。愛車を登録し、登録オーナー同士で他の車両を相互利用するKSC OWNER NETWORK。保管・鍵の受け渡し拠点は京都府内。現在は興味登録と先行相談を受け付けています。",
       path: "/owners",
     }),
 });
@@ -59,7 +60,7 @@ function Ctas() {
         topic="オーナーネットワークについて"
         className="inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6 type-cta"
       >
-        LINEで相談する
+        {lineCtaLabel()}
       </InquiryCta>
     </div>
   );
@@ -76,7 +77,7 @@ function Page() {
       <PageIntro
         kicker="OWNER NETWORK｜既存スーパーカーオーナー限定"
         title="愛車を登録し、次の一台を体験する。"
-        lead="審査対象となるスーパーカーを所有する方のための登録制サービスです。車両はそれぞれのオーナーが所有・保管したまま、利用申請ごとに承認し、KSCが鍵の受け取りから対面受け渡しまで管理します。保管・受け渡し拠点は京都府内です。"
+        lead="審査対象となるスーパーカーを所有する方のための登録制サービスです。車両はそれぞれのオーナーが所有・保管したまま、利用申請はそのつど車両オーナーが承認します。鍵の受け取りから対面受け渡しまでは、KSCが管理します。保管・受け渡し拠点は京都府内です。"
       />
       <div className="mx-auto max-w-6xl px-5">
         <div className="overflow-hidden rounded-xl">
@@ -109,13 +110,13 @@ function Page() {
         <h2 className="mt-20 font-serif text-3xl">登録できる人</h2>
         <BulletList items={OWNER_ELIGIBILITY} />
         <p className="mt-4 max-w-3xl text-sm text-muted">
-          車両価格による固定基準は設けません。車種、年式、状態、走行距離、希少性、整備、保険加入可否、維持費、運転難易度などをKSCが個別に審査します。年1回の継続安全審査があり、点検・審査費用は車両オーナー負担です。
+          車両価格による固定基準は設けません。車種、年式、状態、走行距離、希少性、整備状況、保険加入可否、維持費、運転難易度などをKSCが個別に審査します。年1回の継続安全審査があり、点検・審査費用は車両オーナー負担です。
         </p>
 
         <h2 className="mt-20 font-serif text-3xl">クレジット制度</h2>
         <SpecTable className="mt-8" rows={OWNER_CREDITS} />
         <p className="mt-4 text-sm text-muted">
-          登録車両を外した場合、クレジットは一時凍結します。
+          登録車両を外した場合、クレジットは一時的に凍結されます。
         </p>
 
         <h2 className="mt-20 font-serif text-3xl">料金</h2>
@@ -203,7 +204,7 @@ function Page() {
                 <div>
                   <BulletList items={OWNER_PROHIBITED} />
                   <p className="mt-4">
-                    重大行為を確認した場合、KSCが即時利用停止し、調査後に継続または退会を判断します。
+                    重大な違反行為を確認した場合は、KSCが利用を即時停止し、調査のうえ継続または退会を判断します。
                   </p>
                 </div>
               ),
@@ -245,7 +246,7 @@ function Page() {
               topic="オーナーネットワークについて"
               className="inline-flex h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream type-cta"
             >
-              LINEで相談する
+              {lineCtaLabel()}
             </InquiryCta>
           </div>
         </div>

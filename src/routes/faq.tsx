@@ -11,7 +11,7 @@ export const Route = createFileRoute("/faq")({
     pageHead({
       title: "よくある質問｜KYOTO SUPERCAR CLUB",
       description:
-        "京都のスーパーカー共同購入と、既存オーナー限定の相互利用。料金は予定値です。いまは興味登録と先行相談を受け付けています。",
+        "京都のスーパーカー共同購入と、既存オーナー限定の相互利用。料金は予定額です。いまは興味登録と先行相談を受け付けています。",
       path: "/faq",
     }),
 });

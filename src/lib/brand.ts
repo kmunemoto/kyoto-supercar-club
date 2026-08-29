@@ -11,7 +11,7 @@ export const BRAND = {
   phaseLabel: "サービス準備中",
   phaseNote:
     "京都を車両の保管・管理・受け渡し拠点として、共同購入とオーナー同士の相互利用を準備しています。",
-  region: "京都を車両管理・受け渡し拠点として準備中",
+  region: "京都を車両の保管・管理・受け渡し拠点として準備中",
   kyotoDefinition:
     "車両の保管・管理・受け渡し拠点は京都府内です。共同オーナーや登録オーナーの住所は問いません。",
   siteUrl: "https://kyoto-supercar-club.lovable.app",
@@ -59,7 +59,7 @@ export const FOOTER_LINKS = [
 ] as const;
 
 export const OWNER_VALUE =
-  "スーパーカー所有者のための登録制サービス。愛車は各オーナーが所有したまま、保管・鍵の受け渡し拠点は京都府内です。";
+  "スーパーカー所有者のための登録制サービス。愛車は各オーナーが所有したまま登録でき、保管・鍵の受け渡し拠点は京都府内です。";
 
 export const COLLECTION_VALUE =
   "買えないから、分けるのではない。一台に資金と維持費を固定せず、乗りたい車を合理的に所有する。";

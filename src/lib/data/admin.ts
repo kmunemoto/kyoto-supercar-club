@@ -825,7 +825,7 @@ const addNoteFn = createServerFn({ method: "POST" })
   .validator((data: Token & { subjectType: SubjectType; id: string; body: string }) => data)
   .handler(async ({ data }) => {
     const body = data.body.trim();
-    if (!body) return { ok: false as const, error: "メモを入力してください。" };
+    if (!body) return { ok: false as const, error: "メモを入力してください" };
     const { db, userId } = await requireDb(data.accessToken);
     const { error } = await db.from("inquiry_notes").insert({
       id: newId("note"),
@@ -834,7 +834,7 @@ const addNoteFn = createServerFn({ method: "POST" })
       body,
       author_user_id: userId,
     });
-    if (error) return { ok: false as const, error: "保存に失敗しました。" };
+    if (error) return { ok: false as const, error: "保存に失敗しました" };
     return { ok: true as const };
   });
 
