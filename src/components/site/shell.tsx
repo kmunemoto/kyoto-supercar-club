@@ -22,19 +22,6 @@ export function Wordmark({ invert = false }: { invert?: boolean }) {
   );
 }
 
-export function PhaseChip({ invert = false }: { invert?: boolean }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-sm border px-2.5 py-1 text-[11px] font-medium tracking-[0.16em]",
-        invert ? "border-cream/35 text-cream/90" : "border-oxblood/30 text-oxblood",
-      )}
-    >
-      {BRAND.phaseLabel}
-    </span>
-  );
-}
-
 export function SiteHeader({
   open,
   onOpenChange,
@@ -311,6 +298,15 @@ export function Section({
   return (
     <section className={cn("mx-auto max-w-6xl px-5 py-16 md:py-24", className)}>{children}</section>
   );
+}
+
+/**
+ * Sits with the photo rather than only in the footer. The images show real
+ * cars, so the "not affiliated, not our fleet" note has to be readable next to
+ * them, not several screens away.
+ */
+export function PhotoNote({ className }: { className?: string }) {
+  return <p className={cn("mt-3 text-sm leading-relaxed text-muted", className)}>{PHOTO_NOTE}</p>;
 }
 
 export function Photo({

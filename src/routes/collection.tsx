@@ -7,7 +7,7 @@ import {
   PlanBanner,
   SpecTable,
 } from "@/components/site/conditions";
-import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
+import { PageIntro, Photo, PhotoNote, Section, SiteShell } from "@/components/site/shell";
 import { BRAND } from "@/lib/brand";
 import {
   COLLECTION_CORE,
@@ -91,10 +91,11 @@ function Page() {
         <div className="overflow-hidden rounded-xl">
           <Photo
             src="/images/garage-revuelto.jpg"
-            alt="木目のガレージに置かれたランボルギーニ・レヴエルト"
+            alt="木目のガレージに置かれたランボルギーニ・レヴエルト（イメージ写真）"
             className="aspect-[16/8]"
           />
         </div>
+        <PhotoNote />
       </div>
       <Section>
         <PlanBanner>{LEGAL_BANNER}</PlanBanner>

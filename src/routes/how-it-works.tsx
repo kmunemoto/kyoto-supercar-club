@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PlanBanner } from "@/components/site/conditions";
-import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
+import { PageIntro, Photo, PhotoNote, Section, SiteShell } from "@/components/site/shell";
 import { BRAND } from "@/lib/brand";
 import { HOW_IT_WORKS, LEGAL_BANNER, OWNER_VS_COLLECTION } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
@@ -27,10 +27,11 @@ function Page() {
         <div className="overflow-hidden rounded-xl">
           <Photo
             src="/images/interior-720s-front.jpg"
-            alt="マクラーレン720Sのステアリング（中央のマクラーレンマーク）と、フロントガラス越しの京都・祇園"
+            alt="マクラーレン720Sのステアリングと、フロントガラス越しの京都・祇園（イメージ写真）"
             className="aspect-[16/9]"
           />
         </div>
+        <PhotoNote />
       </div>
       <Section>
         <PlanBanner>{LEGAL_BANNER}</PlanBanner>

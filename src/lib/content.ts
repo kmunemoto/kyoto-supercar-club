@@ -3,19 +3,37 @@ import { BRAND, COLLECTION_VALUE, OWNER_VALUE } from "./brand";
 export const LEGAL_BANNER =
   "現在は、共同購入の興味登録とオーナー車両の先行相談を受け付けています。サービスの提供は、必要な許認可・保険・契約体制を整えた後に開始します。";
 
-export const COLLECTION_PHASE =
-  "掲載の条件は現時点での予定です。いまは無料の興味登録を受け付けています。";
-
-export const OWNER_PHASE = LEGAL_BANNER;
-
 export const FEE_NOTE =
-  "掲載の金額・条件は現時点での予定です。正式募集時に、適用される税を含む総額と契約条件をご案内します。";
+  "掲載の金額・条件は現時点での予定です。表示額の税込・税別の扱いも含めて未確定であり、正式募集時に、適用される税を含む総額と契約条件をご案内します。";
 
 export const REVIEW_COPY =
   "安全にご利用いただくため、本人確認、免許情報、運転記録、保険加入条件を確認します。必要に応じて、追加資料のご提出をお願いする場合があります。";
 
 export const KYOTO_ELIGIBILITY =
-  "共同オーナー・登録オーナーの居住地や法人所在地は問いません。車両の保管・管理・受け渡しは京都府内を基本とします。";
+  "共同オーナー・登録オーナーの居住地や法人所在地は問いません。車両の保管・管理・受け渡しは京都府内です。";
+
+/**
+ * The deposit amounts were written out by hand in four places. One edit used
+ * to leave the site contradicting itself, so every mention now derives from
+ * this list.
+ */
+/**
+ * Who may drive, said once. The pages used to disagree — "審査済み記名運転者",
+ * "審査済み共同オーナー" and "登録本人" all appeared — and a co-owner who
+ * inherits a share without driving makes the second of those wrong.
+ */
+export const NAMED_DRIVER_RULE =
+  "運転できるのは、その車両について審査を通過し、記名運転者として登録された人だけです。持分を持つことと運転できることは別で、法人の場合は記名運転者1人です。";
+
+export const DEPOSIT_CLASSES = [
+  { label: "STANDARD", amount: "50万円" },
+  { label: "PREMIUM", amount: "100万円" },
+  { label: "ICON", amount: "200万円" },
+] as const;
+
+export const DEPOSIT_CLASS_SUMMARY = DEPOSIT_CLASSES.map((c) => `${c.label} ${c.amount}`).join(
+  "、",
+);
 
 export const INVESTMENT_NOTE =
   "KSC COLLECTIONは、車を楽しむための共同所有サービスです。投資収益を目的とした商品ではなく、車両価値や将来の売却価格を保証するものではありません。";
@@ -148,11 +166,11 @@ export const COLLECTION_IDEA = [
   },
   {
     title: "KSCは管理を担当する",
-    body: "車両選定、購入調整、保管、整備、予約、受け渡し、記録、売却調整を担います。運転できるのは、その車両の審査済み記名運転者だけです。法人は記名運転者1人です。",
+    body: "車両選定、購入調整、保管、整備、予約、受け渡し、記録、売却調整を担います。KSC自身は車両を所有しません。",
   },
   {
     title: "その車の記名運転者だけが乗る",
-    body: "運転できるのは、その車両の審査済み共同オーナーだけです。COLLECTIONの車両をほかの会員へ貸し出す仕組みではありません。",
+    body: `${NAMED_DRIVER_RULE} COLLECTIONの車両をほかの会員へ貸し出す仕組みではありません。`,
   },
   {
     title: "基準を満たした個体だけを進める",
@@ -504,7 +522,7 @@ export const OWNER_NETWORK_POINTS = [
   },
   {
     title: "他車を利用するときだけ保証金",
-    body: "愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合は、そのクラスを初めて利用する前に STANDARD 50万円、PREMIUM 100万円、ICON 200万円をお預かりします。上位クラスは差額を追加します。返還対象であり、事故時の責任上限ではありません。",
+    body: `愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合は、そのクラスを初めて利用する前に ${DEPOSIT_CLASS_SUMMARY} をお預かりする予定です。上位クラスは差額を追加します。返還対象であり、事故時の責任上限ではありません。`,
   },
 ] as const;
 
@@ -560,9 +578,15 @@ export const OWNER_FEES = [
 
 export const OWNER_DEPOSITS = [
   { label: "車両登録のみ", value: "保証金なし" },
-  { label: "STANDARDクラスの他車利用", value: "50万円。そのクラスを初めて利用する前" },
-  { label: "PREMIUMクラスの他車利用", value: "100万円。STANDARD分があれば差額を追加" },
-  { label: "ICONクラスの他車利用", value: "200万円。差額を追加" },
+  {
+    label: "STANDARDクラスの他車利用",
+    value: `${DEPOSIT_CLASSES[0].amount}。そのクラスを初めて利用する前`,
+  },
+  {
+    label: "PREMIUMクラスの他車利用",
+    value: `${DEPOSIT_CLASSES[1].amount}。STANDARD分があれば差額を追加`,
+  },
+  { label: "ICONクラスの他車利用", value: `${DEPOSIT_CLASSES[2].amount}。差額を追加` },
   {
     label: "保証金の取扱い",
     value: "退会・精算後の返還対象です。事故や損害に対する責任の上限ではありません。",
@@ -691,7 +715,7 @@ export const OWNER_DELAY = [
 ] as const;
 
 export const OWNER_PROHIBITED = [
-  "登録本人以外の運転",
+  "登録された運転者以外の運転",
   "又貸し",
   "飲酒、薬物、無免許運転",
   "サーキット",
@@ -730,7 +754,7 @@ export const SAFETY_ITEMS = [
   {
     title: "利用資格の確認",
     body:
-      "25歳以上、免許取得後5年以上を目安に審査します。登録本人以外の運転は禁止する方針です。" +
+      "25歳以上、免許取得後5年以上を目安に審査します。登録された運転者以外の運転は禁止する方針です。COLLECTIONでは車両ごとの記名運転者、OWNER NETWORKでは登録オーナー本人が対象です。" +
       REVIEW_COPY,
   },
   {
@@ -843,7 +867,7 @@ export const FAQS = [
   {
     id: "owner-deposit",
     q: "OWNER NETWORKに保証金はありますか？",
-    a: "愛車の登録だけなら不要です。他の登録車両を利用する場合は、そのクラスを初めて利用する前に STANDARD 50万円、PREMIUM 100万円、ICON 200万円をお預かりします。上位クラスを利用する際は、必要な差額をお預かりします。保証金は退会・精算後の返還対象であり、事故や損害に対する責任の上限ではありません。COLLECTIONの保証金とは別に管理します。",
+    a: `愛車の登録だけなら不要です。他の登録車両を利用する場合は、そのクラスを初めて利用する前に ${DEPOSIT_CLASS_SUMMARY} をお預かりする予定です。上位クラスを利用する際は、必要な差額をお預かりします。保証金は退会・精算後の返還対象であり、事故や損害に対する責任の上限ではありません。COLLECTIONの保証金とは別に管理します。`,
   },
   {
     id: "special-cleaning",

@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
 import { FaqJsonLd } from "@/components/site/json-ld";
 import { pageHead } from "@/lib/seo";
-import { FAQS } from "@/lib/content";
+import { PlanBanner } from "@/components/site/conditions";
+import { FAQS, LEGAL_BANNER } from "@/lib/content";
 
 export const Route = createFileRoute("/faq")({
   component: Page,
@@ -25,7 +26,8 @@ function Page() {
         lead="共同購入とオーナーネットワークについて、よくいただくご質問です。"
       />
       <Section className="pt-0">
-        <dl className="divide-y divide-line border-y border-line">
+        <PlanBanner>{LEGAL_BANNER}</PlanBanner>
+        <dl className="mt-12 divide-y divide-line border-y border-line">
           {FAQS.map((f) => (
             <div key={f.q} className="grid gap-3 py-7 md:grid-cols-[0.9fr_1.4fr]">
               <dt className="font-medium">{f.q}</dt>

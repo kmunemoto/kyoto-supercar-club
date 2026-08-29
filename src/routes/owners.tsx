@@ -7,7 +7,7 @@ import {
   PlanBanner,
   SpecTable,
 } from "@/components/site/conditions";
-import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
+import { PageIntro, Photo, PhotoNote, Section, SiteShell } from "@/components/site/shell";
 import {
   ACCIDENT_POLICY,
   DRIVER_BURDEN_ITEMS,
@@ -82,10 +82,11 @@ function Page() {
         <div className="overflow-hidden rounded-xl">
           <Photo
             src="/images/keys-ferrari.jpg"
-            alt="トレイに置いたフェラーリのスマートキー"
+            alt="トレイに置いたフェラーリのスマートキー（イメージ写真）"
             className="aspect-[16/8]"
           />
         </div>
+        <PhotoNote />
       </div>
       <Section>
         <PlanBanner>{LEGAL_BANNER}</PlanBanner>

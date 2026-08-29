@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BulletList } from "@/components/site/conditions";
-import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
+import { BulletList, PlanBanner } from "@/components/site/conditions";
+import { PageIntro, Photo, PhotoNote, Section, SiteShell } from "@/components/site/shell";
 import { pageHead } from "@/lib/seo";
 import {
   ACCIDENT_POLICY,
+  DEPOSIT_CLASSES,
+  LEGAL_BANNER,
   DRIVER_BURDEN_ITEMS,
   OPERATOR_SIDE_RESPONSIBILITY,
   OWNER_PROHIBITED,
@@ -32,13 +34,15 @@ function Page() {
         <div className="overflow-hidden rounded-xl">
           <Photo
             src="/images/wheel-lambo.jpg"
-            alt="ランボルギーニ・レヴエルトのホイールとエンブレム"
+            alt="ランボルギーニ・レヴエルトのホイールとエンブレム（イメージ写真）"
             className="aspect-[16/9]"
           />
         </div>
+        <PhotoNote />
       </div>
       <Section>
-        <div className="grid gap-12 md:grid-cols-2">
+        <PlanBanner>{LEGAL_BANNER}</PlanBanner>
+        <div className="mt-12 grid gap-12 md:grid-cols-2">
           {SAFETY_ITEMS.map((s) => (
             <article key={s.title} className="border-t border-line pt-6">
               <h2 className="font-serif text-2xl">{s.title}</h2>
@@ -72,9 +76,9 @@ function Page() {
           <h2 className="font-serif text-xl">保証金について</h2>
           <p className="mt-3 text-ink-soft">
             COLLECTIONでは、記名運転者1人につき100万円の保証金を予定しています。OWNER
-            NETWORKでは、愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合は、STANDARD
-            50万円、PREMIUM 100万円、ICON
-            200万円を、そのクラスを初めて利用する前にお預かりします。いずれも返還対象であり、事故責任の上限ではありません。
+            NETWORKでは、愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合は、
+            {DEPOSIT_CLASSES.map((c) => `${c.label} ${c.amount}`).join("、")}
+            を、そのクラスを初めて利用する前にお預かりする予定です。いずれも返還対象であり、事故責任の上限ではありません。
           </p>
         </aside>
       </Section>
