@@ -124,7 +124,7 @@ function Page() {
         <SpecTable className="mt-8" rows={OWNER_FEES} />
         <h3 className="mt-12 font-serif text-2xl">他車利用時の保証金</h3>
         <p className="mt-4 max-w-3xl text-sm text-ink-soft">
-          愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合に、そのクラスを初めて使う前にお預かりします。返還対象であり、事故時の責任上限ではありません。
+          愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合に、そのクラスを初めて使う前にお預かりします。退会・精算後の返還対象であり、事故時の責任上限ではありません。
         </p>
         <SpecTable className="mt-8" rows={OWNER_DEPOSITS} />
         <h3 className="mt-12 font-serif text-2xl">月額管理費に含むもの</h3>
@@ -146,7 +146,7 @@ function Page() {
           ))}
         </ol>
         <p className="mt-8 max-w-3xl text-sm text-muted">
-          車両オーナーと利用者が直接連絡する必要はありません。駐車場の許可や入出庫方法は、登録時に個別確認します。
+          車両オーナーと利用者が直接連絡する必要はありません。駐車場の利用許可や入出庫の方法は、登録時に個別に確認します。
         </p>
 
         <h2 className="mt-20 font-serif text-3xl">条件・安全管理・精算</h2>
@@ -170,11 +170,11 @@ function Page() {
               body: (
                 <div className="space-y-4">
                   <p>
-                    通常洗車は1予約1万1,000円のKSC利用管理費に含みます。普通に利用しただけで特別清掃費が発生する想定ではありません。
+                    通常洗車は1予約1万1,000円のKSC利用管理費に含まれます。普通に利用しただけで特別清掃費が発生する想定ではありません。
                   </p>
                   <p className="font-medium text-ink">通常洗車に含むもの</p>
                   <BulletList items={NORMAL_WASH_INCLUDES} />
-                  <p className="font-medium text-ink">特別清掃の例</p>
+                  <p className="font-medium text-ink">特別清掃の例（合理的な実費）</p>
                   <BulletList items={SPECIAL_CLEANING_EXAMPLES} />
                 </div>
               ),

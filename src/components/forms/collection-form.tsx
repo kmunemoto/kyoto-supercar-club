@@ -337,7 +337,7 @@ export function CollectionForm() {
               label="KSC VALUE CHECKを希望しますか"
               htmlFor="wantValueCheck"
               required
-              hint="単独所有との3年負担比較です。仮の車両価格はサイトに載せていません。"
+              hint="単独所有との3年負担比較です。"
               error={errors["wantValueCheck"]}
             >
               <NativeSelect

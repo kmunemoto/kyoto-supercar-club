@@ -30,7 +30,7 @@ export function ConsentControl() {
   if (!ready) {
     return (
       <p className="text-sm text-muted">
-        現在、分析・広告用のCookieは設定されていないため読み込まれていません。
+        現在、このサイトでは分析・広告用のCookieを使用していません。
       </p>
     );
   }
