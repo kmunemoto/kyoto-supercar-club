@@ -286,6 +286,7 @@ function Page() {
             "owner-count",
             "value-check",
             "application-deposit",
+            "share-transfer",
             "kyoto-residency",
           ]).map((f) => (
             <div key={f.q} className="grid gap-3 py-6 md:grid-cols-[0.9fr_1.3fr]">

@@ -21,13 +21,16 @@ import {
   OWNER_ELIGIBILITY,
   OWNER_EXIT,
   OWNER_FEES,
+  OWNER_FEE_TIERS,
   OWNER_FLOW,
   OWNER_HANDOVER_SUMMARY,
   OWNER_MONTHLY_EXCLUDES,
   OWNER_MONTHLY_INCLUDES,
   OWNER_NETWORK_POINTS,
   OWNER_OWNER_CONDITIONS,
+  OWNER_PEAK_DAY_NOTE,
   OWNER_PROHIBITED,
+  OWNER_REGISTRATION_ONLY_INCLUDES,
   OWNER_USE_SPECS,
   SPECIAL_CLEANING_EXAMPLES,
   faqsById,
@@ -115,11 +118,16 @@ function Page() {
 
         <h2 className="mt-20 font-serif text-3xl">クレジット制度</h2>
         <SpecTable className="mt-8" rows={OWNER_CREDITS} />
-        <p className="mt-4 text-sm text-muted">
-          登録車両を外した場合、クレジットは一時的に凍結されます。
+        <p className="mt-4 max-w-3xl text-sm text-muted">
+          愛車を登録するだけの場合も、提供が完了した分のクレジットは貯まります。使うには他車利用資格の有効化が必要です。有効期限は、資格の有無にかかわらず付与日から24か月です。登録車両を外した場合、クレジットは一時的に凍結されます。
         </p>
 
         <h2 className="mt-20 font-serif text-3xl">料金</h2>
+        <p className="mt-6 max-w-3xl text-lg text-ink-soft">
+          費用は、愛車を登録するだけの場合と、他の登録車両も利用する場合とで分かれます。
+        </p>
+        <SpecTable className="mt-8" rows={OWNER_FEE_TIERS} />
+        <h3 className="mt-12 font-serif text-2xl">費用の一覧</h3>
         <p className="mt-4 text-sm text-muted">{FEE_NOTE}</p>
         <SpecTable className="mt-8" rows={OWNER_FEES} />
         <h3 className="mt-12 font-serif text-2xl">他車利用時の保証金</h3>
@@ -127,7 +135,15 @@ function Page() {
           愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合に、そのクラスを初めて使う前にお預かりします。退会・精算後の返還対象であり、事故時の責任上限ではありません。
         </p>
         <SpecTable className="mt-8" rows={OWNER_DEPOSITS} />
+        <h3 className="mt-12 font-serif text-2xl">登録するだけの場合にKSCが行うこと</h3>
+        <p className="mt-4 max-w-3xl text-sm text-ink-soft">
+          愛車を登録するだけの場合も、次のことはKSCが行います。月額管理費はかかりません。予約ごとの対面受け渡しにかかる費用は、利用する側がお支払いになるKSC利用管理費に含まれます。
+        </p>
+        <BulletList items={OWNER_REGISTRATION_ONLY_INCLUDES} />
         <h3 className="mt-12 font-serif text-2xl">月額管理費に含むもの</h3>
+        <p className="mt-4 max-w-3xl text-sm text-ink-soft">
+          月額管理費1万1,000円は、他車利用資格を有効化した会員にかかります。
+        </p>
         <BulletList items={OWNER_MONTHLY_INCLUDES} />
         <h3 className="mt-10 font-serif text-2xl">月額管理費に含まないもの</h3>
         <BulletList items={OWNER_MONTHLY_EXCLUDES} />
@@ -163,7 +179,12 @@ function Page() {
             },
             {
               title: "利用の目安",
-              body: <SpecTable rows={OWNER_USE_SPECS} />,
+              body: (
+                <div>
+                  <SpecTable rows={OWNER_USE_SPECS} />
+                  <p className="mt-6">{OWNER_PEAK_DAY_NOTE}</p>
+                </div>
+              ),
             },
             {
               title: "通常洗車と特別清掃",
@@ -219,9 +240,11 @@ function Page() {
         <h2 className="mt-20 font-serif text-3xl">よくある質問</h2>
         <dl className="mt-8 divide-y divide-line border-y border-line">
           {faqsById([
+            "owner-fees",
             "owner-monthly-fee",
             "owner-deposit",
             "special-cleaning",
+            "distance-overage",
             "screening",
             "owner-storage",
           ]).map((f) => (
