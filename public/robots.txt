@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /login
 
-Sitemap: https://start-your-spark-56.lovable.app/sitemap.xml
+Sitemap: https://kyoto-supercar-club.lovable.app/sitemap.xml

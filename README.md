@@ -6,7 +6,7 @@
 
 Lovable プロジェクト: [lovable.dev/projects/f9b4c823-3a2e-4ecc-87ff-3c3cefcb17ae](https://lovable.dev/projects/f9b4c823-3a2e-4ecc-87ff-3c3cefcb17ae)
 
-公開URL（現時点）: https://start-your-spark-56.lovable.app/
+公開URL: https://kyoto-supercar-club.lovable.app/
 
 サービス名は [`src/lib/brand.ts`](src/lib/brand.ts) の `BRAND.name` を書き換えるとサイト全体に反映されます。
 

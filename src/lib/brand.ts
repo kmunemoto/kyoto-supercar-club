@@ -14,7 +14,7 @@ export const BRAND = {
   region: "京都を車両管理・受け渡し拠点として準備中",
   kyotoDefinition:
     "車両の保管・管理・受け渡し拠点は京都府内です。共同オーナーや登録オーナーの住所は問いません。",
-  siteUrl: "https://start-your-spark-56.lovable.app",
+  siteUrl: "https://kyoto-supercar-club.lovable.app",
 } as const;
 
 export const NAV = [
