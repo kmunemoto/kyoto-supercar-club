@@ -262,16 +262,18 @@ const getDashboardFn = createServerFn({ method: "POST" })
     });
     const storedById = new Map(storedLegal.map((item) => [item.id, item]));
     const knownIds = new Set<string>(LEGAL_TODOS.map((t) => t.id));
+    // Text comes from code, progress from the database. The stored row used to
+    // win outright, so a seeded detail shadowed LEGAL_TODOS forever: the
+    // console still showed 入会金33万円 long after the site said 22万円, and
+    // editing content.ts could not fix it. Nothing writes title or detail —
+    // setLegalStatus only sets status — so the stored text is seed data only.
     const legal = [
-      ...LEGAL_TODOS.map(
-        (t) =>
-          storedById.get(t.id) ?? {
-            id: t.id,
-            title: t.title,
-            detail: t.detail,
-            status: "needs_review",
-          },
-      ),
+      ...LEGAL_TODOS.map((t) => ({
+        id: t.id,
+        title: t.title,
+        detail: t.detail,
+        status: storedById.get(t.id)?.status ?? "needs_review",
+      })),
       ...storedLegal.filter((item) => item.id && !knownIds.has(item.id)),
     ];
     // notification_log records every send attempt; sent_at null means it failed
