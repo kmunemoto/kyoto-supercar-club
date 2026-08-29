@@ -164,7 +164,7 @@ export function SiteFooter() {
           </a>
         </div>
       </div>
-      <div className="border-t border-cream/10 px-5 py-5 text-center text-xs leading-relaxed tracking-wide text-cream/45">
+      <div className="border-t border-cream/10 px-5 py-5 text-center text-xs leading-relaxed tracking-wide text-cream/60">
         <p>{PHOTO_NOTE}</p>
         <p className="mt-2">
           © {new Date().getFullYear()} {BRAND.name}
@@ -309,6 +309,14 @@ export function PhotoNote({ className }: { className?: string }) {
   return <p className={cn("mt-3 text-sm leading-relaxed text-muted", className)}>{PHOTO_NOTE}</p>;
 }
 
+/**
+ * Widths generated for every photo (see scripts/build-images.mjs). The layouts
+ * cap at max-w-6xl, so 1500 covers the largest render and 900 covers phones —
+ * which were downloading the full-size original until now.
+ */
+const PHOTO_WIDTHS = [900, 1500] as const;
+const PHOTO_SIZES = "(max-width: 1152px) 100vw, 1152px";
+
 export function Photo({
   src,
   alt,
@@ -316,6 +324,7 @@ export function Photo({
   priority = false,
   width,
   height,
+  sizes = PHOTO_SIZES,
 }: {
   src: string;
   alt: string;
@@ -323,17 +332,26 @@ export function Photo({
   priority?: boolean;
   width?: number;
   height?: number;
+  sizes?: string;
 }) {
+  const base = src.replace(/\.(jpe?g|png)$/i, "");
+  const srcSet = (ext: string) => PHOTO_WIDTHS.map((w) => `${base}-${w}.${ext} ${w}w`).join(", ");
   return (
-    <img
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      className={cn("h-full w-full object-cover", className)}
-      loading={priority ? "eager" : "lazy"}
-      fetchPriority={priority ? "high" : "low"}
-      decoding={priority ? "sync" : "async"}
-    />
+    <picture>
+      <source type="image/avif" srcSet={srcSet("avif")} sizes={sizes} />
+      <source type="image/webp" srcSet={srcSet("webp")} sizes={sizes} />
+      <img
+        src={`${base}-1500.jpg`}
+        alt={alt}
+        width={width}
+        height={height}
+        className={cn("h-full w-full object-cover", className)}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "low"}
+        // "sync" blocks the main thread while the browser decodes; the eager
+        // load is already enough to prioritise the hero.
+        decoding="async"
+      />
+    </picture>
   );
 }

@@ -1,9 +1,9 @@
-import { LEGAL_TODOS } from "@/lib/content";
-import { allowLocalStore } from "@/lib/site";
+/**
+ * Row shapes for the records stored in Lovable Cloud. This file also used to
+ * carry a localStorage-backed copy of the whole database, which nothing read:
+ * the admin console queries Supabase directly.
+ */
 import type { ApplicationStatus, SubjectType } from "@/lib/status";
-import { newId } from "@/lib/utils";
-
-const KEY = "ksc.db.v3";
 
 export type OwnerRow = {
   id: string;
@@ -166,79 +166,3 @@ export type LegalItem = {
   detail: string;
   status: string;
 };
-
-type Db = {
-  owners: OwnerRow[];
-  members: MemberRow[];
-  contacts: ContactRow[];
-  collections: CollectionRow[];
-  notes: NoteRow[];
-  events: EventRow[];
-  legal: LegalItem[];
-};
-
-function emptyDb(): Db {
-  return {
-    owners: [],
-    members: [],
-    contacts: [],
-    collections: [],
-    notes: [],
-    events: [],
-    legal: LEGAL_TODOS.map((t) => ({
-      id: t.id,
-      title: t.title,
-      detail: t.detail,
-      status: "needs_review",
-    })),
-  };
-}
-
-function load(): Db {
-  if (typeof window === "undefined") return emptyDb();
-  if (!allowLocalStore()) return emptyDb();
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return emptyDb();
-    return { ...emptyDb(), ...(JSON.parse(raw) as Partial<Db>) };
-  } catch {
-    return emptyDb();
-  }
-}
-
-function save(db: Db) {
-  if (typeof window === "undefined" || !allowLocalStore()) return;
-  localStorage.setItem(KEY, JSON.stringify(db));
-}
-
-export function readDb(): Db {
-  return load();
-}
-
-export function writeDb(mutator: (db: Db) => void): Db {
-  const db = load();
-  mutator(db);
-  save(db);
-  return db;
-}
-
-export function pushEvent(
-  db: Db,
-  subjectType: SubjectType,
-  subjectId: string,
-  from: string | null,
-  to: string,
-  author: string | null,
-  note: string | null,
-) {
-  db.events.unshift({
-    id: newId("evt"),
-    subject_type: subjectType,
-    subject_id: subjectId,
-    from_status: from,
-    to_status: to,
-    author_user_id: author,
-    note,
-    created_at: new Date().toISOString(),
-  });
-}

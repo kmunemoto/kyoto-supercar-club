@@ -673,7 +673,9 @@ export async function getAdminSession() {
   const { getStaffSession } = await import("@/lib/staff");
   const session = await getStaffSession();
   if (!session) throw new Error("UNAUTHORIZED");
-  return { userId: session.userId, role: "admin" as const };
+  // staff.role exists in the schema; hard-coding "admin" here made the column
+  // decorative and any future role split silently ineffective.
+  return { userId: session.userId, email: session.email, role: session.role };
 }
 
 export async function getDashboard() {

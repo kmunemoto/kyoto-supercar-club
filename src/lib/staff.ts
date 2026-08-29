@@ -1,4 +1,5 @@
 import { getSupabase } from "@/integrations/supabase/client";
+import { STAFF_COLUMNS, type StaffRow } from "@/integrations/supabase/types";
 import { isCloudConfigured } from "@/lib/site";
 
 export type StaffSession = {
@@ -17,17 +18,18 @@ export async function getStaffSession(): Promise<StaffSession | null> {
   const { data: sessionData } = await sb.auth.getSession();
   const user = sessionData.session?.user;
   if (!user) return null;
-  const { data: staff } = await sb
+  const { data } = await sb
     .from("staff")
-    .select("user_id, role, email")
+    .select(STAFF_COLUMNS)
     .eq("user_id", user.id)
     .maybeSingle();
+  // The client is untyped, so name the shape here rather than indexing into it.
+  const staff = data as Pick<StaffRow, "user_id" | "role" | "email" | "display_name"> | null;
   if (!staff) return null;
-  const roleValue = staff["role"];
   return {
     userId: user.id,
-    email: user.email ?? String(staff["email"] ?? ""),
-    role: typeof roleValue === "string" ? roleValue : "admin",
+    email: user.email ?? staff.email ?? "",
+    role: staff.role || "admin",
   };
 }
 

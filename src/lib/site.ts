@@ -30,10 +30,6 @@ export function isCloudConfigured(): boolean {
   return Boolean(getSupabaseUrl() && getSupabaseAnonKey());
 }
 
-export function allowLocalStore(): boolean {
-  return import.meta.env.DEV && import.meta.env["VITE_ALLOW_LOCAL_STORE"] === "true";
-}
-
 /** Official LINE. Override with VITE_KSC_LINE_URL if the account changes. */
 const OFFICIAL_LINE_URL = "https://line.me/ti/p/eMWqcmXxia";
 

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Photo, Section, SiteShell } from "@/components/site/shell";
-import { FaqJsonLd, SiteJsonLd } from "@/components/site/json-ld";
+import { SiteJsonLd } from "@/components/site/json-ld";
 import { InquiryCta } from "@/components/site/inquiry-cta";
 import { BRAND } from "@/lib/brand";
 import {
@@ -30,7 +30,6 @@ function Home() {
   return (
     <SiteShell>
       <SiteJsonLd />
-      <FaqJsonLd />
       <section className="relative min-h-[62dvh] overflow-hidden bg-charcoal md:min-h-[88dvh]">
         <Photo
           src="/images/hero.jpg"

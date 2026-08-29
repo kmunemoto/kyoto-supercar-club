@@ -7,9 +7,9 @@ export function JsonLd({
 }: {
   data: Record<string, unknown> | Array<Record<string, unknown>>;
 }) {
-  return (
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
-  );
+  // A "</script>" anywhere in the serialised data would close this tag early.
+  const json = JSON.stringify(data).replace(/</g, "\\u003c");
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />;
 }
 
 export function SiteJsonLd() {
@@ -37,13 +37,18 @@ export function SiteJsonLd() {
   );
 }
 
-export function FaqJsonLd() {
+/**
+ * Only /faq renders every question, so only /faq carries the FAQPage block.
+ * Emitting all of them from the home page — which shows four — both contradicts
+ * the visible content and duplicates the same block on two URLs.
+ */
+export function FaqJsonLd({ items = FAQS }: { items?: readonly { q: string; a: string }[] }) {
   return (
     <JsonLd
       data={{
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        mainEntity: FAQS.map((f) => ({
+        mainEntity: items.map((f) => ({
           "@type": "Question",
           name: f.q,
           acceptedAnswer: { "@type": "Answer", text: f.a },

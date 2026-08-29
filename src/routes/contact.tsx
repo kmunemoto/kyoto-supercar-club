@@ -35,10 +35,12 @@ function Page() {
         {line ? (
           <aside className="mb-12 flex flex-col items-start gap-6 rounded-xl border border-line bg-cream p-6 sm:flex-row sm:items-center">
             <img
-              src="/images/line-qr.jpg"
+              src="/images/line-qr.png"
               alt="公式LINEを追加するQRコード"
               width={160}
               height={160}
+              loading="lazy"
+              decoding="async"
               className="size-40 rounded-md bg-white object-contain"
             />
             <div>

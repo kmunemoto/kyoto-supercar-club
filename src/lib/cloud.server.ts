@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { getRequestIP } from "@tanstack/react-start/server";
+import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 import { BRAND } from "@/lib/brand";
 import { getSupabaseAnonKey, getSupabaseUrl, isCloudConfigured } from "@/lib/site";
 import { newId } from "@/lib/utils";
@@ -16,14 +16,39 @@ const SAVE_FAILED = "送信に失敗しました。時間をおいて再度お�
 type Result =
   { ok: true; id: string } | { ok: false; error: string; fields?: Record<string, string> };
 
+/**
+ * Per-instance and in memory, so it resets on redeploy and is not shared across
+ * workers. It slows a single noisy client down; the durable limits are the
+ * length CHECK constraints on the tables themselves.
+ */
 const hits = new Map<string, { count: number; resetAt: number }>();
+const HITS_MAX_KEYS = 5000;
+
+/**
+ * X-Forwarded-For is whatever the client typed, so a rotating value defeats the
+ * limiter and grows the map without bound. Cloudflare sets cf-connecting-ip
+ * itself and strips any client copy, so prefer it where it exists.
+ */
+function clientKey(): string {
+  const trusted = getRequestHeader("cf-connecting-ip") ?? getRequestHeader("true-client-ip");
+  if (trusted) return trusted;
+  return getRequestIP({ xForwardedFor: true }) ?? "unknown";
+}
+
+function sweep(now: number) {
+  if (hits.size <= HITS_MAX_KEYS) return;
+  for (const [key, value] of hits) if (value.resetAt < now) hits.delete(key);
+  // Still oversized means the expired entries were not the problem: start over
+  // rather than let a spoofed header pin memory open.
+  if (hits.size > HITS_MAX_KEYS) hits.clear();
+}
 
 function rateLimited(bucket: string): boolean {
-  const ip = getRequestIP({ xForwardedFor: true }) ?? "unknown";
-  const key = `${bucket}:${ip}`;
+  const key = `${bucket}:${clientKey()}`;
   const now = Date.now();
   const windowMs = 10 * 60 * 1000;
   const max = 8;
+  sweep(now);
   const current = hits.get(key);
   if (!current || current.resetAt < now) {
     hits.set(key, { count: 1, resetAt: now + windowMs });
@@ -250,6 +275,27 @@ function localDevInsert(kind: keyof typeof localDevStore, row: unknown): Result 
  * Mail the lead out in full rather than lose it: this is the last line before
  * a submission disappears.
  */
+/**
+ * A timeout or a double tap can send the same form twice; the client's pending
+ * flag does not survive either. Rather than reject the second one — which would
+ * look like a failure to someone who is not sure the first went through — the
+ * row is flagged so the operator sees a duplicate instead of chasing it twice.
+ */
+async function isDuplicateLead(table: string, email: string): Promise<boolean> {
+  if (!cloudReady() || !email) return false;
+  const client = insertClient();
+  if (!client) return false;
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await client
+    .from(table)
+    .select("id")
+    .eq("email", email)
+    .gte("created_at", since)
+    .limit(1);
+  if (error) return false;
+  return (data ?? []).length > 0;
+}
+
 async function rescueUnsavedLead(subjectType: string, id: string, row: Record<string, unknown>) {
   await notify(
     `【要対応】保存できなかった申込（${subjectType}）`,
@@ -359,7 +405,11 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     prefer_line: Boolean(data.preferLine),
   };
 
+  const duplicate = await isDuplicateLead("owner_inquiries", data.email);
   const summary = `地域: ${data.region}\nメーカー: ${data.make}\n車種: ${data.model}\n目的: ${data.participationPurpose}\nID: ${id}`;
+  const summaryText = duplicate
+    ? `${summary}\n※ 24時間以内に同じメールアドレスからの送信があります`
+    : summary;
 
   if (!cloudReady()) {
     const local = localDevInsert("owners", withNewColumns);
@@ -367,7 +417,7 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
       await rescueUnsavedLead("owner_inquiries", id, withNewColumns);
       return local;
     }
-    await notify("【OWNER NETWORK】新しい先行相談（ローカル）", summary, "owner_inquiries", id);
+    await notify("【OWNER NETWORK】新しい先行相談（ローカル）", summaryText, "owner_inquiries", id);
     await acknowledgeOwner(data, id);
     return local;
   }
@@ -375,7 +425,7 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     await rescueUnsavedLead("owner_inquiries", id, withNewColumns);
     return { ok: false, error: SAVE_FAILED };
   }
-  await notify("【OWNER NETWORK】新しい先行相談", summary, "owner_inquiries", id);
+  await notify("【OWNER NETWORK】新しい先行相談", summaryText, "owner_inquiries", id);
   await acknowledgeOwner(data, id);
   return { ok: true, id };
 }
@@ -442,7 +492,11 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     resale_priorities: data.resalePriorities ?? [],
     prefer_line: Boolean(data.preferLine),
   };
+  const duplicate = await isDuplicateLead("collection_inquiries", data.email);
   const summary = `地域: ${data.region}\n希望: ${desiredModels}\n新車／中古: ${data.vehicleCondition}\nID: ${id}`;
+  const summaryText = duplicate
+    ? `${summary}\n※ 24時間以内に同じメールアドレスからの送信があります`
+    : summary;
 
   if (!cloudReady()) {
     const local = localDevInsert("collections", withNewColumns);
@@ -452,7 +506,7 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     }
     await notify(
       "【COLLECTION】新しい共同オーナー候補（ローカル）",
-      summary,
+      summaryText,
       "collection_inquiries",
       id,
     );
@@ -463,7 +517,7 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     await rescueUnsavedLead("collection_inquiries", id, withNewColumns);
     return { ok: false, error: SAVE_FAILED };
   }
-  await notify("【COLLECTION】新しい共同オーナー候補", summary, "collection_inquiries", id);
+  await notify("【COLLECTION】新しい共同オーナー候補", summaryText, "collection_inquiries", id);
   await acknowledgeCollection(data, id);
   return { ok: true, id };
 }
@@ -505,7 +559,11 @@ export async function insertMemberPrereg(data: MemberPreregInput): Promise<Resul
     updated_at: now,
     ...attr(data),
   };
+  const duplicate = await isDuplicateLead("member_preregistrations", data.email);
   const summary = `地域: ${data.region}\n参加: ${data.participationInterests.join("、")}\nID: ${id}`;
+  const summaryText = duplicate
+    ? `${summary}\n※ 24時間以内に同じメールアドレスからの送信があります`
+    : summary;
 
   if (!cloudReady()) {
     const local = localDevInsert("members", row);
@@ -513,14 +571,19 @@ export async function insertMemberPrereg(data: MemberPreregInput): Promise<Resul
       await rescueUnsavedLead("member_preregistrations", id, row);
       return local;
     }
-    await notify("【会員事前登録】新しい登録（ローカル）", summary, "member_preregistrations", id);
+    await notify(
+      "【会員事前登録】新しい登録（ローカル）",
+      summaryText,
+      "member_preregistrations",
+      id,
+    );
     return local;
   }
   if (!(await insertSimple("member_preregistrations", row))) {
     await rescueUnsavedLead("member_preregistrations", id, row);
     return { ok: false, error: SAVE_FAILED };
   }
-  await notify("【会員事前登録】新しい登録", summary, "member_preregistrations", id);
+  await notify("【会員事前登録】新しい登録", summaryText, "member_preregistrations", id);
   return { ok: true, id };
 }
 
@@ -542,7 +605,11 @@ export async function insertContact(data: ContactInput): Promise<Result> {
     updated_at: now,
     ...attr(data),
   };
+  const duplicate = await isDuplicateLead("contact_inquiries", data.email);
   const summary = `種別: ${data.topic}\nID: ${id}`;
+  const summaryText = duplicate
+    ? `${summary}\n※ 24時間以内に同じメールアドレスからの送信があります`
+    : summary;
 
   if (!cloudReady()) {
     const local = localDevInsert("contacts", row);
@@ -550,7 +617,12 @@ export async function insertContact(data: ContactInput): Promise<Result> {
       await rescueUnsavedLead("contact_inquiries", id, row);
       return local;
     }
-    await notify("【お問い合わせ】新しいメッセージ（ローカル）", summary, "contact_inquiries", id);
+    await notify(
+      "【お問い合わせ】新しいメッセージ（ローカル）",
+      summaryText,
+      "contact_inquiries",
+      id,
+    );
     await acknowledgeContact(data, id);
     return local;
   }
@@ -558,7 +630,7 @@ export async function insertContact(data: ContactInput): Promise<Result> {
     await rescueUnsavedLead("contact_inquiries", id, row);
     return { ok: false, error: SAVE_FAILED };
   }
-  await notify("【お問い合わせ】新しいメッセージ", summary, "contact_inquiries", id);
+  await notify("【お問い合わせ】新しいメッセージ", summaryText, "contact_inquiries", id);
   await acknowledgeContact(data, id);
   return { ok: true, id };
 }

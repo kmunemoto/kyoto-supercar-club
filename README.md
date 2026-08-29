@@ -26,9 +26,18 @@ npm i
 npm run dev
 ```
 
-公開URL・canonical は `VITE_PUBLIC_SITE_URL` で切り替えます。未設定時は Lovable の実URLを使います。
+チェックは `npm run typecheck` / `npm run lint` / `npm run test` です。GitHub Actions
+（`.github/workflows/ci.yml`）で push ごとに同じものとビルドを実行します。
 
-LINE 導線は公式アカウント（`src/lib/site.ts` の `OFFICIAL_LINE_URL`）です。アカウントが変わったときだけ `VITE_KSC_LINE_URL` で上書きしてください。
+公開URL・canonical は `VITE_PUBLIC_SITE_URL` で切り替えます。未設定時は Lovable の実URLを使い、
+ビルド時に警告を出します。**独自ドメイン公開時はこれを必ず設定してください。**未設定のままだと
+canonical・sitemap・OGP がすべて旧URLを正典として指し続けます。公開ページの一覧は
+[`site.config.ts`](site.config.ts) が単一の情報源で、アプリの canonical と `sitemap.xml`
+の両方がここから生成されます。
+
+LINE 導線は公式アカウント（`src/lib/site.ts` の `OFFICIAL_LINE_URL`）です。アカウントが変わったときだけ
+`VITE_KSC_LINE_URL` で上書きしてください。`off` を設定すると、サイト上の LINE 導線がすべて
+お問い合わせフォームに切り替わります。
 
 ## 管理画面
 
@@ -47,6 +56,26 @@ staff に無いアカウントはログインできません。
 接続後、[`supabase/migrations/`](supabase/migrations/) を **追加分も含めて順に** SQL Editor で実行してください。既存マイグレーションは削除・上書きしません。`member_preregistrations` の既存データは削除しないでください。
 
 サーバー専用の値（service role、Resend、通知先メール）は **Lovable Cloud Secrets** にだけ置いてください。`VITE_` には入れないでください。
+
+メール（受付控えと運営通知）は `RESEND_API_KEY` と `NOTIFY_EMAIL` が設定されているときだけ送信します。
+`NOTIFY_FROM` は **Resend で認証済みのドメイン** のアドレスにしてください。既定の `noreply@resend.dev`
+は Resend のサンドボックスで、アカウント所有者以外には届きません。送信の成否は `notification_log`
+テーブルとサーバーログに記録されます。
+
+## 画像
+
+`public/images/` の配信用ファイル（AVIF / WebP / JPEG の各サイズ）は
+[`scripts/build-images.mjs`](scripts/build-images.mjs) が生成します。元画像は `assets/photos/`
+にあり、公開ディレクトリには置きません。写真を差し替えたときだけ実行してください。
+
+```bash
+npm i --no-save sharp && node scripts/build-images.mjs
+```
+
+## 個人情報の削除請求
+
+管理画面の各詳細ページに「個人情報を削除する」があります。氏名・連絡先・自由記述を消し、
+件数・ステータス・受付日は統計のために残します。実行は対応履歴に記録されます。
 
 ## 注意
 

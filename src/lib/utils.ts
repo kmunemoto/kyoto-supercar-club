@@ -28,10 +28,21 @@ export function newId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID()}`;
 }
 
+/**
+ * Every column here comes from a public form, and the export is opened in
+ * Excel (the BOM below says so). A leading =, +, - or @ makes the cell a
+ * formula, so a value like `=HYPERLINK(...)` would run on a staff machine.
+ * Prefixing a tab keeps the text readable and stops it being parsed as one.
+ */
+function neutralizeFormula(value: string): string {
+  return /^[=+\-@\t\r]/.test(value) ? `\t${value}` : value;
+}
+
 export function toCsv(rows: Record<string, unknown>[], columns: string[]): string {
   const escape = (v: unknown) => {
-    const s = v == null ? "" : Array.isArray(v) ? v.join(" / ") : String(v);
-    if (/[",\n\r]/.test(s)) return `"${s.replaceAll('"', '""')}"`;
+    const raw = v == null ? "" : Array.isArray(v) ? v.join(" / ") : String(v);
+    const s = neutralizeFormula(raw);
+    if (/[",\n\r\t]/.test(s)) return `"${s.replaceAll('"', '""')}"`;
     return s;
   };
   const header = columns.join(",");

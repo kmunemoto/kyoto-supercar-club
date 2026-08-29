@@ -46,8 +46,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP",
-    system-ui, sans-serif;
+  --font-sans:
+    "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
   --font-serif: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
   --color-paper: #f4efe6;
   --color-paper-deep: #ebe4d6;
@@ -58,7 +58,8 @@
   --color-line-strong: #c4b8a8;
   --color-oxblood: #7a3034;
   --color-oxblood-dark: #5c2428;
-  --color-copper: #9a6b4f;
+  /* 4.68:1 on paper, 5.01:1 on cream — AA at the 11-12px sizes this is used at. */
+  --color-copper: #8c6148;
   --color-charcoal: #241f1c;
   --color-success: #3f5d4a;
   --color-warn: #8a5a2b;
@@ -76,7 +77,8 @@
   --primary-foreground: oklch(0.97 0.01 85);
   --secondary: oklch(0.93 0.015 80);
   --secondary-foreground: oklch(0.28 0.02 70);
-  --muted: oklch(0.55 0.02 70);
+  /* #736a60 — 4.63:1 on paper. The previous 0.55 gave 3.18:1. */
+  --muted: oklch(0.505 0.014 70);
   --muted-foreground: oklch(0.5 0.02 70);
   --accent: oklch(0.93 0.015 80);
   --accent-foreground: oklch(0.28 0.02 70);
