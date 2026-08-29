@@ -1,23 +1,50 @@
 import { z } from "zod";
 
-const email = z.string().trim().email("メールアドレスの形式を確認してください").max(200);
+/**
+ * Japanese IMEs produce full-width digits and symbols. Normalizing to NFKC
+ * turns "０９０－１２３４" into "090-1234" so a valid number typed in full
+ * width is not rejected as a format error.
+ */
+function normalize(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  return value.normalize("NFKC");
+}
+
+/** NFKC leaves the katakana prolonged sound mark alone; phone numbers need it. */
+const PHONE_SEPARATORS = /[\u30FC\u2010-\u2015\uFF70]/g;
+
+function normalizePhone(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  return value.normalize("NFKC").replace(PHONE_SEPARATORS, "-");
+}
+
+const email = z.preprocess(
+  normalize,
+  z.string().trim().email("メールアドレスの形式を確認してください").max(200),
+);
 
 const name = z.string().trim().min(1, "氏名を入力してください").max(80);
 
-const optionalPhone = z
-  .string()
-  .trim()
-  .max(20)
-  .refine((v) => v === "" || /^[0-9+\-() ]{10,20}$/.test(v), "電話番号の形式を確認してください")
-  .optional()
-  .or(z.literal(""));
+const optionalPhone = z.preprocess(
+  normalizePhone,
+  z
+    .string()
+    .trim()
+    .max(20)
+    .refine((v) => v === "" || /^[0-9+\-() ]{10,20}$/.test(v), "電話番号の形式を確認してください")
+    .optional()
+    .or(z.literal("")),
+);
 
-const requiredPhone = z
-  .string()
-  .trim()
-  .min(10, "電話番号を入力してください")
-  .max(20, "電話番号が長すぎます")
-  .regex(/^[0-9+\-() ]+$/, "電話番号の形式を確認してください");
+const requiredPhone = z.preprocess(
+  normalizePhone,
+  z
+    .string()
+    .trim()
+    .min(10, "電話番号を入力してください")
+    .max(20, "電話番号が長すぎます")
+    .regex(/^[0-9+\-() ]+$/, "電話番号の形式を確認してください"),
+);
 
 /** OWNER NETWORK: Kyoto storage / handover region only. */
 export const REGIONS = ["京都市", "京都府内（京都市以外）"] as const;
@@ -220,14 +247,28 @@ export const RESALE_PRIORITIES = [
 
 const honeypot = z.string().optional();
 
+/**
+ * Attribution comes from the URL and the referrer, not from anything the
+ * visitor typed, and no form renders an input for it. An oversized value must
+ * therefore be truncated, never rejected: a validation error on these keys
+ * would surface as a generic toast pointing at a field that does not exist,
+ * leaving the visitor unable to submit at all.
+ */
+function attributionField(max: number) {
+  return z.preprocess(
+    (value) => (typeof value === "string" ? value.trim().slice(0, max) : undefined),
+    z.string().max(max).optional(),
+  );
+}
+
 const attribution = {
-  utmSource: z.string().trim().max(200).optional().or(z.literal("")),
-  utmMedium: z.string().trim().max(200).optional().or(z.literal("")),
-  utmCampaign: z.string().trim().max(200).optional().or(z.literal("")),
-  utmContent: z.string().trim().max(200).optional().or(z.literal("")),
-  utmTerm: z.string().trim().max(200).optional().or(z.literal("")),
-  landingPath: z.string().trim().max(500).optional().or(z.literal("")),
-  referrer: z.string().trim().max(500).optional().or(z.literal("")),
+  utmSource: attributionField(200),
+  utmMedium: attributionField(200),
+  utmCampaign: attributionField(200),
+  utmContent: attributionField(200),
+  utmTerm: attributionField(200),
+  landingPath: attributionField(500),
+  referrer: attributionField(500),
 };
 
 export function maxVehicleYear(): number {
@@ -273,7 +314,7 @@ export const ownerInquirySchema = z.object({
   wantToRegisterCar: z.enum(YES_NO, {
     message: "愛車登録の希望を選択してください",
   }),
-  priorityUsePeriod: z.string().trim().min(1, "希望する利用可能日を入力してください").max(500),
+  priorityUsePeriod: z.string().trim().max(500).optional().or(z.literal("")),
   dailyKmPreference: z.enum(DAILY_KM_PREFS, {
     message: "距離の希望を選択してください",
   }),
@@ -299,7 +340,7 @@ export const ownerInquirySchema = z.object({
   otherDriverConditions: z.string().trim().max(2000).optional().or(z.literal("")),
   managementNeeds: z.array(z.string()).optional(),
   annualKmCap: z.string().trim().max(200).optional().or(z.literal("")),
-  concerns: z.string().trim().min(1, "気になること・質問を入力してください").max(2000),
+  concerns: z.string().trim().max(2000).optional().or(z.literal("")),
   fullName: name,
   email,
   phone: requiredPhone,
@@ -325,8 +366,8 @@ export const collectionInquirySchema = z.object({
   currentVehicleStatus: z.enum(CURRENT_VEHICLE_STATUS, {
     message: "現在の車両所有状況を選択してください",
   }),
-  desiredMake: z.string().trim().min(1, "希望メーカーを入力してください").max(80),
-  desiredModel: z.string().trim().min(1, "希望車種を入力してください").max(80),
+  desiredMake: z.string().trim().max(80).optional().or(z.literal("")),
+  desiredModel: z.string().trim().max(80).optional().or(z.literal("")),
   desiredModels: z.string().trim().min(1, "希望する車種・メーカーを入力してください").max(500),
   vehicleCondition: z.enum(VEHICLE_CONDITIONS, {
     message: "新車・中古の希望を選択してください",
@@ -445,9 +486,15 @@ export function fieldErrors(error: z.ZodError): Record<string, string> {
 export function focusFirstError(errors: Record<string, string>) {
   const first = Object.keys(errors)[0];
   if (!first || typeof document === "undefined") return;
-  const el = document.getElementById(first);
-  if (el && "focus" in el) {
-    (el as HTMLElement).focus();
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
+  // A multi-step form may have just switched back to the step that owns this
+  // field, so look the element up after the re-render rather than before it.
+  const focus = () => {
+    const el = document.getElementById(first);
+    if (el && "focus" in el) {
+      (el as HTMLElement).focus();
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+  if (typeof requestAnimationFrame === "function") requestAnimationFrame(focus);
+  else focus();
 }

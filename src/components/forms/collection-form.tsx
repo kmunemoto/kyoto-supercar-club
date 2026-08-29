@@ -78,32 +78,37 @@ export function CollectionForm() {
     };
   }
 
+  const step1Keys = {
+    applicantType: true,
+    region: true,
+    kyotoConnection: true,
+    currentVehicleStatus: true,
+    desiredMake: true,
+    desiredModel: true,
+    desiredModels: true,
+    vehicleCondition: true,
+    budgetBand: true,
+    desiredDaysPerYear: true,
+    desiredKmPerYear: true,
+    desiredStartTiming: true,
+    wantValueCheck: true,
+    resalePriorities: true,
+    priorities: true,
+    concerns: true,
+  } as const;
+
+  /** Server-side errors can name a step 1 field while step 2 is on screen. */
+  function showErrors(nextErrors: Record<string, string>) {
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).some((key) => key in step1Keys)) setStep(1);
+    focusFirstError(nextErrors);
+  }
+
   function onNext() {
-    const parsed = collectionInquirySchema
-      .pick({
-        applicantType: true,
-        region: true,
-        kyotoConnection: true,
-        currentVehicleStatus: true,
-        desiredMake: true,
-        desiredModel: true,
-        desiredModels: true,
-        vehicleCondition: true,
-        budgetBand: true,
-        desiredDaysPerYear: true,
-        desiredKmPerYear: true,
-        desiredStartTiming: true,
-        wantValueCheck: true,
-        resalePriorities: true,
-        priorities: true,
-        concerns: true,
-      })
-      .safeParse(payload());
+    const parsed = collectionInquirySchema.pick(step1Keys).safeParse(payload());
     if (!parsed.success) {
-      const nextErrors = fieldErrors(parsed.error);
-      setErrors(nextErrors);
+      showErrors(fieldErrors(parsed.error));
       toast.error("入力内容を確認してください。");
-      focusFirstError(nextErrors);
       return;
     }
     setErrors({});
@@ -114,10 +119,8 @@ export function CollectionForm() {
     e.preventDefault();
     const parsed = collectionInquirySchema.safeParse(payload());
     if (!parsed.success) {
-      const nextErrors = fieldErrors(parsed.error);
-      setErrors(nextErrors);
+      showErrors(fieldErrors(parsed.error));
       toast.error("入力内容を確認してください。");
-      focusFirstError(nextErrors);
       return;
     }
     setErrors({});
@@ -125,9 +128,8 @@ export function CollectionForm() {
     try {
       const res = await submitCollectionInquiry({ data: parsed.data });
       if (!res.ok) {
-        setErrors(res.fields ?? {});
+        showErrors(res.fields ?? {});
         toast.error(res.error);
-        focusFirstError(res.fields ?? {});
         return;
       }
       track("collection_prereg_submit");
@@ -230,8 +232,7 @@ export function CollectionForm() {
             <Field
               label="希望メーカー"
               htmlFor="desiredMake"
-              required
-              hint="未定でも構いません。"
+              hint="未定でも構いません。空欄のままでも送信できます。"
               error={errors["desiredMake"]}
             >
               <Input
@@ -244,8 +245,7 @@ export function CollectionForm() {
             <Field
               label="希望車種"
               htmlFor="desiredModel"
-              required
-              hint="未定でも構いません。"
+              hint="未定でも構いません。空欄のままでも送信できます。"
               error={errors["desiredModel"]}
             >
               <Input

@@ -113,13 +113,18 @@ export function OwnerForm() {
     concerns: true,
   } as const;
 
+  /** Server-side errors can name a step 1 field while step 2 is on screen. */
+  function showErrors(nextErrors: Record<string, string>) {
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).some((key) => key in step1Keys)) setStep(1);
+    focusFirstError(nextErrors);
+  }
+
   function onNext() {
     const parsed = ownerInquirySchema.pick(step1Keys).safeParse(payload());
     if (!parsed.success) {
-      const nextErrors = fieldErrors(parsed.error);
-      setErrors(nextErrors);
+      showErrors(fieldErrors(parsed.error));
       toast.error("入力内容を確認してください。");
-      focusFirstError(nextErrors);
       return;
     }
     setErrors({});
@@ -130,11 +135,9 @@ export function OwnerForm() {
     e.preventDefault();
     const parsed = ownerInquirySchema.safeParse(payload());
     if (!parsed.success) {
-      const nextErrors = fieldErrors(parsed.error);
-      setErrors(nextErrors);
+      showErrors(fieldErrors(parsed.error));
       toast.error("入力内容を確認してください。");
       track("owner_form_error");
-      focusFirstError(nextErrors);
       return;
     }
     setErrors({});
@@ -142,10 +145,9 @@ export function OwnerForm() {
     try {
       const res = await submitOwnerInquiry({ data: parsed.data });
       if (!res.ok) {
-        setErrors(res.fields ?? {});
+        showErrors(res.fields ?? {});
         toast.error(res.error);
         track("owner_form_error");
-        focusFirstError(res.fields ?? {});
         return;
       }
       track("owner_form_submit");
@@ -340,8 +342,7 @@ export function OwnerForm() {
           <Field
             label="自分の車を出せる時期の目安"
             htmlFor="priorityUsePeriod"
-            required
-            hint="例：週末以外、GWは不可、未定"
+            hint="任意。例：週末以外、GWは不可、未定"
             error={errors["priorityUsePeriod"]}
           >
             <Input
@@ -481,7 +482,12 @@ export function OwnerForm() {
               onChange={(e) => set("otherDriverConditions", e.target.value)}
             />
           </Field>
-          <Field label="質問・懸念事項" htmlFor="concerns" required error={errors["concerns"]}>
+          <Field
+            label="質問・懸念事項"
+            htmlFor="concerns"
+            hint="任意。相談時にうかがうこともできます。"
+            error={errors["concerns"]}
+          >
             <Textarea
               id="concerns"
               value={form.concerns}

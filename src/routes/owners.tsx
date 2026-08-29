@@ -11,7 +11,6 @@ import { PageIntro, Photo, Section, SiteShell } from "@/components/site/shell";
 import {
   ACCIDENT_POLICY,
   DRIVER_BURDEN_ITEMS,
-  FAQS,
   FEE_NOTE,
   LEGAL_BANNER,
   NORMAL_WASH_INCLUDES,
@@ -31,6 +30,7 @@ import {
   OWNER_PROHIBITED,
   OWNER_USE_SPECS,
   SPECIAL_CLEANING_EXAMPLES,
+  faqsById,
 } from "@/lib/content";
 import { BRAND } from "@/lib/brand";
 import { pageHead } from "@/lib/seo";
@@ -216,15 +216,13 @@ function Page() {
 
         <h2 className="mt-20 font-serif text-3xl">よくある質問</h2>
         <dl className="mt-8 divide-y divide-line border-y border-line">
-          {FAQS.filter((f) =>
-            [
-              "OWNER NETWORKの月額管理費は何に使いますか？",
-              "OWNER NETWORKに保証金はありますか？",
-              "特別清掃費はいつ発生しますか？",
-              "審査はどのように行いますか？",
-              "OWNER NETWORKの車はどこに置きますか？",
-            ].includes(f.q),
-          ).map((f) => (
+          {faqsById([
+            "owner-monthly-fee",
+            "owner-deposit",
+            "special-cleaning",
+            "screening",
+            "owner-storage",
+          ]).map((f) => (
             <div key={f.q} className="grid gap-3 py-6 md:grid-cols-[0.9fr_1.3fr]">
               <dt className="font-medium">{f.q}</dt>
               <dd className="text-ink-soft">{f.a}</dd>

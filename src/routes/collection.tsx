@@ -33,11 +33,12 @@ import {
   COLLECTION_UNPAID,
   COLLECTION_USE_ALLOCATION,
   COLLECTION_USE_SPECS,
-  FAQS,
+  faqsById,
   FEE_NOTE,
   LEGAL_BANNER,
   NORMAL_WASH_INCLUDES,
   SPECIAL_CLEANING_EXAMPLES,
+  INVESTMENT_NOTE,
   VALUE_CHECK,
 } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
@@ -155,6 +156,9 @@ function Page() {
         <h3 className="mt-12 font-serif text-2xl">基準を満たさないとき</h3>
         <BulletList items={VALUE_CHECK.ifNotMet} />
         <p className="mt-6 max-w-3xl text-sm text-muted">{VALUE_CHECK.disclaimer}</p>
+        <div className="mt-8">
+          <PlanBanner>{INVESTMENT_NOTE}</PlanBanner>
+        </div>
 
         <h2 className="mt-20 font-serif text-3xl">予定する基本条件</h2>
         <p className="mt-4 text-sm text-muted">{FEE_NOTE}</p>
@@ -262,17 +266,16 @@ function Page() {
 
         <h2 className="mt-20 font-serif text-3xl">よくある質問</h2>
         <dl className="mt-8 divide-y divide-line border-y border-line">
-          {FAQS.filter((f) =>
-            [
-              "KSCが車を買って、利用権だけ売るのですか？",
-              "COLLECTIONの費用はいくらですか？",
-              "1人あたりの購入負担はいくらですか？",
-              "共同オーナーは何人ですか？",
-              "KSC VALUE CHECKとは何ですか？",
-              "参加申込預り金は何ですか？",
-              "京都在住でないと参加できませんか？",
-            ].includes(f.q),
-          ).map((f) => (
+          {faqsById([
+            "who-buys",
+            "investment",
+            "collection-fees",
+            "per-owner-cost",
+            "owner-count",
+            "value-check",
+            "application-deposit",
+            "kyoto-residency",
+          ]).map((f) => (
             <div key={f.q} className="grid gap-3 py-6 md:grid-cols-[0.9fr_1.3fr]">
               <dt className="font-medium">{f.q}</dt>
               <dd className="text-ink-soft">{f.a}</dd>

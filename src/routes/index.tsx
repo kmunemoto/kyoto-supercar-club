@@ -6,11 +6,11 @@ import { BRAND } from "@/lib/brand";
 import {
   BRAND_PURPOSE,
   BUSINESS_PATHS,
-  FAQS,
   HERO_PILLARS,
   LEGAL_BANNER,
   MANAGEMENT_INTRO,
   MANAGEMENT_ITEMS,
+  faqsById,
 } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 import { lineCtaLabel } from "@/lib/site";
@@ -134,19 +134,14 @@ function Home() {
           </Link>
         </div>
         <dl className="mt-10 divide-y divide-line border-y border-line">
-          {FAQS.filter((f) =>
-            [
-              "今すぐ車を借りられますか？",
-              "COLLECTIONとOWNER NETWORKの違いは何ですか？",
-              "いま代金や申込金は必要ですか？",
-              "京都在住でないと参加できませんか？",
-            ].includes(f.q),
-          ).map((f) => (
-            <div key={f.q} className="grid gap-3 py-6 md:grid-cols-[0.9fr_1.3fr]">
-              <dt className="font-medium">{f.q}</dt>
-              <dd className="text-ink-soft">{f.a}</dd>
-            </div>
-          ))}
+          {faqsById(["rent-now", "collection-vs-owner", "money-now", "kyoto-residency"]).map(
+            (f) => (
+              <div key={f.q} className="grid gap-3 py-6 md:grid-cols-[0.9fr_1.3fr]">
+                <dt className="font-medium">{f.q}</dt>
+                <dd className="text-ink-soft">{f.a}</dd>
+              </div>
+            ),
+          )}
         </dl>
       </Section>
 

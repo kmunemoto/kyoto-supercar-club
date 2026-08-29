@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/check-kyoto.mjs"
+    "test": "node --test \"src/lib/*.test.ts\" && node scripts/check-kyoto.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

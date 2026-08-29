@@ -67,6 +67,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+// Meta is deduplicated by name/property with the deepest match winning, so these
+// act as defaults for any route that does not set its own. Links are NOT
+// deduplicated, so the canonical from here is deliberately left out: every page
+// declares its own, and emitting this one too would point each of them at "/".
 const fallbackHead = pageHead({
   title: BRAND.name,
   description:
@@ -92,7 +96,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@500;600;700&display=swap",
       },
-      ...fallbackHead.links,
     ],
   }),
   shellComponent: RootShell,
