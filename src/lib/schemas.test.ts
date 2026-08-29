@@ -114,7 +114,9 @@ test("collection inquiry rejects former fixed 5-million budget band", () => {
   assert.equal(result.success, false);
 });
 
-test("collection inquiry rejects missing vehicle condition", () => {
+// Used cars only, so the form stopped asking new-or-used. A submission without
+// it must go through rather than fail on a question nobody is shown.
+test("collection inquiry accepts a submission with no vehicle condition", () => {
   const result = collectionInquirySchema.safeParse({
     fullName: "佐藤 花子",
     email: "hanako@example.com",
@@ -135,7 +137,7 @@ test("collection inquiry rejects missing vehicle condition", () => {
     priorities: ["まだ決めていない"],
     privacyAgreed: true,
   });
-  assert.equal(result.success, false);
+  assert.equal(result.success, true);
 });
 
 test("member prereg without driving interest does not require age 30", () => {

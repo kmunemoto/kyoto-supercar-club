@@ -30,6 +30,8 @@ import {
   COLLECTION_RESERVE_USES,
   COLLECTION_RISKS,
   COLLECTION_SOURCING,
+  COLLECTION_SOURCING_COMMON,
+  COLLECTION_USED_ONLY,
   COLLECTION_UNPAID,
   COLLECTION_USE_ALLOCATION,
   COLLECTION_USE_SPECS,
@@ -118,11 +120,10 @@ function Page() {
         <p className="mt-4 max-w-3xl text-ink-soft">{COLLECTION_HEADCOUNT.body}</p>
         <p className="mt-4 max-w-3xl text-ink-soft">{COLLECTION_HEADCOUNT.range}</p>
 
-        <h2 className="mt-20 font-serif text-3xl">新車と中古車</h2>
-        <p className="mt-4 max-w-3xl text-ink-soft">
-          新車、認定中古、専門店在庫、公開中古在庫を対象にします。
-        </p>
-        <div className="mt-10 grid gap-10 md:grid-cols-3">
+        <h2 className="mt-20 font-serif text-3xl">車両の探しかた</h2>
+        <p className="mt-4 max-w-3xl text-lg text-ink-soft">{COLLECTION_USED_ONLY}</p>
+        <p className="mt-4 max-w-3xl text-ink-soft">{COLLECTION_SOURCING_COMMON}</p>
+        <div className="mt-10 grid gap-10 md:grid-cols-2">
           {COLLECTION_SOURCING.map((item) => (
             <article key={item.title} className="border-t border-line pt-6">
               <h3 className="font-serif text-2xl">{item.title}</h3>
@@ -269,6 +270,8 @@ function Page() {
         <dl className="mt-8 divide-y divide-line border-y border-line">
           {faqsById([
             "who-buys",
+            "used-only",
+            "collection-storage",
             "investment",
             "collection-fees",
             "per-owner-cost",

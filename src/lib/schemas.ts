@@ -235,6 +235,11 @@ export const COLLECTION_PRIORITIES = [
   "まだ決めていない",
 ] as const;
 
+/**
+ * Kept only so historical rows written before the service settled on used cars
+ * still parse. Nothing collects it any more: every project is a used car, so
+ * asking would imply a choice that does not exist.
+ */
 export const VEHICLE_CONDITIONS = ["新車", "中古", "どちらでも"] as const;
 
 export const RESALE_PRIORITIES = [
@@ -369,9 +374,7 @@ export const collectionInquirySchema = z.object({
   desiredMake: z.string().trim().max(80).optional().or(z.literal("")),
   desiredModel: z.string().trim().max(80).optional().or(z.literal("")),
   desiredModels: z.string().trim().min(1, "希望する車種・メーカーを入力してください").max(500),
-  vehicleCondition: z.enum(VEHICLE_CONDITIONS, {
-    message: "新車・中古の希望を選択してください",
-  }),
+  vehicleCondition: z.enum(VEHICLE_CONDITIONS).optional().or(z.literal("")),
   budgetBand: z.enum(COLLECTION_BUDGETS, {
     message: "予算感を選択してください",
   }),

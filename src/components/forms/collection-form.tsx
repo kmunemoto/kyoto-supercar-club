@@ -18,7 +18,6 @@ import {
   RESALE_PRIORITIES,
   RESIDENCE_REGIONS,
   START_TIMING,
-  VEHICLE_CONDITIONS,
   YES_NO,
   collectionInquirySchema,
   fieldErrors,
@@ -36,7 +35,6 @@ export function CollectionForm() {
     currentVehicleStatus: "所有していない" as CollectionInquiryInput["currentVehicleStatus"],
     desiredMake: "",
     desiredModel: "",
-    vehicleCondition: "どちらでも" as CollectionInquiryInput["vehicleCondition"],
     budgetBand: "未定・相談したい" as CollectionInquiryInput["budgetBand"],
     desiredDaysPerYear: "まだ決めていない" as CollectionInquiryInput["desiredDaysPerYear"],
     desiredKmPerYear: "まだ決めていない" as CollectionInquiryInput["desiredKmPerYear"],
@@ -91,7 +89,6 @@ export function CollectionForm() {
     desiredMake: true,
     desiredModel: true,
     desiredModels: true,
-    vehicleCondition: true,
     budgetBand: true,
     desiredDaysPerYear: true,
     desiredKmPerYear: true,
@@ -268,22 +265,6 @@ export function CollectionForm() {
                 onChange={(e) => set("desiredModel", e.target.value)}
                 placeholder="例：未定"
               />
-            </Field>
-            <Field
-              label="新車／中古"
-              htmlFor="vehicleCondition"
-              required
-              error={errors["vehicleCondition"]}
-            >
-              <NativeSelect
-                id="vehicleCondition"
-                value={form.vehicleCondition}
-                onChange={(e) => set("vehicleCondition", e.target.value)}
-              >
-                {VEHICLE_CONDITIONS.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
             </Field>
             <Field
               label="共同購入に充てられる予算感"

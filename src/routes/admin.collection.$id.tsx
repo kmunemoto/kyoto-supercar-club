@@ -58,7 +58,8 @@ function Page() {
           ["希望車種", r.desired_models],
           ["希望メーカー", r.desired_make],
           ["希望モデル", r.desired_model],
-          ["新車／中古", r.vehicle_condition],
+          // The form stopped asking; older rows may still carry an answer.
+          ["車両状態", r.vehicle_condition],
           ["VALUE CHECK希望", r.want_value_check],
           ["再販・保有", jsonList(r.resale_priorities ?? [])],
           ["LINE希望", r.prefer_line ? "はい" : "—"],

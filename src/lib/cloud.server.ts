@@ -486,7 +486,6 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
   const extra = [
     `希望メーカー: ${data.desiredMake || "未定"}`,
     `希望車種: ${data.desiredModel || "未定"}`,
-    `新車／中古: ${data.vehicleCondition}`,
     `VALUE CHECK希望: ${data.wantValueCheck}`,
     `再販・保有: ${(data.resalePriorities ?? []).join("、") || "未記入"}`,
     `LINEでの連絡希望: ${data.preferLine ? "はい" : "いいえ"}`,
@@ -525,13 +524,14 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     ...base,
     desired_make: data.desiredMake || null,
     desired_model: data.desiredModel || null,
-    vehicle_condition: data.vehicleCondition,
+    // Used cars only; the form no longer asks.
+    vehicle_condition: data.vehicleCondition || "中古",
     want_value_check: data.wantValueCheck,
     resale_priorities: data.resalePriorities ?? [],
     prefer_line: Boolean(data.preferLine),
   };
   const duplicate = await isDuplicateLead("collection_inquiries", data.email);
-  const summary = `地域: ${data.region}\n希望: ${desiredModels}\n新車／中古: ${data.vehicleCondition}\nID: ${id}`;
+  const summary = `地域: ${data.region}\n希望: ${desiredModels}\nID: ${id}`;
   const summaryText = duplicate
     ? `${summary}\n※ 24時間以内に同じメールアドレスからの送信があります`
     : summary;

@@ -131,8 +131,13 @@ export const BUSINESS_PATHS = [
   },
 ] as const;
 
-export const MANAGEMENT_INTRO =
-  "KSC COLLECTIONでは、共同所有車両を京都府内の拠点で保管し、KSCが日常管理を担う計画です。OWNER NETWORKでは、車両は各オーナーが保管し、利用時の鍵の受け取りから返却確認までKSCが京都府内で対応します。詳細は正式募集時にご案内します。";
+/**
+ * COLLECTION の共同所有車両の保管場所。OWNER NETWORK の登録車両は各オーナーの
+ * 手元にあるままで、こちらの対象ではない（正確な保管場所は非公開のまま）。
+ */
+export const COLLECTION_STORAGE_PLACE = "御池駐車場（京都市）";
+
+export const MANAGEMENT_INTRO = `KSC COLLECTIONでは、共同所有車両を${COLLECTION_STORAGE_PLACE}で保管し、KSCが日常管理を担う計画です。OWNER NETWORKでは、車両は各オーナーが保管し、利用時の鍵の受け取りから返却確認までKSCが京都府内で対応します。詳細は正式募集時にご案内します。`;
 
 export const MANAGEMENT_ITEMS = [
   {
@@ -141,7 +146,7 @@ export const MANAGEMENT_ITEMS = [
   },
   {
     title: "COLLECTIONの保管",
-    body: "共同所有車両は、KSCが京都府内の拠点で保管し、日常管理を行う計画です。保管場所と管理内容の詳細は、正式募集時にご案内します。",
+    body: `共同所有車両は、KSCが${COLLECTION_STORAGE_PLACE}で保管し、日常管理を行う計画です。管理内容の詳細は、正式募集時にご案内します。`,
   },
   {
     title: "OWNER NETWORKの保管",
@@ -186,18 +191,29 @@ export const COLLECTION_IDEA = [
   },
 ] as const;
 
+/** 共同購入は中古車のみを対象とする。 */
+export const COLLECTION_USED_ONLY = "共同購入の対象は中古車のみです。新車は扱いません。";
+
+/** どの経路で仕入れても、購入前点検と全員承認は共通で行う。 */
+export const COLLECTION_SOURCING_COMMON =
+  "どの経路の場合も、購入前点検を行い、個体の状態、価格、整備履歴、保証、再販性を調査したうえで、共同オーナー全員の承認を取ります。";
+
 export const COLLECTION_SOURCING = [
   {
-    title: "新車",
-    body: "正規販売店などでの発注、納期確認、登録をKSCが調整する計画です。納車まで月額管理費は発生しません。",
+    title: "連携する販売店",
+    body: "取引のある販売店を通じて候補車両を探します。",
+  },
+  {
+    title: "オークション",
+    body: "業者向けオークションからの購入も候補です。落札できないこともあります。",
   },
   {
     title: "認定中古・専門店在庫",
-    body: "認定中古車や専門店の在庫も対象です。購入前点検を行ったうえで、共同オーナー全員の承認を取ります。",
+    body: "メーカー認定中古車や専門店の在庫も対象です。",
   },
   {
     title: "公開中古在庫",
-    body: "カーセンサーなどの公開在庫も候補になります。特定の掲載サイトとの提携はありません。",
+    body: "一般に公開されている中古車在庫も候補になります。特定の掲載サイトとの提携はありません。",
   },
 ] as const;
 
@@ -262,14 +278,14 @@ export const COLLECTION_FLOW = [
 ] as const;
 
 export const COLLECTION_DUTIES = [
-  { title: "車両選定", body: "新車・中古を問わず、候補車両の選定と状態確認を調整します。" },
+  { title: "車両選定", body: "中古車を対象に、候補車両の選定と状態確認を調整します。" },
   {
     title: "購入調整",
     body: "車両の購入資金はプロジェクト参加者が負担し、KSCが車両選定と購入手続きを調整します。",
   },
   {
     title: "保管",
-    body: "共同所有車両は、KSCが京都府内の拠点で保管し、日常管理を行う計画です。詳細は正式募集時にご案内します。",
+    body: `共同所有車両は、KSCが${COLLECTION_STORAGE_PLACE}で保管し、日常管理を行う計画です。詳細は正式募集時にご案内します。`,
   },
   {
     title: "整備・洗車の手配",
@@ -547,7 +563,7 @@ export const OWNER_VS_COLLECTION = [
   },
   {
     label: "保管・受け渡し",
-    collection: "KSCが京都府内で保管・受け渡しする計画",
+    collection: `KSCが${COLLECTION_STORAGE_PLACE}で保管する計画。受け渡しは京都府内`,
     owner: "各オーナーが保管。鍵の受け取り・受け渡し・返却は京都府内",
   },
   {
@@ -855,7 +871,7 @@ export const FAQS = [
   {
     id: "used-cars",
     q: "中古車も対象ですか？",
-    a: "新車、認定中古車、専門店在庫、一般に公開されている中古車在庫も候補です。希望する車種を伺い、KSCが個体の状態、価格、整備履歴、保証、再販性を調査します。",
+    a: "対象は中古車のみです。新車は扱いません。連携する販売店、業者向けオークション、メーカー認定中古車、専門店在庫、一般に公開されている中古車在庫が候補になります。希望する車種を伺い、KSCが個体の状態、価格、整備履歴、保証、再販性を調査します。",
   },
   {
     id: "application-deposit",
@@ -886,6 +902,16 @@ export const FAQS = [
     id: "screening",
     q: "審査はどのように行いますか？",
     a: REVIEW_COPY,
+  },
+  {
+    id: "collection-storage",
+    q: "共同所有する車はどこに置きますか？",
+    a: `${COLLECTION_STORAGE_PLACE}で保管し、KSCが日常管理を行う計画です。受け渡しは京都府内で、毎回KSCが対面で行います。管理内容の詳細は正式募集時にご案内します。`,
+  },
+  {
+    id: "used-only",
+    q: "共同購入できるのは新車ですか、中古車ですか？",
+    a: "中古車のみです。新車は扱いません。連携する販売店、業者向けオークション、メーカー認定中古車、専門店在庫、一般に公開されている中古車在庫から探します。",
   },
   {
     id: "owner-storage",
@@ -1003,7 +1029,7 @@ export const LEGAL_TODOS = [
     id: "identity-handover",
     title: "対面での本人確認",
     detail:
-      "受け渡し時の対面本人確認、緊急連絡と事故対応手順を文書化すること。保管場所は公開しない。OWNER NETWORKの保管・鍵受け取り・受け渡し・返却は京都府内。",
+      "受け渡し時の対面本人確認、緊急連絡と事故対応手順を文書化すること。OWNER NETWORKの登録車両の正確な保管場所は公開しない（保管・鍵受け取り・受け渡し・返却は京都府内）。COLLECTIONの保管場所は御池駐車場として公開しているため、施設側の管理体制、盗難・当て逃げ時の責任範囲、保険の駐車場条件を確認すること。",
   },
   {
     id: "owner-contract",
