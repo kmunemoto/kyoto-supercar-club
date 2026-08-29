@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
 import { BRAND } from "@/lib/brand";
 import { OPERATOR } from "@/lib/operator";
+import { ConsentControl } from "@/components/site/consent-control";
+import { PROCESSORS, RETENTION_NOTE } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
@@ -48,23 +50,42 @@ function Page() {
         <article>
           <h2 className="font-serif text-2xl">4. 保管と安全管理</h2>
           <p className="mt-3 text-ink-soft">
-            お預かりした情報は、適切なアクセス制限を設けたシステムで管理し、業務上必要な運営担当者のみが取り扱います。個人情報の開示、訂正、削除に関するご相談は、お問い合わせフォームから受け付けます。
+            お預かりした情報は、適切なアクセス制限を設けたシステムで管理し、業務上必要な運営担当者のみが取り扱います。個人情報の開示、訂正、削除のご請求は、お問い合わせフォームまたは受付時にお送りする控えのメールへの返信で受け付けます。ご本人であることを確認できた場合、原則として2週間以内に対応し、削除に応じたときはその旨をご連絡します。
           </p>
         </article>
         <article>
-          <h2 className="font-serif text-2xl">5. 委託</h2>
+          <h2 className="font-serif text-2xl">5. 委託先</h2>
           <p className="mt-3 text-ink-soft">
-            当サービスは、サイト運営やメール配信など、業務の一部を外部事業者へ委託する場合があります。委託する場合は、必要な範囲でのみ情報を取り扱い、適切な管理を行います。
+            当サービスは、以下の外部サービスに業務の一部を委託しています。いずれも必要な範囲でのみ情報を取り扱います。
+          </p>
+          <ul className="mt-3 space-y-2 text-ink-soft">
+            {PROCESSORS.map((item) => (
+              <li key={item.name}>
+                <span className="font-medium text-ink">{item.name}</span>：{item.purpose}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-sm text-muted">
+            LINE公式アカウントからご相談いただいた場合、そのやり取りはLINEヤフー株式会社のサービス上でも取り扱われます。
           </p>
         </article>
         <article>
-          <h2 className="font-serif text-2xl">6. Cookieとアクセス解析</h2>
+          <h2 className="font-serif text-2xl">6. 保存期間</h2>
+          <p className="mt-3 text-ink-soft">{RETENTION_NOTE}</p>
+        </article>
+        <article id="cookie" className="scroll-mt-24">
+          <h2 className="font-serif text-2xl">7. Cookieとアクセス解析</h2>
           <p className="mt-3 text-ink-soft">
-            当サイトでは、利便性の向上と利用状況の把握のため、Cookieなどの技術を利用する場合があります。任意の分析・広告Cookieは、利用者の同意が得られた場合にのみ使用します。
+            サイトの表示に必要なCookieのほか、利用状況の把握と広告効果の測定のためにGoogleアナリティクス（Google
+            LLC）とMetaピクセル（Meta Platforms,
+            Inc.）を利用する場合があります。これらは利用者の同意が得られた場合にのみ読み込みます。同意はいつでも変更できます。
           </p>
+          <div className="mt-4">
+            <ConsentControl />
+          </div>
         </article>
         <article>
-          <h2 className="font-serif text-2xl">7. 運営者</h2>
+          <h2 className="font-serif text-2xl">8. 運営者</h2>
           {OPERATOR.legalName || OPERATOR.contactEmail ? (
             <p className="mt-3 text-ink-soft">
               {OPERATOR.legalName ? <>名称: {OPERATOR.legalName}</> : <>運営：{BRAND.name}</>}

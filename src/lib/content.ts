@@ -20,6 +20,43 @@ export const KYOTO_ELIGIBILITY =
 export const INVESTMENT_NOTE =
   "KSC COLLECTIONは、車を楽しむための共同所有サービスです。投資収益を目的とした商品ではなく、車両価値や将来の売却価格を保証するものではありません。";
 
+/** Named so the policy matches what the site actually loads and sends. */
+/**
+ * Everything on /about is restated from what the site already commits to
+ * elsewhere. No claim is made here that is not made on the service pages.
+ */
+export const ABOUT_STANCE = [
+  {
+    title: "京都を拠点にする理由",
+    body: "車両の保管・管理・受け渡しの拠点を京都府内に置きます。整備と保管の質を一箇所で見られること、受け渡しに人が立ち会えることを優先しました。共同オーナーや登録オーナーの居住地・法人所在地は問いません。",
+  },
+  {
+    title: "確約しないと決めていること",
+    body: "補償の範囲、料金、車種、将来の売却価格は、このサイトでは確約しません。保険の引受条件、共同所有の名義、必要な許認可、税務の扱いが確定していないためです。掲載している金額と条件はすべて予定であり、正式募集の開始時に、適用される税を含む総額と契約条件をご案内します。",
+  },
+  {
+    title: "不利なことも先に書く",
+    body: "退出のしかた、相続、支払いが滞ったときの扱い、車両価値が下がる可能性、希望日に予約が取れない可能性、特別清掃が実費になる条件を、申し込む前に読める場所に置いています。あとから知って困ることを減らすためです。",
+  },
+  {
+    title: "いま受け付けていること",
+    body: "共同購入の興味登録と、既存スーパーカーオーナーからの先行相談の2つです。いずれも無料で、契約・決済・購入申込は発生しません。一般会員向けの貸し出しは保留しており、新規の募集は行っていません。",
+  },
+] as const;
+
+export const ABOUT_OPERATOR_PENDING =
+  "運営主体の名称・所在地は、法人の設立と許認可の確認が済んだ時点で、このページとプライバシーポリシーに掲載します。確定していない事項を先に掲げることはしません。個人情報に関するご請求とご相談は、それまでの間もお問い合わせフォームで受け付けます。";
+
+export const PROCESSORS = [
+  { name: "Lovable Cloud（Supabase）", purpose: "フォーム送信内容の保管とサイトの稼働" },
+  { name: "Resend", purpose: "受付控えと運営向け通知メールの配信" },
+  { name: "Google アナリティクス", purpose: "利用状況の把握（同意時のみ）" },
+  { name: "Meta ピクセル", purpose: "広告効果の測定（同意時のみ）" },
+] as const;
+
+export const RETENTION_NOTE =
+  "興味登録・先行相談・お問い合わせの内容は、正式募集の準備と個別のご連絡のために保管します。最後のご連絡から3年、または削除のご請求をいただいた時点のいずれか早い方で削除します。統計のために個人を識別できない形に加工した情報は、その後も利用することがあります。";
+
 export const PHOTO_NOTE =
   "掲載写真はサービスの世界観を表現するイメージです。特定メーカーとの提携や取扱車両を示すものではありません。";
 

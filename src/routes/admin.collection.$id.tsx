@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { Defs, StatusAndNotes } from "@/components/admin/detail-tools";
+import { ContactActions, Defs, StatusAndNotes } from "@/components/admin/detail-tools";
 import { getCollection } from "@/lib/data/admin";
 import { formatDateTime, jsonList } from "@/lib/utils";
 
@@ -15,7 +15,9 @@ function Page() {
   );
 
   const load = useCallback(() => {
-    getCollection({ data: id }).then(setData);
+    getCollection({ data: id })
+      .then(setData)
+      .catch(() => setData(null));
   }, [id]);
 
   useEffect(() => {
@@ -35,7 +37,13 @@ function Page() {
       </p>
       <header>
         <h1 className="font-serif text-3xl">{r.full_name}</h1>
-        <p className="mt-2 text-muted">{formatDateTime(r.created_at)} 受付</p>
+        <p className="mt-2 text-muted">
+          {formatDateTime(r.created_at)} 受付 ・ 受付番号{" "}
+          <span className="tabular-nums">{r.id}</span>
+        </p>
+        <div className="mt-4">
+          <ContactActions email={r.email} phone={r.phone} referenceId={r.id} />
+        </div>
       </header>
       <Defs
         items={[

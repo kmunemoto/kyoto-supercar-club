@@ -61,7 +61,7 @@ export function OwnerForm() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
-  const [done, setDone] = useState(false);
+  const [doneId, setDoneId] = useState<string | null>(null);
   const [started, setStarted] = useState(false);
 
   useEffect(() => {
@@ -151,7 +151,7 @@ export function OwnerForm() {
         return;
       }
       track("owner_form_submit");
-      setDone(true);
+      setDoneId(res.id);
     } catch {
       toast.error("送信に失敗しました。時間をおいて再度お試しください。");
       track("owner_form_error");
@@ -160,11 +160,17 @@ export function OwnerForm() {
     }
   }
 
-  if (done) {
+  if (doneId) {
     return (
       <SuccessPanel
-        title="お問い合わせありがとうございます"
-        body="内容を確認のうえ、必要に応じてご連絡します。正確な保管場所は、相談後に個別確認します。"
+        title="先行相談を受け付けました"
+        body="契約や決済は発生していません。受付内容の控えをメールでお送りします。"
+        referenceId={doneId}
+        nextSteps={[
+          "ご相談内容を確認します。",
+          "車両と条件について、担当より個別にご連絡します。正確な保管場所はこの段階で伺います。",
+          "正式募集の開始時に、税を含む総額と契約条件をあらためてご案内します。",
+        ]}
       />
     );
   }

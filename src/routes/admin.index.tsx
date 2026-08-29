@@ -1,7 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { getDashboard } from "@/lib/data/admin";
+import {
+  LEGAL_STATUSES,
+  LEGAL_STATUS_LABEL,
+  STALE_NEW_DAYS,
+  getDashboard,
+  isLegalStatus,
+  setLegalStatus,
+  type LegalStatus,
+} from "@/lib/data/admin";
 import { APPLICATION_STATUSES, STATUS_LABEL } from "@/lib/status";
 
 export const Route = createFileRoute("/admin/")({
@@ -15,6 +24,7 @@ function sum(rows: { n: number }[]) {
 function Dashboard() {
   const [data, setData] = useState<Awaited<ReturnType<typeof getDashboard>> | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
 
   useEffect(() => {
     getDashboard()
@@ -22,15 +32,60 @@ function Dashboard() {
       .catch(() => setError("読み込めませんでした"));
   }, []);
 
+  async function onLegalChange(id: string, next: string) {
+    if (!isLegalStatus(next)) return;
+    setSaving(id);
+    try {
+      await setLegalStatus({ data: { id, status: next } });
+      setData((prev) =>
+        prev
+          ? {
+              ...prev,
+              legal: prev.legal.map((l) => (l.id === id ? { ...l, status: next } : l)),
+            }
+          : prev,
+      );
+    } catch {
+      toast.error("保存できませんでした");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   if (error) return <p className="text-oxblood">{error}</p>;
   if (!data) return <p className="text-muted">読み込み中…</p>;
 
   const cards = [
-    { label: "共同所有", total: sum(data.collections), href: "/admin/collection" },
-    { label: "オーナー", total: sum(data.owners), href: "/admin/owners" },
-    { label: "旧会員", total: sum(data.members), href: "/admin/members" },
-    { label: "お問い合わせ", total: sum(data.contacts), href: "/admin/inquiries" },
+    {
+      label: "共同所有",
+      total: sum(data.collections),
+      href: "/admin/collection",
+      isNew: data.collections.find((x) => x.status === "new")?.n ?? 0,
+      stale: data.stale.collections,
+    },
+    {
+      label: "オーナー",
+      total: sum(data.owners),
+      href: "/admin/owners",
+      isNew: data.owners.find((x) => x.status === "new")?.n ?? 0,
+      stale: data.stale.owners,
+    },
+    {
+      label: "旧会員",
+      total: sum(data.members),
+      href: "/admin/members",
+      isNew: data.members.find((x) => x.status === "new")?.n ?? 0,
+      stale: data.stale.members,
+    },
+    {
+      label: "お問い合わせ",
+      total: sum(data.contacts),
+      href: "/admin/inquiries",
+      isNew: data.contacts.find((x) => x.status === "new")?.n ?? 0,
+      stale: data.stale.contacts,
+    },
   ];
+  const staleTotal = cards.reduce((a, c) => a + c.stale, 0);
 
   return (
     <div className="space-y-12">
@@ -38,11 +93,26 @@ function Dashboard() {
         <h1 className="font-serif text-3xl">概況</h1>
         <p className="mt-2 text-ink-soft">Lovable Cloud に保存された実データです。</p>
       </header>
+      {staleTotal > 0 ? (
+        <p className="rounded-lg border border-oxblood/30 bg-oxblood/5 px-4 py-3 text-sm text-oxblood">
+          {STALE_NEW_DAYS}日以上「新規」のままの申込が {staleTotal} 件あります。
+        </p>
+      ) : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
           <Link key={c.href} to={c.href} className="rounded-xl border border-line bg-cream p-6">
             <p className="text-sm text-muted">{c.label}</p>
             <p className="mt-2 font-serif text-4xl tabular-nums">{c.total}</p>
+            <p className="mt-2 text-sm">
+              <span className={c.isNew > 0 ? "text-oxblood" : "text-muted"}>
+                新規 <span className="tabular-nums">{c.isNew}</span>
+              </span>
+              {c.stale > 0 ? (
+                <span className="ml-3 text-oxblood">
+                  ／{STALE_NEW_DAYS}日超 <span className="tabular-nums">{c.stale}</span>
+                </span>
+              ) : null}
+            </p>
           </Link>
         ))}
       </div>
@@ -113,6 +183,20 @@ function Dashboard() {
           </ul>
         </div>
         <div>
+          <h2 className="font-serif text-xl">最近のお問い合わせ</h2>
+          <ul className="mt-4 divide-y divide-line border-y border-line">
+            {data.recentContacts.map((r) => (
+              <li key={r.id} className="flex items-center justify-between gap-3 py-3">
+                <Link to="/admin/inquiries/$id" params={{ id: r.id }} className="hover:underline">
+                  {r.full_name}
+                  <span className="ml-2 text-sm text-muted">{r.topic}</span>
+                </Link>
+                <StatusBadge status={r.status} />
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
           <h2 className="font-serif text-xl">最近の事前登録</h2>
           <ul className="mt-4 divide-y divide-line border-y border-line">
             {data.recentMembers.map((r) => (
@@ -131,13 +215,41 @@ function Dashboard() {
         <h2 className="font-serif text-xl">要確認（法務・保険・運用）</h2>
         <p className="mt-2 text-sm text-muted">断定せず、専門家確認が必要な項目です。</p>
         <ul className="mt-4 space-y-4">
-          {data.legal.map((item) => (
-            <li key={item.id} className="rounded-lg border border-line bg-cream p-4">
-              <p className="text-xs tracking-wide text-oxblood">要確認</p>
-              <h3 className="mt-1 font-medium">{item.title}</h3>
-              <p className="mt-2 text-sm text-ink-soft">{item.detail}</p>
-            </li>
-          ))}
+          {data.legal.map((item) => {
+            const status: LegalStatus = isLegalStatus(item.status) ? item.status : "needs_review";
+            return (
+              <li key={item.id} className="rounded-lg border border-line bg-cream p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p
+                    className={
+                      status === "confirmed"
+                        ? "text-xs tracking-wide text-success"
+                        : "text-xs tracking-wide text-oxblood"
+                    }
+                  >
+                    {LEGAL_STATUS_LABEL[status]}
+                  </p>
+                  <label className="flex items-center gap-2 text-sm">
+                    <span className="text-muted">状態</span>
+                    <select
+                      className="h-9 rounded-md border border-line bg-paper px-2 text-sm"
+                      value={status}
+                      disabled={saving === item.id}
+                      onChange={(e) => onLegalChange(item.id, e.target.value)}
+                    >
+                      {LEGAL_STATUSES.map((value) => (
+                        <option key={value} value={value}>
+                          {LEGAL_STATUS_LABEL[value]}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <h3 className="mt-1 font-medium">{item.title}</h3>
+                <p className="mt-2 text-sm text-ink-soft">{item.detail}</p>
+              </li>
+            );
+          })}
         </ul>
       </section>
     </div>

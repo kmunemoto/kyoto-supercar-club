@@ -6,6 +6,7 @@ import {
   isApplicationStatus,
   type ApplicationStatus,
   type SubjectType,
+  isSubjectType,
 } from "@/lib/status";
 import type {
   CollectionRow,
@@ -217,6 +218,18 @@ function counts(rows: { status: string }[]): StatusCount[] {
   return APPLICATION_STATUSES.map((status) => ({ status, n: map.get(status) ?? 0 }));
 }
 
+/** A lead still marked "new" after this many days needs chasing. */
+export const STALE_NEW_DAYS = 3;
+
+function staleCount(rows: { status: string; created_at?: string | null }[]): number {
+  const cutoff = Date.now() - STALE_NEW_DAYS * 24 * 60 * 60 * 1000;
+  return rows.filter((row) => {
+    if (row.status !== "new") return false;
+    const created = row.created_at ? Date.parse(row.created_at) : NaN;
+    return Number.isNaN(created) ? false : created < cutoff;
+  }).length;
+}
+
 const getDashboardFn = createServerFn({ method: "POST" })
   .validator((data: Token) => data)
   .handler(async ({ data }) => {
@@ -257,6 +270,12 @@ const getDashboardFn = createServerFn({ method: "POST" })
       ),
       ...storedLegal.filter((item) => item.id && !knownIds.has(item.id)),
     ];
+    const stale = {
+      collections: staleCount(collections),
+      owners: staleCount(owners),
+      members: staleCount(members),
+      contacts: staleCount(contacts),
+    };
     return {
       owners: counts(owners),
       members: counts(members),
@@ -265,6 +284,8 @@ const getDashboardFn = createServerFn({ method: "POST" })
       recentOwners: owners.slice(0, 5),
       recentMembers: members.slice(0, 5),
       recentCollections: collections.slice(0, 5),
+      recentContacts: contacts.slice(0, 5),
+      stale,
       legal,
     };
   });
@@ -365,6 +386,22 @@ const listContactsFn = createServerFn({ method: "POST" })
       );
   });
 
+/** Two people share this console; "who wrote this" has to be answerable. */
+async function staffNames(
+  db: Awaited<ReturnType<typeof requireDb>>["db"],
+): Promise<Map<string, string>> {
+  const { data } = await db.from("staff").select("user_id, email, display_name");
+  const map = new Map<string, string>();
+  for (const r of data ?? []) {
+    const row = r as Record<string, unknown>;
+    const id = String(row["user_id"] ?? "");
+    if (!id) continue;
+    const label = String(row["display_name"] ?? "").trim() || String(row["email"] ?? "").trim();
+    if (label) map.set(id, label);
+  }
+  return map;
+}
+
 async function trail(
   db: Awaited<ReturnType<typeof requireDb>>["db"],
   subjectType: SubjectType,
@@ -384,6 +421,7 @@ async function trail(
       .eq("subject_id", subjectId)
       .order("created_at", { ascending: false }),
   ]);
+  const authors = await staffNames(db);
   const notes: NoteRow[] = (notesRes.data ?? []).map((r) => {
     const row = r as Record<string, unknown>;
     return {
@@ -392,6 +430,7 @@ async function trail(
       subject_id: subjectId,
       body: String(row["body"] ?? ""),
       author_user_id: String(row["author_user_id"] ?? ""),
+      author_label: authors.get(String(row["author_user_id"] ?? "")) ?? "不明な担当者",
       created_at: String(row["created_at"] ?? ""),
     };
   });
@@ -404,6 +443,7 @@ async function trail(
       from_status: row["from_status"] == null ? null : String(row["from_status"]),
       to_status: String(row["to_status"] ?? ""),
       author_user_id: row["author_user_id"] == null ? null : String(row["author_user_id"]),
+      author_label: authors.get(String(row["author_user_id"] ?? "")) ?? null,
       note: row["note"] == null ? null : String(row["note"]),
       created_at: String(row["created_at"] ?? ""),
     };
@@ -492,6 +532,7 @@ const updateStatusFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     if (!isApplicationStatus(data.status)) throw new Error("Invalid status");
+    if (!isSubjectType(data.subjectType)) throw new Error("unknown subject type");
     const { db, userId } = await requireDb(data.accessToken);
     const table = tableFor(data.subjectType);
     const { data: current } = await db.from(table).select("status").eq("id", data.id).maybeSingle();
@@ -511,6 +552,96 @@ const updateStatusFn = createServerFn({ method: "POST" })
       to_status: data.status,
       author_user_id: userId,
       note: data.note || null,
+    });
+    return { ok: true as const };
+  });
+
+/**
+ * Columns cleared when a person asks for their data to be deleted. The row
+ * itself stays so the funnel counts and the audit trail remain honest, but
+ * nothing identifying is left in it.
+ */
+const PERSONAL_COLUMNS: Record<SubjectType, string[]> = {
+  owner: [
+    "full_name",
+    "email",
+    "phone",
+    "storage_location",
+    "questions",
+    "concerns",
+    "free_text",
+    "photo_notes",
+    "other_driver_conditions",
+    "preferred_contact",
+    "region_limit",
+  ],
+  collection: ["full_name", "email", "phone", "concerns", "kyoto_connection"],
+  member: ["full_name", "email", "phone", "requests", "use_purpose"],
+  contact: ["full_name", "email", "phone", "message"],
+};
+
+const anonymiseFn = createServerFn({ method: "POST" })
+  .validator((data: Token & { subjectType: SubjectType; id: string }) => data)
+  .handler(async ({ data }) => {
+    if (!isSubjectType(data.subjectType)) throw new Error("unknown subject type");
+    const { db, userId } = await requireDb(data.accessToken);
+    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    for (const column of PERSONAL_COLUMNS[data.subjectType]) patch[column] = null;
+    patch["full_name"] = "（削除済み）";
+    const { error } = await db.from(tableFor(data.subjectType)).update(patch).eq("id", data.id);
+    if (error) return { ok: false as const, error: error.message };
+    await db.from("inquiry_status_events").insert({
+      id: newId("evt"),
+      subject_type: data.subjectType,
+      subject_id: data.id,
+      to_status: "personal_data_erased",
+      author_user_id: userId,
+      note: "本人からの削除請求に対応し、氏名・連絡先・自由記述を削除しました。",
+      created_at: new Date().toISOString(),
+    });
+    return { ok: true as const };
+  });
+
+export const LEGAL_STATUSES = ["needs_review", "in_progress", "confirmed"] as const;
+export type LegalStatus = (typeof LEGAL_STATUSES)[number];
+export const LEGAL_STATUS_LABEL: Record<LegalStatus, string> = {
+  needs_review: "要確認",
+  in_progress: "確認中",
+  confirmed: "確認済み",
+};
+
+export function isLegalStatus(value: string): value is LegalStatus {
+  return (LEGAL_STATUSES as readonly string[]).includes(value);
+}
+
+/**
+ * The checklist items live in code (LEGAL_TODOS) but their progress lives in
+ * the database, so the row may not exist yet the first time one is touched.
+ */
+const setLegalStatusFn = createServerFn({ method: "POST" })
+  .validator((data: Token & { id: string; status: string; note?: string }) => data)
+  .handler(async ({ data }) => {
+    if (!isLegalStatus(data.status)) throw new Error("unknown status");
+    const { db, userId } = await requireDb(data.accessToken);
+    const known = LEGAL_TODOS.find((t) => t.id === data.id);
+    const { error } = await db.from("legal_review_items").upsert(
+      {
+        id: data.id,
+        title: known?.title ?? data.id,
+        detail: known?.detail ?? "",
+        status: data.status,
+      },
+      { onConflict: "id" },
+    );
+    if (error) throw new Error(error.message);
+    await db.from("inquiry_status_events").insert({
+      id: newId("evt"),
+      subject_type: "legal",
+      subject_id: data.id,
+      to_status: data.status,
+      author_user_id: userId,
+      note: data.note ?? null,
+      created_at: new Date().toISOString(),
     });
     return { ok: true as const };
   });
@@ -630,5 +761,17 @@ export async function addNote(arg: {
       id: arg.data.id,
       body: arg.data.body,
     },
+  });
+}
+
+export async function setLegalStatus(arg: { data: { id: string; status: LegalStatus } }) {
+  return setLegalStatusFn({
+    data: { accessToken: await token(), id: arg.data.id, status: arg.data.status },
+  });
+}
+
+export async function anonymise(arg: { data: { subjectType: SubjectType; id: string } }) {
+  return anonymiseFn({
+    data: { accessToken: await token(), subjectType: arg.data.subjectType, id: arg.data.id },
   });
 }

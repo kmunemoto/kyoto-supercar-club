@@ -1,37 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageIntro, Section, SiteShell } from "@/components/site/shell";
-import { pageHead } from "@/lib/seo";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
+/**
+ * The old general-membership intake. Its content now lives on /membership;
+ * keeping two near-identical pages meant one of them always drifted, and this
+ * one only ever linked on to COLLECTION, losing owners who arrived here.
+ */
 export const Route = createFileRoute("/apply/member")({
-  component: Page,
-  head: () =>
-    pageHead({
-      title: "参加のご案内｜KYOTO SUPERCAR CLUB",
-      description: "現在は、KSC COLLECTIONとKSC OWNER NETWORKの準備に注力しています。",
-      path: "/apply/member",
-      noindex: true,
-    }),
+  beforeLoad: () => {
+    throw redirect({ to: "/membership", statusCode: 301 });
+  },
 });
-
-function Page() {
-  return (
-    <SiteShell>
-      <PageIntro
-        kicker="MEMBERSHIP"
-        title="参加のご案内"
-        lead="現在は、KSC COLLECTIONとKSC OWNER NETWORKの準備に注力しています。"
-      />
-      <Section className="max-w-3xl pt-0">
-        <p className="mb-8 text-ink-soft">
-          共同購入の興味登録と、既存オーナーからの先行相談をご覧ください。
-        </p>
-        <Link
-          to="/collection"
-          className="inline-flex h-12 items-center rounded-md bg-oxblood px-6 text-cream"
-        >
-          共同所有へ進む
-        </Link>
-      </Section>
-    </SiteShell>
-  );
-}

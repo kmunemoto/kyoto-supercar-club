@@ -37,6 +37,18 @@ export function isApplicationStatus(value: string): value is ApplicationStatus {
 export const SUBJECT_TYPES = ["owner", "member", "contact", "collection"] as const;
 export type SubjectType = (typeof SUBJECT_TYPES)[number];
 
+export function isSubjectType(value: string): value is SubjectType {
+  return (SUBJECT_TYPES as readonly string[]).includes(value);
+}
+
+/**
+ * Trail entries that are not status transitions. Without this the timeline
+ * would print the raw slug.
+ */
+export const EVENT_LABEL: Record<string, string> = {
+  personal_data_erased: "個人情報を削除",
+};
+
 export const SUBJECT_LABEL: Record<SubjectType, string> = {
   owner: "オーナーネットワーク申込",
   member: "旧・会員事前登録",

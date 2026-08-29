@@ -2,7 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /login
-Disallow: /apply/
-Disallow: /membership
 
 Sitemap: https://start-your-spark-56.lovable.app/sitemap.xml

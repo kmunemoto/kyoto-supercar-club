@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Checkbox, CheckRow, Field } from "@/components/ui/field";
@@ -54,9 +54,14 @@ export function CollectionForm() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
-  const [done, setDone] = useState(false);
+  const [doneId, setDoneId] = useState<string | null>(null);
 
+  const started = useRef(false);
   function set<K extends string>(key: K, value: unknown) {
+    if (!started.current) {
+      started.current = true;
+      track("collection_form_start");
+    }
     setForm((f) => ({ ...f, [key]: value }));
   }
 
@@ -121,6 +126,7 @@ export function CollectionForm() {
     if (!parsed.success) {
       showErrors(fieldErrors(parsed.error));
       toast.error("入力内容を確認してください。");
+      track("collection_form_error");
       return;
     }
     setErrors({});
@@ -130,22 +136,30 @@ export function CollectionForm() {
       if (!res.ok) {
         showErrors(res.fields ?? {});
         toast.error(res.error);
+        track("collection_form_error");
         return;
       }
       track("collection_prereg_submit");
-      setDone(true);
+      setDoneId(res.id);
     } catch {
       toast.error("送信に失敗しました。時間をおいて再度お試しください。");
+      track("collection_form_error");
     } finally {
       setPending(false);
     }
   }
 
-  if (done) {
+  if (doneId) {
     return (
       <SuccessPanel
         title="興味登録を受け付けました"
-        body="内容を確認のうえ、必要に応じてご連絡します。契約や決済は発生していません。"
+        body="契約や決済は発生していません。受付内容の控えをメールでお送りします。"
+        referenceId={doneId}
+        nextSteps={[
+          "ご登録内容を確認します。",
+          "希望条件に合う車両プロジェクトの検討状況を、担当より個別にご連絡します。",
+          "正式募集の開始時に、税を含む総額と契約条件をあらためてご案内します。",
+        ]}
       />
     );
   }

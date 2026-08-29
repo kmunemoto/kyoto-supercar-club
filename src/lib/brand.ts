@@ -43,6 +43,7 @@ export const MOBILE_SERVICE_CARDS = [
 
 export const MOBILE_AUX_NAV = [
   { href: "/how-it-works", label: "2つのサービスの違い" },
+  { href: "/about", label: "準備の現在地" },
   { href: "/safety", label: "安全・保険について" },
   { href: "/faq", label: "よくある質問" },
   { href: "/contact", label: "お問い合わせ" },
@@ -51,6 +52,7 @@ export const MOBILE_AUX_NAV = [
 export const FOOTER_LINKS = [
   { href: "/collection", label: "KSC COLLECTION" },
   { href: "/owners", label: "KSC OWNER NETWORK" },
+  { href: "/about", label: "準備の現在地" },
   { href: "/privacy", label: "プライバシーポリシー" },
   { href: "/terms", label: "利用条件（準備中）" },
   { href: "/contact", label: "お問い合わせ" },

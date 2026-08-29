@@ -162,13 +162,20 @@ function Home() {
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               to="/apply/collection"
-              className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink type-cta`}
+              className="type-cta inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-cream px-6 text-ink"
             >
               共同購入の興味登録をする
             </Link>
+            <Link
+              to="/apply/owner"
+              className="type-cta inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream"
+            >
+              愛車の先行相談をする
+            </Link>
             <InquiryCta
               topic="共同所有について"
-              className={`inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream type-cta`}
+              place="home-footer"
+              className="type-cta inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-cream/40 px-6 text-cream"
             >
               {lineCtaLabel()}
             </InquiryCta>

@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import {
+  analyticsConsent,
   analyticsIds,
   hasAnalyticsConfig,
   hasAnalyticsConsent,
   setAnalyticsConsent,
+  trackPageView,
 } from "@/lib/analytics";
 import { captureAttribution } from "@/lib/attribution";
 
@@ -31,6 +34,8 @@ function loadScripts() {
 export function AnalyticsGate() {
   const [needed, setNeeded] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const firstView = useRef(true);
 
   useEffect(() => {
     captureAttribution();
@@ -40,9 +45,18 @@ export function AnalyticsGate() {
       loadScripts();
       setOpen(false);
     } else {
-      setOpen(true);
+      setOpen(analyticsConsent() === "unset");
     }
   }, []);
+
+  useEffect(() => {
+    // The tags send their own view on load; this covers every route change after it.
+    if (firstView.current) {
+      firstView.current = false;
+      return;
+    }
+    trackPageView(pathname);
+  }, [pathname]);
 
   if (!needed || !open) return null;
 
@@ -50,7 +64,11 @@ export function AnalyticsGate() {
     <div className="fixed inset-x-0 bottom-16 z-40 mx-auto max-w-lg px-4 lg:bottom-6">
       <div className="rounded-xl border border-line bg-paper p-4 shadow-lg">
         <p className="text-sm text-ink-soft">
-          広告・アクセス解析用のクッキーは、同意後のみ読み込みます。計測IDが設定されている場合にだけ表示されます。
+          広告・アクセス解析用のクッキー（Googleアナリティクス、Metaピクセル）は、同意いただいた場合にのみ読み込みます。あとから
+          <a href="/privacy" className="underline underline-offset-4">
+            プライバシーポリシー
+          </a>
+          で変更できます。
         </p>
         <div className="mt-3 flex gap-2">
           <button

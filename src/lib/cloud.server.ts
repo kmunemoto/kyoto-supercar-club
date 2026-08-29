@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getRequestIP } from "@tanstack/react-start/server";
+import { BRAND } from "@/lib/brand";
 import { getSupabaseAnonKey, getSupabaseUrl, isCloudConfigured } from "@/lib/site";
 import { newId } from "@/lib/utils";
 import type {
@@ -84,23 +85,126 @@ function attr(input: {
   };
 }
 
-async function notify(subject: string, text: string) {
-  const key = env("RESEND_API_KEY");
-  const to = env("NOTIFY_EMAIL");
-  const from = env("NOTIFY_FROM") ?? "KYOTO SUPERCAR CLUB <noreply@resend.dev>";
-  if (!key || !to) return;
+const MAIL_TIMEOUT_MS = 5000;
+
+/**
+ * `noreply@resend.dev` is Resend's sandbox sender: it only ever reaches the
+ * account owner. Set NOTIFY_FROM to an address on a verified domain before
+ * relying on any of this in production.
+ */
+function mailFrom(): string {
+  return env("NOTIFY_FROM") ?? "KYOTO SUPERCAR CLUB <noreply@resend.dev>";
+}
+
+/**
+ * A lead that reaches the database but never reaches a person is a lead lost,
+ * so every delivery failure is recorded rather than swallowed. The log row is
+ * itself best-effort; the console line is what a deploy log will show.
+ */
+async function recordNotification(
+  channel: string,
+  subjectType: string,
+  subjectId: string,
+  payload: Record<string, unknown>,
+  sentAt: string | null,
+) {
+  if (!sentAt) console.error(`[notify] ${channel} failed`, { subjectType, subjectId, ...payload });
+  if (!cloudReady()) return;
   try {
-    await fetch("https://api.resend.com/emails", {
+    const client = insertClient();
+    if (!client) return;
+    await client.from("notification_log").insert({
+      id: newId("ntf"),
+      channel,
+      subject_type: subjectType,
+      subject_id: subjectId,
+      payload,
+      sent_at: sentAt,
+      created_at: new Date().toISOString(),
+    });
+  } catch {
+    /* the console line above is the fallback */
+  }
+}
+
+async function sendMail(to: string, subject: string, text: string): Promise<string | null> {
+  const key = env("RESEND_API_KEY");
+  if (!key) return null;
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ from, to: [to], subject, text }),
+      body: JSON.stringify({ from: mailFrom(), to: [to], subject, text }),
+      // Resend being slow must not become the visitor's wait.
+      signal: AbortSignal.timeout(MAIL_TIMEOUT_MS),
     });
-  } catch {
-    /* notification is best-effort */
+    if (!res.ok) {
+      console.error(`[notify] resend responded ${res.status}`, await res.text().catch(() => ""));
+      return null;
+    }
+    return new Date().toISOString();
+  } catch (error) {
+    console.error("[notify] resend request failed", error);
+    return null;
   }
+}
+
+/** Operator-facing new-lead alert. Deliberately carries no contact details. */
+async function notify(subject: string, text: string, subjectType = "unknown", subjectId = "") {
+  const to = env("NOTIFY_EMAIL");
+  if (!env("RESEND_API_KEY") || !to) {
+    console.error("[notify] RESEND_API_KEY or NOTIFY_EMAIL is not set; no alert was sent", {
+      subjectType,
+      subjectId,
+      subject,
+    });
+    await recordNotification("operator_email", subjectType, subjectId, { subject }, null);
+    return;
+  }
+  const sentAt = await sendMail(to, subject, text);
+  await recordNotification("operator_email", subjectType, subjectId, { subject }, sentAt);
+}
+
+/**
+ * Receipt for the person who just registered. Without it they keep no record
+ * at all once the success panel is closed. It repeats that nothing has been
+ * agreed or charged, and deliberately does not echo back what they entered.
+ */
+async function acknowledge(input: {
+  email: string;
+  fullName: string;
+  heading: string;
+  lead: string;
+  subjectType: string;
+  subjectId: string;
+}) {
+  if (!env("RESEND_API_KEY")) return;
+  const text = [
+    `${input.fullName} 様`,
+    "",
+    input.lead,
+    "",
+    `受付番号: ${input.subjectId}`,
+    "",
+    "現時点で契約・決済・購入申込は一切発生していません。掲載中の料金・条件は予定であり、",
+    "正式募集の開始時に、適用される税を含む総額と契約条件をあらためてご案内します。",
+    "",
+    "内容を確認のうえ、必要に応じて担当より個別にご連絡します。",
+    "このメールに心当たりがない場合は、お手数ですが破棄してください。",
+    "",
+    BRAND.name,
+  ].join("\n");
+  const sentAt = await sendMail(input.email, input.heading, text);
+  await recordNotification(
+    "applicant_receipt",
+    input.subjectType,
+    input.subjectId,
+    { heading: input.heading },
+    sentAt,
+  );
 }
 
 function ownerExtraSummary(data: OwnerInquiryInput): string {
@@ -139,6 +243,65 @@ function localDevInsert(kind: keyof typeof localDevStore, row: unknown): Result 
   const id = (row as { id?: string }).id ?? newId("loc");
   localDevStore[kind].unshift(row);
   return { ok: true, id };
+}
+
+/**
+ * Cloud not being configured in production means the row has nowhere to go.
+ * Mail the lead out in full rather than lose it: this is the last line before
+ * a submission disappears.
+ */
+async function rescueUnsavedLead(subjectType: string, id: string, row: Record<string, unknown>) {
+  await notify(
+    `【要対応】保存できなかった申込（${subjectType}）`,
+    [
+      "データベースに保存できませんでした。設定を確認してください。",
+      "以下は受信した内容です。復旧後に手動で登録してください。",
+      "",
+      JSON.stringify(row, null, 2),
+    ].join("\n"),
+    subjectType,
+    id,
+  );
+}
+
+/**
+ * Insert with the current column set, falling back to the older one when the
+ * database has not caught up. The fallback is recorded: quietly dropping the
+ * newer columns forever is indistinguishable from success at the call site.
+ */
+async function insertWithFallback(
+  table: string,
+  full: Record<string, unknown>,
+  legacy: Record<string, unknown>,
+  subjectId: string,
+): Promise<boolean> {
+  const client = insertClient();
+  if (!client) return false;
+  const first = await client.from(table).insert(full);
+  if (!first.error) return true;
+  console.error(`[insert] ${table} rejected the current columns`, first.error.message);
+  const fallback = await client.from(table).insert(legacy);
+  if (fallback.error) {
+    console.error(`[insert] ${table} legacy insert also failed`, fallback.error.message);
+    return false;
+  }
+  const dropped = Object.keys(full).filter((key) => !(key in legacy));
+  console.error(
+    `[insert] ${table} saved without ${dropped.join(", ")} — run the pending migrations`,
+  );
+  await recordNotification("schema_drift", table, subjectId, { table, dropped }, null);
+  return true;
+}
+
+async function insertSimple(table: string, row: Record<string, unknown>): Promise<boolean> {
+  const client = insertClient();
+  if (!client) return false;
+  const { error } = await client.from(table).insert(row);
+  if (error) {
+    console.error(`[insert] ${table} failed`, error.message);
+    return false;
+  }
+  return true;
 }
 
 export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Result> {
@@ -196,28 +359,36 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     prefer_line: Boolean(data.preferLine),
   };
 
+  const summary = `地域: ${data.region}\nメーカー: ${data.make}\n車種: ${data.model}\n目的: ${data.participationPurpose}\nID: ${id}`;
+
   if (!cloudReady()) {
     const local = localDevInsert("owners", withNewColumns);
-    if (local.ok) {
-      await notify(
-        "【OWNER NETWORK】新しい先行相談（ローカル）",
-        `地域: ${data.region}\nメーカー: ${data.make}\n車種: ${data.model}\n目的: ${data.participationPurpose}\nID: ${id}`,
-      );
+    if (!local.ok) {
+      await rescueUnsavedLead("owner_inquiries", id, withNewColumns);
+      return local;
     }
+    await notify("【OWNER NETWORK】新しい先行相談（ローカル）", summary, "owner_inquiries", id);
+    await acknowledgeOwner(data, id);
     return local;
   }
-  const client = insertClient();
-  if (!client) return { ok: false, error: UNCONFIGURED };
-  const first = await client.from("owner_inquiries").insert(withNewColumns);
-  if (first.error) {
-    const fallback = await client.from("owner_inquiries").insert(base);
-    if (fallback.error) return { ok: false, error: SAVE_FAILED };
+  if (!(await insertWithFallback("owner_inquiries", withNewColumns, base, id))) {
+    await rescueUnsavedLead("owner_inquiries", id, withNewColumns);
+    return { ok: false, error: SAVE_FAILED };
   }
-  await notify(
-    "【OWNER NETWORK】新しい先行相談",
-    `地域: ${data.region}\nメーカー: ${data.make}\n車種: ${data.model}\n目的: ${data.participationPurpose}\nID: ${id}`,
-  );
+  await notify("【OWNER NETWORK】新しい先行相談", summary, "owner_inquiries", id);
+  await acknowledgeOwner(data, id);
   return { ok: true, id };
+}
+
+function acknowledgeOwner(data: OwnerInquiryInput, id: string) {
+  return acknowledge({
+    email: data.email,
+    fullName: data.fullName,
+    heading: `【${BRAND.short}】先行相談を受け付けました`,
+    lead: "オーナーネットワークの先行相談を受け付けました。",
+    subjectType: "owner_inquiries",
+    subjectId: id,
+  });
 }
 
 export async function insertCollectionInquiry(data: CollectionInquiryInput): Promise<Result> {
@@ -271,28 +442,41 @@ export async function insertCollectionInquiry(data: CollectionInquiryInput): Pro
     resale_priorities: data.resalePriorities ?? [],
     prefer_line: Boolean(data.preferLine),
   };
+  const summary = `地域: ${data.region}\n希望: ${desiredModels}\n新車／中古: ${data.vehicleCondition}\nID: ${id}`;
+
   if (!cloudReady()) {
     const local = localDevInsert("collections", withNewColumns);
-    if (local.ok) {
-      await notify(
-        "【COLLECTION】新しい共同オーナー候補（ローカル）",
-        `地域: ${data.region}\n希望: ${desiredModels}\n新車／中古: ${data.vehicleCondition}\nID: ${id}`,
-      );
+    if (!local.ok) {
+      await rescueUnsavedLead("collection_inquiries", id, withNewColumns);
+      return local;
     }
+    await notify(
+      "【COLLECTION】新しい共同オーナー候補（ローカル）",
+      summary,
+      "collection_inquiries",
+      id,
+    );
+    await acknowledgeCollection(data, id);
     return local;
   }
-  const client = insertClient();
-  if (!client) return { ok: false, error: UNCONFIGURED };
-  const first = await client.from("collection_inquiries").insert(withNewColumns);
-  if (first.error) {
-    const fallback = await client.from("collection_inquiries").insert(base);
-    if (fallback.error) return { ok: false, error: SAVE_FAILED };
+  if (!(await insertWithFallback("collection_inquiries", withNewColumns, base, id))) {
+    await rescueUnsavedLead("collection_inquiries", id, withNewColumns);
+    return { ok: false, error: SAVE_FAILED };
   }
-  await notify(
-    "【COLLECTION】新しい共同オーナー候補",
-    `地域: ${data.region}\n希望: ${desiredModels}\n新車／中古: ${data.vehicleCondition}\nID: ${id}`,
-  );
+  await notify("【COLLECTION】新しい共同オーナー候補", summary, "collection_inquiries", id);
+  await acknowledgeCollection(data, id);
   return { ok: true, id };
+}
+
+function acknowledgeCollection(data: CollectionInquiryInput, id: string) {
+  return acknowledge({
+    email: data.email,
+    fullName: data.fullName,
+    heading: `【${BRAND.short}】興味登録を受け付けました`,
+    lead: "KSC COLLECTION（共同所有）の興味登録を受け付けました。",
+    subjectType: "collection_inquiries",
+    subjectId: id,
+  });
 }
 
 export async function insertMemberPrereg(data: MemberPreregInput): Promise<Result> {
@@ -321,15 +505,22 @@ export async function insertMemberPrereg(data: MemberPreregInput): Promise<Resul
     updated_at: now,
     ...attr(data),
   };
-  if (!cloudReady()) return localDevInsert("members", row);
-  const client = insertClient();
-  if (!client) return { ok: false, error: UNCONFIGURED };
-  const { error } = await client.from("member_preregistrations").insert(row);
-  if (error) return { ok: false, error: SAVE_FAILED };
-  await notify(
-    "【会員事前登録】新しい登録",
-    `地域: ${data.region}\n参加: ${data.participationInterests.join("、")}\nID: ${id}`,
-  );
+  const summary = `地域: ${data.region}\n参加: ${data.participationInterests.join("、")}\nID: ${id}`;
+
+  if (!cloudReady()) {
+    const local = localDevInsert("members", row);
+    if (!local.ok) {
+      await rescueUnsavedLead("member_preregistrations", id, row);
+      return local;
+    }
+    await notify("【会員事前登録】新しい登録（ローカル）", summary, "member_preregistrations", id);
+    return local;
+  }
+  if (!(await insertSimple("member_preregistrations", row))) {
+    await rescueUnsavedLead("member_preregistrations", id, row);
+    return { ok: false, error: SAVE_FAILED };
+  }
+  await notify("【会員事前登録】新しい登録", summary, "member_preregistrations", id);
   return { ok: true, id };
 }
 
@@ -351,13 +542,36 @@ export async function insertContact(data: ContactInput): Promise<Result> {
     updated_at: now,
     ...attr(data),
   };
-  if (!cloudReady()) return localDevInsert("contacts", row);
-  const client = insertClient();
-  if (!client) return { ok: false, error: UNCONFIGURED };
-  const { error } = await client.from("contact_inquiries").insert(row);
-  if (error) return { ok: false, error: SAVE_FAILED };
-  await notify("【お問い合わせ】新しいメッセージ", `種別: ${data.topic}\nID: ${id}`);
+  const summary = `種別: ${data.topic}\nID: ${id}`;
+
+  if (!cloudReady()) {
+    const local = localDevInsert("contacts", row);
+    if (!local.ok) {
+      await rescueUnsavedLead("contact_inquiries", id, row);
+      return local;
+    }
+    await notify("【お問い合わせ】新しいメッセージ（ローカル）", summary, "contact_inquiries", id);
+    await acknowledgeContact(data, id);
+    return local;
+  }
+  if (!(await insertSimple("contact_inquiries", row))) {
+    await rescueUnsavedLead("contact_inquiries", id, row);
+    return { ok: false, error: SAVE_FAILED };
+  }
+  await notify("【お問い合わせ】新しいメッセージ", summary, "contact_inquiries", id);
+  await acknowledgeContact(data, id);
   return { ok: true, id };
+}
+
+function acknowledgeContact(data: ContactInput, id: string) {
+  return acknowledge({
+    email: data.email,
+    fullName: data.fullName,
+    heading: `【${BRAND.short}】お問い合わせを受け付けました`,
+    lead: "お問い合わせを受け付けました。",
+    subjectType: "contact_inquiries",
+    subjectId: id,
+  });
 }
 
 export async function staffDb(

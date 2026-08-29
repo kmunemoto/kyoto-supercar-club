@@ -6,26 +6,24 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { writeFileSync } from "node:fs";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { FALLBACK_SITE_URL, SITE_PATHS } from "./site.config";
 
-const SITE_URL = (
-  process.env["VITE_PUBLIC_SITE_URL"] || "https://start-your-spark-56.lovable.app"
-).replace(/\/$/, "");
-const PAGES = [
-  "/",
-  "/collection",
-  "/owners",
-  "/how-it-works",
-  "/safety",
-  "/faq",
-  "/contact",
-  "/privacy",
-  "/terms",
-];
+const CONFIGURED_SITE_URL = process.env["VITE_PUBLIC_SITE_URL"];
+const SITE_URL = (CONFIGURED_SITE_URL || FALLBACK_SITE_URL).replace(/\/$/, "");
+const PAGES = SITE_PATHS;
 
 function siteMetaPlugin() {
   return {
     name: "ksc-site-meta",
     buildStart() {
+      if (!CONFIGURED_SITE_URL) {
+        // Every canonical, the sitemap and the OGP URLs are built from this.
+        // Shipping a custom domain without it hands the whole site's search
+        // equity back to the Lovable preview URL.
+        console.warn(
+          `[ksc] VITE_PUBLIC_SITE_URL is not set; canonical URLs and sitemap.xml will point at ${FALLBACK_SITE_URL}`,
+        );
+      }
       const urls = PAGES.map(
         (path) => `  <url><loc>${SITE_URL}${path === "/" ? "/" : path}</loc></url>`,
       ).join("\n");
@@ -35,7 +33,17 @@ function siteMetaPlugin() {
       );
       writeFileSync(
         "public/robots.txt",
-        `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /login\nDisallow: /apply/\nDisallow: /membership\n\nSitemap: ${SITE_URL}/sitemap.xml\n`,
+        [
+          "User-agent: *",
+          "Allow: /",
+          // /apply/* and /membership are noindex; a Disallow would stop crawlers
+          // from ever reading that tag, leaving the URLs indexable by link alone.
+          "Disallow: /admin",
+          "Disallow: /login",
+          "",
+          `Sitemap: ${SITE_URL}/sitemap.xml`,
+          "",
+        ].join("\n"),
       );
     },
   };

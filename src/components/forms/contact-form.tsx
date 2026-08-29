@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Checkbox, CheckRow, Field } from "@/components/ui/field";
@@ -6,6 +6,7 @@ import { Input, NativeSelect, Textarea } from "@/components/ui/native";
 import { Button } from "@/components/ui/button";
 import { submitContact } from "@/lib/data/public";
 import { readAttribution } from "@/lib/attribution";
+import { track } from "@/lib/analytics";
 import { CONTACT_TOPICS, contactSchema, fieldErrors, focusFirstError } from "@/lib/schemas";
 import { Honeypot, SuccessPanel } from "./form-status";
 
@@ -24,9 +25,14 @@ export function ContactForm({ initialTopic }: { initialTopic?: string | undefine
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
-  const [done, setDone] = useState(false);
+  const [doneId, setDoneId] = useState<string | null>(null);
 
+  const started = useRef(false);
   function set<K extends string>(key: K, value: unknown) {
+    if (!started.current) {
+      started.current = true;
+      track("contact_form_start");
+    }
     setForm((f) => ({ ...f, [key]: value }));
   }
 
@@ -38,6 +44,7 @@ export function ContactForm({ initialTopic }: { initialTopic?: string | undefine
       const nextErrors = fieldErrors(parsed.error);
       setErrors(nextErrors);
       toast.error("入力内容を確認してください。");
+      track("contact_form_error");
       focusFirstError(nextErrors);
       return;
     }
@@ -48,22 +55,27 @@ export function ContactForm({ initialTopic }: { initialTopic?: string | undefine
       if (!res.ok) {
         setErrors(res.fields ?? {});
         toast.error(res.error);
+        track("contact_form_error");
         focusFirstError(res.fields ?? {});
         return;
       }
-      setDone(true);
+      track("contact_form_submit");
+      setDoneId(res.id);
     } catch {
       toast.error("送信に失敗しました。時間をおいて再度お試しください。");
+      track("contact_form_error");
     } finally {
       setPending(false);
     }
   }
 
-  if (done) {
+  if (doneId) {
     return (
       <SuccessPanel
         title="お問い合わせを受け付けました"
-        body="内容を確認し、必要な場合のみご連絡します。予約や購入の受付ではありません。"
+        body="予約や購入の受付ではありません。受付内容の控えをメールでお送りします。"
+        referenceId={doneId}
+        nextSteps={["内容を確認します。", "回答が必要な場合のみ、担当よりご連絡します。"]}
       />
     );
   }

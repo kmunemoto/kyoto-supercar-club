@@ -4,7 +4,7 @@ import { useEffect, useId, useState } from "react";
 import { BRAND, FOOTER_LINKS, MOBILE_AUX_NAV, MOBILE_SERVICE_CARDS, NAV } from "@/lib/brand";
 import { PHOTO_NOTE } from "@/lib/content";
 import { track } from "@/lib/analytics";
-import { getLineUrl } from "@/lib/site";
+import { getLineUrl, lineCtaLabel } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export function Wordmark({ invert = false }: { invert?: boolean }) {
@@ -172,6 +172,9 @@ export function SiteFooter() {
               {l.label}
             </Link>
           ))}
+          <a href="/privacy#cookie" className={cn("text-cream/80 hover:text-cream", "type-cta")}>
+            Cookie設定
+          </a>
         </div>
       </div>
       <div className="border-t border-cream/10 px-5 py-5 text-center text-xs leading-relaxed tracking-wide text-cream/45">
@@ -235,9 +238,10 @@ function MobileStickyCta({ hidden }: { hidden: boolean }) {
           href={line || "/contact"}
           target={line ? "_blank" : undefined}
           rel={line ? "noopener noreferrer" : undefined}
+          onClick={() => track(line ? "line_cta_click" : "contact_form_start", { place: "sticky" })}
           className={className}
         >
-          LINEで相談する
+          {lineCtaLabel()}
         </a>
       ) : null}
     </div>

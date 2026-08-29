@@ -2,6 +2,7 @@ import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { ContactForm } from "@/components/forms/contact-form";
 import { PageIntro, Section, SiteShell } from "@/components/site/shell";
 import { CONTACT_TOPICS } from "@/lib/schemas";
+import { track } from "@/lib/analytics";
 import { pageHead } from "@/lib/seo";
 import { getLineUrl, lineCtaLabel } from "@/lib/site";
 
@@ -49,7 +50,8 @@ function Page() {
                 href={line}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`mt-4 inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream type-cta`}
+                onClick={() => track("line_cta_click", { place: "contact" })}
+                className="type-cta mt-4 inline-flex h-12 min-h-12 items-center justify-center rounded-md bg-oxblood px-6 text-cream"
               >
                 {lineCtaLabel()}
               </a>

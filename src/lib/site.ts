@@ -1,16 +1,6 @@
-const FALLBACK_SITE_URL = "https://start-your-spark-56.lovable.app";
+import { FALLBACK_SITE_URL, SITE_PATHS } from "../../site.config";
 
-export const SITE_PATHS = [
-  "/",
-  "/collection",
-  "/owners",
-  "/how-it-works",
-  "/safety",
-  "/faq",
-  "/contact",
-  "/privacy",
-  "/terms",
-] as const;
+export { SITE_PATHS };
 
 export function getSiteUrl(): string {
   const raw = import.meta.env["VITE_PUBLIC_SITE_URL"];
@@ -47,9 +37,15 @@ export function allowLocalStore(): boolean {
 /** Official LINE. Override with VITE_KSC_LINE_URL if the account changes. */
 const OFFICIAL_LINE_URL = "https://line.me/ti/p/eMWqcmXxia";
 
+/**
+ * Set VITE_KSC_LINE_URL to "off" to take the LINE route down. Without it the
+ * account can never be switched off, and the contact-form fallbacks that every
+ * LINE CTA falls back to are unreachable code.
+ */
 export function getLineUrl(): string | undefined {
   const raw = import.meta.env["VITE_KSC_LINE_URL"];
   const value = typeof raw === "string" ? raw.trim() : "";
+  if (value.toLowerCase() === "off") return undefined;
   return value || OFFICIAL_LINE_URL;
 }
 

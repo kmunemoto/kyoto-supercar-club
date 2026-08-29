@@ -144,6 +144,7 @@ export type NoteRow = {
   subject_id: string;
   body: string;
   author_user_id: string;
+  author_label?: string | undefined;
   created_at: string;
 };
 
@@ -154,6 +155,7 @@ export type EventRow = {
   from_status: string | null;
   to_status: string;
   author_user_id: string | null;
+  author_label?: string | null | undefined;
   note: string | null;
   created_at: string;
 };

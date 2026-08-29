@@ -1,17 +1,32 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useDebouncedQuery, validateAdminSearch } from "@/components/admin/use-filters";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { AdminToolbar } from "@/components/admin/toolbar";
 import { listContacts, type ContactRow } from "@/lib/data/admin";
 import { downloadText, formatDateTime, toCsv } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/inquiries")({
+  validateSearch: validateAdminSearch,
   component: Page,
 });
 
 function Page() {
-  const [q, setQ] = useState("");
-  const [status, setStatus] = useState("all");
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const q = search.q ?? "";
+  const status = search.status ?? "all";
+  const setFilters = (next: { q: string; status: string }) =>
+    void navigate({
+      search: {
+        ...(next.q ? { q: next.q } : {}),
+        ...(next.status && next.status !== "all" ? { status: next.status } : {}),
+      },
+      replace: true,
+    });
+  const setQ = (next: string) => setFilters({ q: next, status });
+  const setStatus = (next: string) => setFilters({ q, status: next });
+  const [draftQ, setDraftQ] = useDebouncedQuery(q, setQ);
   const [rows, setRows] = useState<ContactRow[] | null>(null);
 
   useEffect(() => {
@@ -26,9 +41,9 @@ function Page() {
         <h1 className="font-serif text-3xl">お問い合わせ</h1>
       </header>
       <AdminToolbar
-        q={q}
+        q={draftQ}
         status={status}
-        onQ={setQ}
+        onQ={setDraftQ}
         onStatus={setStatus}
         onExport={() => {
           if (!rows) return;
