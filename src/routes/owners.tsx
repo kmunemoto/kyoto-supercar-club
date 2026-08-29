@@ -132,7 +132,7 @@ function Page() {
         <h3 className="mt-10 font-serif text-2xl">月額管理費に含まないもの</h3>
         <BulletList items={OWNER_MONTHLY_EXCLUDES} />
         <p className="mt-6 max-w-3xl text-sm text-ink-soft">
-          他車を利用するときのKSC利用管理費（1予約1万1,000円）は、対面受け渡しと利用前後の確認、通常洗車を含みます。
+          他車を利用するときのKSC利用管理費（1予約2万2,000円）は、対面受け渡しと利用前後の確認、通常洗車を含みます。
         </p>
 
         <h2 className="mt-20 font-serif text-3xl">利用申請から返却まで</h2>
@@ -170,7 +170,7 @@ function Page() {
               body: (
                 <div className="space-y-4">
                   <p>
-                    通常洗車は1予約1万1,000円のKSC利用管理費に含まれます。普通に利用しただけで特別清掃費が発生する想定ではありません。
+                    通常洗車は1予約2万2,000円のKSC利用管理費に含まれます。普通に利用しただけで特別清掃費が発生する想定ではありません。
                   </p>
                   <p className="font-medium text-ink">通常洗車に含むもの</p>
                   <BulletList items={NORMAL_WASH_INCLUDES} />
