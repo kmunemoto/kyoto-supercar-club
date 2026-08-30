@@ -163,6 +163,9 @@
   h4 {
     font-family: var(--font-serif);
     text-wrap: balance;
+    /* 日本語は既定だと語の途中でも改行する（「少人数」が「少人／数」に割れる）。
+       文節単位で折り返す。未対応ブラウザはこの宣言を無視して従来どおりになる。 */
+    word-break: auto-phrase;
     letter-spacing: -0.02em;
     line-height: 1.25;
     font-weight: 600;

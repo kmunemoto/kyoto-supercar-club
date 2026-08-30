@@ -39,7 +39,7 @@ function Home() {
           width={1500}
           height={844}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/55 to-charcoal/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/75 to-charcoal/35 md:via-charcoal/55 md:to-charcoal/20" />
         <div className="relative mx-auto flex min-h-[62dvh] max-w-6xl flex-col justify-end px-5 pb-16 pt-28 text-cream md:min-h-[88dvh] md:pb-24">
           <p className="text-xs font-medium tracking-[0.28em] text-cream/80">
             京都を拠点に｜{BRAND.phaseLabel}
@@ -47,7 +47,7 @@ function Home() {
           <h1 className="mt-5 max-w-3xl font-serif text-[2.1rem] leading-[1.2] md:text-6xl">
             {BRAND.tagline}
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-cream/80 md:text-lg">
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-cream/90 md:text-lg md:text-cream/80">
             {BRAND_PURPOSE.paragraphs[0]}
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
