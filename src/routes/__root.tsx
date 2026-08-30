@@ -74,7 +74,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 const fallbackHead = pageHead({
   title: BRAND.name,
   description:
-    "京都からスーパーカーの共同所有とオーナーネットワークを準備しています。予約・貸出は行っていません。",
+    "京都からスーパーカーの共同所有と、既存オーナー向けの無料登録を準備しています。予約・貸出は行っていません。",
   path: "/",
 });
 

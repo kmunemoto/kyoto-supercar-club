@@ -9,17 +9,11 @@ import { track } from "@/lib/analytics";
 import { readAttribution } from "@/lib/attribution";
 import {
   ANNUAL_USE,
-  DAILY_KM_PREFS,
-  HANDOVER_ACCESS,
-  LICENSE_YEAR_OPTIONS,
   MILEAGE_BANDS,
-  MIN_DRIVER_AGE_OPTIONS,
   OWNER_PURPOSES,
   OWNS_VEHICLE,
   REGIONS,
   STORAGE_TYPES,
-  YES_NO,
-  YES_NO_UNDECIDED,
   fieldErrors,
   focusFirstError,
   maxVehicleYear,
@@ -39,18 +33,6 @@ export function OwnerForm() {
     annualUseCount: "年に数回" as (typeof ANNUAL_USE)[number],
     storageType: "屋内ガレージ" as (typeof STORAGE_TYPES)[number],
     participationPurpose: "まず説明を聞きたい" as (typeof OWNER_PURPOSES)[number],
-    wantToUseOthers: "はい" as (typeof YES_NO)[number],
-    wantToRegisterCar: "はい" as (typeof YES_NO)[number],
-    priorityUsePeriod: "",
-    dailyKmPreference: "1日200kmを基準でよい" as (typeof DAILY_KM_PREFS)[number],
-    minDriverAge: "KSC基準（25歳）でよい" as (typeof MIN_DRIVER_AGE_OPTIONS)[number],
-    requiredLicenseYears: "KSC基準（5年以上）でよい" as (typeof LICENSE_YEAR_OPTIONS)[number],
-    rainUse: "未定" as (typeof YES_NO_UNDECIDED)[number],
-    snowUse: "未定" as (typeof YES_NO_UNDECIDED)[number],
-    regionLimit: "",
-    outdoorNightParking: "未定" as (typeof YES_NO_UNDECIDED)[number],
-    handoverAccessOk: "確認が必要" as (typeof HANDOVER_ACCESS)[number],
-    otherDriverConditions: "",
     concerns: "",
     fullName: "",
     email: "",
@@ -81,8 +63,6 @@ export function OwnerForm() {
       ...form,
       year: form.year === "" ? undefined : form.year,
       mileageBand: form.mileageBand || undefined,
-      regionLimit: form.regionLimit || undefined,
-      otherDriverConditions: form.otherDriverConditions || undefined,
       privacyAgreed: form.privacyAgreed ? true : false,
       ...attr,
     };
@@ -98,18 +78,6 @@ export function OwnerForm() {
     annualUseCount: true,
     storageType: true,
     participationPurpose: true,
-    wantToUseOthers: true,
-    wantToRegisterCar: true,
-    priorityUsePeriod: true,
-    dailyKmPreference: true,
-    minDriverAge: true,
-    requiredLicenseYears: true,
-    rainUse: true,
-    snowUse: true,
-    regionLimit: true,
-    outdoorNightParking: true,
-    handoverAccessOk: true,
-    otherDriverConditions: true,
     concerns: true,
   } as const;
 
@@ -163,13 +131,13 @@ export function OwnerForm() {
   if (doneId) {
     return (
       <SuccessPanel
-        title="先行相談を受け付けました"
-        body="契約や決済は発生していません。受付内容の控えをメールでお送りします。"
+        title="REGISTRYへの登録を受け付けました"
+        body="登録は無料です。契約や決済は発生していません。受付内容の控えをメールでお送りします。"
         referenceId={doneId}
         nextSteps={[
-          "ご相談内容を確認します。",
-          "車両と条件について、担当より個別にご連絡します。正確な保管場所はこの段階で伺います。",
-          "正式募集の開始時に、契約条件をあらためてご案内します。",
+          "登録内容を確認します。",
+          "車両について、担当より個別にご連絡することがあります。",
+          "売却のご相談、MORNING RUN、愛車撮影など、ご案内できるようになった時点でお声がけします。",
         ]}
       />
     );
@@ -179,7 +147,7 @@ export function OwnerForm() {
     <form onSubmit={onSubmit} className="relative space-y-8" noValidate>
       <Honeypot value={form.companyUrl} onChange={(v) => set("companyUrl", v)} />
       <p className="text-sm text-ink-soft">
-        既存スーパーカーオーナー向けの先行相談です。初回は正確な保管住所、ナンバー、車検証、免許証画像は不要です。
+        既存スーパーカーオーナー向けの無料登録です。費用は一切かかりません。初回は正確な保管住所、ナンバー、車検証、免許証画像は不要です。
       </p>
       <div className="flex gap-2 text-xs tracking-[0.16em] text-muted">
         <span className={step === 1 ? "text-oxblood" : ""}>01 車両と希望</span>
@@ -209,7 +177,7 @@ export function OwnerForm() {
             label="京都府内の車両保管地域"
             htmlFor="region"
             required
-            hint="オーナーの住所は京都府外でも構いません。保管・受け渡しは京都府内です。"
+            hint="オーナーの住所は京都府外でも構いません。車両は引き続きご自身で保管いただきます。"
             error={errors["region"]}
           >
             <NativeSelect
@@ -295,42 +263,8 @@ export function OwnerForm() {
               ))}
             </NativeSelect>
           </Field>
-          <div className="grid gap-6 md:grid-cols-2">
-            <Field
-              label="他の登録車両を利用したい"
-              htmlFor="wantToUseOthers"
-              required
-              error={errors["wantToUseOthers"]}
-            >
-              <NativeSelect
-                id="wantToUseOthers"
-                value={form.wantToUseOthers}
-                onChange={(e) => set("wantToUseOthers", e.target.value)}
-              >
-                {YES_NO.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
-            <Field
-              label="愛車を登録したい"
-              htmlFor="wantToRegisterCar"
-              required
-              error={errors["wantToRegisterCar"]}
-            >
-              <NativeSelect
-                id="wantToRegisterCar"
-                value={form.wantToRegisterCar}
-                onChange={(e) => set("wantToRegisterCar", e.target.value)}
-              >
-                {YES_NO.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
-          </div>
           <Field
-            label="希望する利用頻度"
+            label="現在の利用頻度"
             htmlFor="annualUseCount"
             required
             error={errors["annualUseCount"]}
@@ -344,149 +278,6 @@ export function OwnerForm() {
                 <option key={r}>{r}</option>
               ))}
             </NativeSelect>
-          </Field>
-          <Field
-            label="自分の車を出せる時期の目安"
-            htmlFor="priorityUsePeriod"
-            hint="任意。例：週末以外、GWは不可、未定"
-            error={errors["priorityUsePeriod"]}
-          >
-            <Input
-              id="priorityUsePeriod"
-              value={form.priorityUsePeriod}
-              onChange={(e) => set("priorityUsePeriod", e.target.value)}
-            />
-          </Field>
-          <Field
-            label="1日200kmを基準とした希望距離"
-            htmlFor="dailyKmPreference"
-            required
-            error={errors["dailyKmPreference"]}
-          >
-            <NativeSelect
-              id="dailyKmPreference"
-              value={form.dailyKmPreference}
-              onChange={(e) => set("dailyKmPreference", e.target.value)}
-            >
-              {DAILY_KM_PREFS.map((r) => (
-                <option key={r}>{r}</option>
-              ))}
-            </NativeSelect>
-          </Field>
-          <div className="grid gap-6 md:grid-cols-2">
-            <Field
-              label="希望する運転者最低年齢"
-              htmlFor="minDriverAge"
-              required
-              error={errors["minDriverAge"]}
-            >
-              <NativeSelect
-                id="minDriverAge"
-                value={form.minDriverAge}
-                onChange={(e) => set("minDriverAge", e.target.value)}
-              >
-                {MIN_DRIVER_AGE_OPTIONS.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
-            <Field
-              label="希望する免許歴"
-              htmlFor="requiredLicenseYears"
-              required
-              error={errors["requiredLicenseYears"]}
-            >
-              <NativeSelect
-                id="requiredLicenseYears"
-                value={form.requiredLicenseYears}
-                onChange={(e) => set("requiredLicenseYears", e.target.value)}
-              >
-                {LICENSE_YEAR_OPTIONS.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
-            <Field label="雨天利用" htmlFor="rainUse" required error={errors["rainUse"]}>
-              <NativeSelect
-                id="rainUse"
-                value={form.rainUse}
-                onChange={(e) => set("rainUse", e.target.value)}
-              >
-                {YES_NO_UNDECIDED.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
-            <Field label="降雪時利用" htmlFor="snowUse" required error={errors["snowUse"]}>
-              <NativeSelect
-                id="snowUse"
-                value={form.snowUse}
-                onChange={(e) => set("snowUse", e.target.value)}
-              >
-                {YES_NO_UNDECIDED.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
-          </div>
-          <Field
-            label="走行地域の制限"
-            htmlFor="regionLimit"
-            hint="任意。例：京都府内のみ、未定"
-            error={errors["regionLimit"]}
-          >
-            <Input
-              id="regionLimit"
-              value={form.regionLimit}
-              onChange={(e) => set("regionLimit", e.target.value)}
-            />
-          </Field>
-          <div className="grid gap-6 md:grid-cols-2">
-            <Field
-              label="屋外での夜間保管"
-              htmlFor="outdoorNightParking"
-              required
-              error={errors["outdoorNightParking"]}
-            >
-              <NativeSelect
-                id="outdoorNightParking"
-                value={form.outdoorNightParking}
-                onChange={(e) => set("outdoorNightParking", e.target.value)}
-              >
-                {YES_NO_UNDECIDED.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
-            <Field
-              label="受け渡し時にKSC担当者が保管場所へ入れるか"
-              htmlFor="handoverAccessOk"
-              required
-              hint="正確な住所は不要です。相談後に個別確認します。"
-              error={errors["handoverAccessOk"]}
-            >
-              <NativeSelect
-                id="handoverAccessOk"
-                value={form.handoverAccessOk}
-                onChange={(e) => set("handoverAccessOk", e.target.value)}
-              >
-                {HANDOVER_ACCESS.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            </Field>
-          </div>
-          <Field
-            label="その他、他の運転者に求める条件"
-            htmlFor="otherDriverConditions"
-            hint="任意。年齢・免許歴以外にあれば。"
-            error={errors["otherDriverConditions"]}
-          >
-            <Textarea
-              id="otherDriverConditions"
-              value={form.otherDriverConditions}
-              onChange={(e) => set("otherDriverConditions", e.target.value)}
-            />
           </Field>
           <Field
             label="質問・懸念事項"

@@ -10,8 +10,8 @@ export const Route = createFileRoute("/apply/owner")({
   component: Page,
   head: () =>
     pageHead({
-      title: "京都のスーパーカーオーナーネットワーク｜先行相談",
-      description: `${OWNER_VALUE}先行相談を受け付けています。`,
+      title: "KSC REGISTRY｜愛車の無料登録",
+      description: `${OWNER_VALUE}`,
       path: "/apply/owner",
       noindex: true,
     }),
@@ -21,9 +21,9 @@ function Page() {
   return (
     <SiteShell>
       <PageIntro
-        kicker="OWNER NETWORK｜既存スーパーカーオーナー限定"
-        title="愛車の登録についての相談"
-        lead="スーパーカー所有者の方向けです。愛車を登録し、他の登録車両を相互利用する仕組みについての先行相談です。"
+        kicker="KSC REGISTRY｜既存スーパーカーオーナー限定・無料"
+        title="愛車の無料登録"
+        lead="スーパーカー所有者の方向けです。費用は一切かかりません。車両は登録後もご自身で所有・保管いただきます。"
       />
       <Section className="max-w-3xl pt-0">
         <PlanBanner>{LEGAL_BANNER}</PlanBanner>

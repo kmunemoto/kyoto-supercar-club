@@ -78,7 +78,7 @@ function Page() {
             to="/owners"
             className="type-cta inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6"
           >
-            オーナーネットワークを見る
+            REGISTRYを見る
           </Link>
         </div>
       </Section>

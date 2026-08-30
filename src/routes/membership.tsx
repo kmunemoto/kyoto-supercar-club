@@ -9,7 +9,7 @@ export const Route = createFileRoute("/membership")({
   head: () =>
     pageHead({
       title: "参加のご案内｜KYOTO SUPERCAR CLUB",
-      description: "現在は、KSC COLLECTIONとKSC OWNER NETWORKの準備に注力しています。",
+      description: "現在は、KSC COLLECTIONとKSC REGISTRYの準備に注力しています。",
       path: "/membership",
       noindex: true,
     }),
@@ -21,7 +21,7 @@ function Page() {
       <PageIntro
         kicker="MEMBERSHIP"
         title="参加のご案内"
-        lead="一般会員向けの貸し出しは保留しており、新規の募集は行っていません。現在は、KSC COLLECTIONとKSC OWNER NETWORKの準備に注力しています。"
+        lead="現在は、KSC COLLECTIONとKSC REGISTRYの準備に注力しています。"
       />
       <Section className="max-w-3xl pt-0">
         <PlanBanner>{LEGAL_BANNER}</PlanBanner>
@@ -39,7 +39,7 @@ function Page() {
             to="/owners"
             className="type-cta inline-flex h-12 min-h-12 items-center justify-center rounded-md border border-line px-6"
           >
-            オーナーネットワークを見る
+            REGISTRYを見る
           </Link>
         </div>
       </Section>

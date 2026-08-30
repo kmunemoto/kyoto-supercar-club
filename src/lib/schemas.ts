@@ -46,7 +46,7 @@ const requiredPhone = z.preprocess(
     .regex(/^[0-9+\-() ]+$/, "電話番号の形式を確認してください"),
 );
 
-/** OWNER NETWORK: Kyoto storage / handover region only. */
+/** REGISTRY: Kyoto storage region only. */
 export const REGIONS = ["京都市", "京都府内（京都市以外）"] as const;
 
 /** Residence may be outside Kyoto. Storage/handover is still Kyoto. */
@@ -79,9 +79,10 @@ export const MILEAGE_BANDS = [
 ] as const;
 
 export const OWNER_PURPOSES = [
-  "他の登録車両を利用したい",
-  "愛車を登録したい",
-  "両方",
+  "愛車をREGISTRYに登録したい",
+  "売却の相談をしたい",
+  "MORNING RUN（ツーリング）に興味がある",
+  "愛車の撮影に興味がある",
   "まず説明を聞きたい",
 ] as const;
 
@@ -96,21 +97,6 @@ export const OWNER_MANAGEMENT = [
 export const OWNER_INTERESTS = OWNER_MANAGEMENT;
 
 export const YES_NO = ["はい", "いいえ"] as const;
-
-export const YES_NO_UNDECIDED = ["可", "不可", "未定"] as const;
-
-export const HANDOVER_ACCESS = ["はい", "確認が必要", "未定"] as const;
-
-export const DAILY_KM_PREFS = [
-  "1日200kmを基準でよい",
-  "200kmより短くしたい",
-  "200kmより長くしたい",
-  "車両ごとに相談したい",
-] as const;
-
-export const MIN_DRIVER_AGE_OPTIONS = ["KSC基準（25歳）でよい", "30歳以上", "未定"] as const;
-
-export const LICENSE_YEAR_OPTIONS = ["KSC基準（5年以上）でよい", "10年以上", "未定"] as const;
 
 export const PREFERRED_CONTACT = ["メール", "電話", "どちらでもよい"] as const;
 
@@ -170,7 +156,10 @@ export const INCIDENT_OPTIONS = [
 
 export const CONTACT_TOPICS = [
   "共同所有について",
-  "オーナーネットワークについて",
+  "REGISTRY（愛車の無料登録）について",
+  "売却のご相談",
+  "MORNING RUN（ツーリング）について",
+  "愛車の撮影について",
   "取材・提携",
   "その他",
 ] as const;
@@ -311,38 +300,8 @@ export const ownerInquirySchema = z.object({
     message: "保管形態を選択してください",
   }),
   participationPurpose: z.enum(OWNER_PURPOSES, {
-    message: "参加目的を選択してください",
+    message: "関心のある内容を選択してください",
   }),
-  wantToUseOthers: z.enum(YES_NO, {
-    message: "他車利用の希望を選択してください",
-  }),
-  wantToRegisterCar: z.enum(YES_NO, {
-    message: "愛車登録の希望を選択してください",
-  }),
-  priorityUsePeriod: z.string().trim().max(500).optional().or(z.literal("")),
-  dailyKmPreference: z.enum(DAILY_KM_PREFS, {
-    message: "距離の希望を選択してください",
-  }),
-  minDriverAge: z.enum(MIN_DRIVER_AGE_OPTIONS, {
-    message: "運転者の最低年齢希望を選択してください",
-  }),
-  requiredLicenseYears: z.enum(LICENSE_YEAR_OPTIONS, {
-    message: "免許歴の希望を選択してください",
-  }),
-  rainUse: z.enum(YES_NO_UNDECIDED, {
-    message: "雨天利用の可否を選択してください",
-  }),
-  snowUse: z.enum(YES_NO_UNDECIDED, {
-    message: "降雪時利用の可否を選択してください",
-  }),
-  regionLimit: z.string().trim().max(500).optional().or(z.literal("")),
-  outdoorNightParking: z.enum(YES_NO_UNDECIDED, {
-    message: "屋外夜間保管の可否を選択してください",
-  }),
-  handoverAccessOk: z.enum(HANDOVER_ACCESS, {
-    message: "受け渡し時のアクセス可否を選択してください",
-  }),
-  otherDriverConditions: z.string().trim().max(2000).optional().or(z.literal("")),
   managementNeeds: z.array(z.string()).optional(),
   annualKmCap: z.string().trim().max(200).optional().or(z.literal("")),
   concerns: z.string().trim().max(2000).optional().or(z.literal("")),

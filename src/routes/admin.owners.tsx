@@ -44,7 +44,7 @@ function Page() {
     <div className="space-y-6">
       <header>
         <h1 className="font-serif text-3xl">オーナー申込</h1>
-        <p className="mt-2 text-ink-soft">オーナーネットワークの先行相談一覧です。</p>
+        <p className="mt-2 text-ink-soft">REGISTRY（愛車の無料登録）の一覧です。</p>
       </header>
       <AdminToolbar
         q={draftQ}

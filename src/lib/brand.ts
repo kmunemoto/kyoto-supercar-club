@@ -10,7 +10,7 @@ export const BRAND = {
   purpose: "車の魅力を発信する",
   phaseLabel: "サービス準備中",
   phaseNote:
-    "京都を車両の保管・管理・受け渡し拠点として、共同購入とオーナー同士の相互利用を準備しています。",
+    "京都を車両の保管・管理・受け渡し拠点として、共同購入と既存オーナー向けの無料登録を準備しています。",
   region: "京都を車両の保管・管理・受け渡し拠点として準備中",
   kyotoDefinition:
     "車両の保管・管理・受け渡し拠点は京都府内です。共同オーナーや登録オーナーの住所は問いません。",
@@ -19,7 +19,7 @@ export const BRAND = {
 
 export const NAV = [
   { href: "/collection", label: "共同所有", labelLong: "スーパーカーを共同所有する" },
-  { href: "/owners", label: "オーナーネットワーク", labelLong: "既存スーパーカーオーナー限定" },
+  { href: "/owners", label: "REGISTRY", labelLong: "既存スーパーカーオーナー限定・無料登録" },
   { href: "/how-it-works", label: "サービスの違い", labelLong: "2つのサービスの違い" },
   { href: "/safety", label: "安全・保険", labelLong: "安全・保険について" },
   { href: "/faq", label: "よくある質問", labelLong: "よくある質問" },
@@ -35,13 +35,16 @@ export const MOBILE_SERVICE_CARDS = [
   },
   {
     href: "/owners",
-    kicker: "KSC OWNER NETWORK｜オーナーネットワーク",
+    kicker: "KSC REGISTRY｜無料登録",
     title: "スーパーカーをお持ちの方",
-    body: "愛車を登録し、登録オーナー同士で他の車両を相互利用する仕組み",
+    body: "愛車を無料で登録。売却相談・MORNING RUN・愛車撮影のご案内につながります",
   },
 ] as const;
 
 export const MOBILE_AUX_NAV = [
+  { href: "/sell", label: "売却のご相談" },
+  { href: "/touring", label: "MORNING RUN（ツーリング）" },
+  { href: "/photography", label: "愛車撮影" },
   { href: "/how-it-works", label: "2つのサービスの違い" },
   { href: "/about", label: "準備の現在地" },
   { href: "/safety", label: "安全・保険について" },
@@ -51,7 +54,10 @@ export const MOBILE_AUX_NAV = [
 
 export const FOOTER_LINKS = [
   { href: "/collection", label: "KSC COLLECTION" },
-  { href: "/owners", label: "KSC OWNER NETWORK" },
+  { href: "/owners", label: "KSC REGISTRY" },
+  { href: "/sell", label: "売却のご相談" },
+  { href: "/touring", label: "MORNING RUN" },
+  { href: "/photography", label: "愛車撮影" },
   { href: "/about", label: "準備の現在地" },
   { href: "/privacy", label: "プライバシーポリシー" },
   { href: "/terms", label: "利用条件（準備中）" },
@@ -59,7 +65,7 @@ export const FOOTER_LINKS = [
 ] as const;
 
 export const OWNER_VALUE =
-  "スーパーカー所有者のための登録制サービス。愛車は各オーナーが所有したまま登録でき、保管・鍵の受け渡し拠点は京都府内です。";
+  "既存スーパーカーオーナーのための、無料の車両・オーナー登録サービスです。愛車は所有・保管したまま、費用をかけずにKSCの台帳に加われます。";
 
 export const COLLECTION_VALUE =
   "買えないから、分けるのではない。一台に資金と維持費を固定せず、乗りたい車を合理的に所有する。";

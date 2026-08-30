@@ -12,7 +12,7 @@ export const Route = createFileRoute("/contact")({
     pageHead({
       title: "お問い合わせ｜KYOTO SUPERCAR CLUB",
       description:
-        "共同所有、オーナーネットワーク、取材・提携のご質問。いまは興味登録と先行相談を受け付けています。",
+        "共同所有、REGISTRY、売却相談、MORNING RUN、愛車撮影、取材・提携のご質問。いまは興味登録と先行相談を受け付けています。",
       path: "/contact",
     }),
 });
@@ -29,7 +29,7 @@ function Page() {
       <PageIntro
         kicker="CONTACT"
         title="お問い合わせ"
-        lead="共同所有、オーナーネットワーク、取材・提携のご質問はこちらから。"
+        lead="共同所有、REGISTRY、売却相談、MORNING RUN、愛車撮影、取材・提携のご質問はこちらから。"
       />
       <Section className="max-w-3xl pt-0">
         {line ? (
@@ -46,7 +46,7 @@ function Page() {
             <div>
               <h2 className="font-serif text-2xl">LINEで相談する</h2>
               <p className="mt-2 text-sm text-ink-soft">
-                共同所有・オーナーネットワークの先行相談は、公式LINEからも受け付けています。契約や購入申込ではありません。
+                共同所有の興味登録、REGISTRYの登録、その他のご相談は、公式LINEからも受け付けています。契約や購入申込ではありません。
               </p>
               <a
                 href={line}

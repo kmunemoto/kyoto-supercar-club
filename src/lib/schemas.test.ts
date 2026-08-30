@@ -11,18 +11,8 @@ const ownerBase = {
   mileageBand: "15,000〜30,000km",
   annualUseCount: "年に数回",
   storageType: "屋内ガレージ",
-  participationPurpose: "両方",
-  wantToUseOthers: "はい",
-  wantToRegisterCar: "はい",
-  priorityUsePeriod: "週末以外",
-  dailyKmPreference: "1日200kmを基準でよい",
-  minDriverAge: "KSC基準（25歳）でよい",
-  requiredLicenseYears: "KSC基準（5年以上）でよい",
-  rainUse: "未定",
-  snowUse: "未定",
-  handoverAccessOk: "確認が必要",
-  outdoorNightParking: "未定",
-  concerns: "保険と受け渡しの流れを知りたいです。",
+  participationPurpose: "愛車をREGISTRYに登録したい",
+  concerns: "登録の流れを知りたいです。",
   fullName: "山田 太郎",
   email: "taro@example.com",
   phone: "075-000-0000",
@@ -33,7 +23,7 @@ test("owner inquiry rejects missing privacy agreement", () => {
   assert.equal(result.success, false);
 });
 
-test("owner inquiry accepts current network consultation fields", () => {
+test("owner inquiry accepts REGISTRY registration fields", () => {
   const result = ownerInquirySchema.safeParse({ ...ownerBase, privacyAgreed: true });
   assert.equal(result.success, true);
 });
@@ -221,7 +211,6 @@ test("desired make and model may be left blank, as the hint promises", () => {
 test("owner inquiry accepts blank optional free text", () => {
   const result = ownerInquirySchema.safeParse({
     ...ownerBase,
-    priorityUsePeriod: "",
     concerns: "",
     privacyAgreed: true,
   });

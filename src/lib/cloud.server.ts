@@ -269,22 +269,7 @@ async function acknowledge(input: {
 }
 
 function ownerExtraSummary(data: OwnerInquiryInput): string {
-  return [
-    `他の登録車両を利用したいか: ${data.wantToUseOthers}`,
-    `愛車を登録したいか: ${data.wantToRegisterCar}`,
-    `1日200km基準の希望: ${data.dailyKmPreference}`,
-    `運転者最低年齢: ${data.minDriverAge}`,
-    `免許歴希望: ${data.requiredLicenseYears}`,
-    `雨天利用: ${data.rainUse}`,
-    `降雪時利用: ${data.snowUse}`,
-    `走行地域の制限: ${data.regionLimit || "未記入"}`,
-    `屋外夜間保管: ${data.outdoorNightParking}`,
-    `受け渡し時の保管場所アクセス: ${data.handoverAccessOk}`,
-    `LINEでの連絡希望: ${data.preferLine ? "はい" : "いいえ"}`,
-    data.otherDriverConditions ? `その他の運転者条件: ${data.otherDriverConditions}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n");
+  return [`LINEでの連絡希望: ${data.preferLine ? "はい" : "いいえ"}`].filter(Boolean).join("\n");
 }
 
 const localDevStore: {
@@ -404,7 +389,7 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     mileage_km: null,
     storage_location: null,
     annual_use_count: data.annualUseCount,
-    lendable_period: data.priorityUsePeriod || null,
+    lendable_period: null,
     management_needs: data.managementNeeds ?? [],
     reward_preference: null,
     photo_notes: null,
@@ -419,9 +404,9 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     preferred_contact: data.preferLine ? "LINE希望" : null,
     free_text: extra,
     participation_purpose: data.participationPurpose,
-    priority_use_period: data.priorityUsePeriod || null,
-    annual_km_cap: data.dailyKmPreference,
-    other_driver_conditions: extra,
+    priority_use_period: null,
+    annual_km_cap: null,
+    other_driver_conditions: null,
     created_at: now,
     updated_at: now,
     ...attr(data),
@@ -429,16 +414,16 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
   };
   const withNewColumns = {
     ...base,
-    want_to_use_others: data.wantToUseOthers,
-    want_to_register_car: data.wantToRegisterCar,
-    daily_km_preference: data.dailyKmPreference,
-    min_driver_age: data.minDriverAge,
-    license_years_pref: data.requiredLicenseYears,
-    rain_use: data.rainUse,
-    snow_use: data.snowUse,
-    region_limit: data.regionLimit || null,
-    outdoor_night_parking: data.outdoorNightParking,
-    handover_access_ok: data.handoverAccessOk,
+    want_to_use_others: null,
+    want_to_register_car: null,
+    daily_km_preference: null,
+    min_driver_age: null,
+    license_years_pref: null,
+    rain_use: null,
+    snow_use: null,
+    region_limit: null,
+    outdoor_night_parking: null,
+    handover_access_ok: null,
     prefer_line: Boolean(data.preferLine),
   };
 
@@ -454,7 +439,7 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
       await rescueUnsavedLead("owner_inquiries", id, withNewColumns);
       return local;
     }
-    await notify("【OWNER NETWORK】新しい先行相談（ローカル）", summaryText, "owner_inquiries", id);
+    await notify("【REGISTRY】新しい登録（ローカル）", summaryText, "owner_inquiries", id);
     await acknowledgeOwner(data, id);
     return local;
   }
@@ -462,7 +447,7 @@ export async function insertOwnerInquiry(data: OwnerInquiryInput): Promise<Resul
     await rescueUnsavedLead("owner_inquiries", id, withNewColumns);
     return { ok: false, error: SAVE_FAILED };
   }
-  await notify("【OWNER NETWORK】新しい先行相談", summaryText, "owner_inquiries", id);
+  await notify("【REGISTRY】新しい登録", summaryText, "owner_inquiries", id);
   await acknowledgeOwner(data, id);
   return { ok: true, id };
 }
@@ -471,8 +456,8 @@ function acknowledgeOwner(data: OwnerInquiryInput, id: string) {
   return acknowledge({
     email: data.email,
     fullName: data.fullName,
-    heading: `【${BRAND.short}】先行相談を受け付けました`,
-    lead: "オーナーネットワークの先行相談を受け付けました。",
+    heading: `【${BRAND.short}】REGISTRYへの登録を受け付けました`,
+    lead: "REGISTRYへの登録を受け付けました。",
     subjectType: "owner_inquiries",
     subjectId: id,
   });

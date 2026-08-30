@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PlanBanner } from "@/components/site/conditions";
 import { PageIntro, Photo, PhotoNote, Section, SiteShell } from "@/components/site/shell";
 import { BRAND } from "@/lib/brand";
-import { HOW_IT_WORKS, LEGAL_BANNER, OWNER_VS_COLLECTION } from "@/lib/content";
+import { HOW_IT_WORKS, LEGAL_BANNER, REGISTRY_VS_COLLECTION } from "@/lib/content";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/how-it-works")({
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/how-it-works")({
   head: () =>
     pageHead({
       title: "2つのサービスの違い｜KYOTO SUPERCAR CLUB",
-      description: `${BRAND.name}の共同購入と、既存オーナー限定の相互利用の違い。いまは興味登録と先行相談を受け付けています。`,
+      description: `${BRAND.name}の共同購入と、既存オーナー向けの無料登録の違い。いまは興味登録と先行相談を受け付けています。`,
       path: "/how-it-works",
     }),
 });
@@ -21,7 +21,7 @@ function Page() {
       <PageIntro
         kicker="HOW IT WORKS"
         title="2つのサービスの違い"
-        lead="京都を拠点に、共同購入とオーナー同士の相互利用を準備しています。住所は問いません。"
+        lead="京都を拠点に、共同購入と既存オーナー向けの無料登録を準備しています。住所は問いません。"
       />
       <div className="mx-auto max-w-6xl px-5 pb-8">
         <div className="overflow-hidden rounded-xl">
@@ -44,10 +44,10 @@ function Page() {
             </p>
           </article>
           <article className="border-t border-line pt-6">
-            <p className="text-xs tracking-[0.22em] text-copper">KSC OWNER NETWORK</p>
-            <h2 className="mt-3 font-serif text-2xl">愛車登録・相互利用</h2>
+            <p className="text-xs tracking-[0.22em] text-copper">KSC REGISTRY</p>
+            <h2 className="mt-3 font-serif text-2xl">愛車の無料登録</h2>
             <p className="mt-4 text-ink-soft">
-              審査対象となるスーパーカーを所有する方のための登録制サービスです。登録オーナー同士が、車両ごとの条件と承認に基づいて利用します。
+              既存スーパーカーオーナーのための無料の登録制サービスです。車両は登録後もオーナーご自身が所有・保管し、貸し借りは行いません。
             </p>
           </article>
         </div>
@@ -59,15 +59,15 @@ function Page() {
               <tr className="border-b border-line">
                 <th className="py-3 pr-4 font-medium">項目</th>
                 <th className="py-3 pr-4 font-medium">COLLECTION</th>
-                <th className="py-3 font-medium">OWNER NETWORK</th>
+                <th className="py-3 font-medium">REGISTRY</th>
               </tr>
             </thead>
             <tbody>
-              {OWNER_VS_COLLECTION.map((row) => (
+              {REGISTRY_VS_COLLECTION.map((row) => (
                 <tr key={row.label} className="border-b border-line align-top">
                   <td className="py-4 pr-4 font-medium">{row.label}</td>
                   <td className="py-4 pr-4 text-ink-soft">{row.collection}</td>
-                  <td className="py-4 text-ink-soft">{row.owner}</td>
+                  <td className="py-4 text-ink-soft">{row.registry}</td>
                 </tr>
               ))}
             </tbody>

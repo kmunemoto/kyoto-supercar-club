@@ -4,11 +4,10 @@ import { PageIntro, Photo, PhotoNote, Section, SiteShell } from "@/components/si
 import { pageHead } from "@/lib/seo";
 import {
   ACCIDENT_POLICY,
-  DEPOSIT_CLASSES,
   LEGAL_BANNER,
   DRIVER_BURDEN_ITEMS,
+  DRIVING_PROHIBITED,
   OPERATOR_SIDE_RESPONSIBILITY,
-  OWNER_PROHIBITED,
   SAFETY_ITEMS,
 } from "@/lib/content";
 
@@ -70,16 +69,12 @@ function Page() {
             ))}
           </ul>
           <h3 className="mt-10 font-serif text-xl">禁止行為</h3>
-          <BulletList items={OWNER_PROHIBITED} />
+          <BulletList items={DRIVING_PROHIBITED} />
         </article>
         <aside className="mt-16 rounded-xl border border-line bg-cream p-6 md:p-8">
           <h2 className="font-serif text-xl">保証金について</h2>
           <p className="mt-3 text-ink-soft">
-            COLLECTIONでは、記名運転者1人につき100万円の保証金を予定しています。OWNER
-            NETWORKでは、愛車の登録だけなら保証金は不要です。他の登録車両を利用する場合は、
-            {DEPOSIT_CLASSES.map((c) => `${c.label} ${c.amount}`).join("、")}
-            を、そのクラスを初めて利用する前にお預かりする予定です。OWNER
-            NETWORKの保証金は退会・精算後の返還対象です。COLLECTIONの保証金の取扱いは、正式募集時の契約条件で明示します。いずれも事故責任の上限ではありません。
+            COLLECTIONでは、記名運転者1人につき100万円の保証金を予定しています。保証金は退会・精算後の返還対象で、事故責任の上限ではありません。取扱いは、正式募集時の契約条件で明示します。REGISTRYは無料の登録制で、保証金はかかりません。
           </p>
         </aside>
       </Section>

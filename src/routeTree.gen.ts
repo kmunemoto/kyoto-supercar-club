@@ -19,9 +19,12 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as OwnersRouteImport } from './routes/owners'
+import { Route as PhotographyRouteImport } from './routes/photography'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as SellRouteImport } from './routes/sell'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TouringRouteImport } from './routes/touring'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCollectionRouteImport } from './routes/admin.collection'
 import { Route as AdminInquiriesRouteImport } from './routes/admin.inquiries'
@@ -87,6 +90,11 @@ const OwnersRoute = OwnersRouteImport.update({
   path: '/owners',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PhotographyRoute = PhotographyRouteImport.update({
+  id: '/photography',
+  path: '/photography',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -97,9 +105,19 @@ const SafetyRoute = SafetyRouteImport.update({
   path: '/safety',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellRoute = SellRouteImport.update({
+  id: '/sell',
+  path: '/sell',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TouringRoute = TouringRouteImport.update({
+  id: '/touring',
+  path: '/touring',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -184,9 +202,12 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/owners': typeof OwnersRoute
+  '/photography': typeof PhotographyRoute
   '/privacy': typeof PrivacyRoute
   '/safety': typeof SafetyRoute
+  '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
+  '/touring': typeof TouringRoute
   '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
   '/admin/intake': typeof AdminIntakeRoute
@@ -212,9 +233,12 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/owners': typeof OwnersRoute
+  '/photography': typeof PhotographyRoute
   '/privacy': typeof PrivacyRoute
   '/safety': typeof SafetyRoute
+  '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
+  '/touring': typeof TouringRoute
   '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
   '/admin/intake': typeof AdminIntakeRoute
@@ -242,9 +266,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/membership': typeof MembershipRoute
   '/owners': typeof OwnersRoute
+  '/photography': typeof PhotographyRoute
   '/privacy': typeof PrivacyRoute
   '/safety': typeof SafetyRoute
+  '/sell': typeof SellRoute
   '/terms': typeof TermsRoute
+  '/touring': typeof TouringRoute
   '/admin/collection': typeof AdminCollectionRouteWithChildren
   '/admin/inquiries': typeof AdminInquiriesRouteWithChildren
   '/admin/intake': typeof AdminIntakeRoute
@@ -273,9 +300,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/membership'
     | '/owners'
+    | '/photography'
     | '/privacy'
     | '/safety'
+    | '/sell'
     | '/terms'
+    | '/touring'
     | '/admin/collection'
     | '/admin/inquiries'
     | '/admin/intake'
@@ -301,9 +331,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/membership'
     | '/owners'
+    | '/photography'
     | '/privacy'
     | '/safety'
+    | '/sell'
     | '/terms'
+    | '/touring'
     | '/admin/collection'
     | '/admin/inquiries'
     | '/admin/intake'
@@ -330,9 +363,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/membership'
     | '/owners'
+    | '/photography'
     | '/privacy'
     | '/safety'
+    | '/sell'
     | '/terms'
+    | '/touring'
     | '/admin/collection'
     | '/admin/inquiries'
     | '/admin/intake'
@@ -360,9 +396,12 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MembershipRoute: typeof MembershipRoute
   OwnersRoute: typeof OwnersRoute
+  PhotographyRoute: typeof PhotographyRoute
   PrivacyRoute: typeof PrivacyRoute
   SafetyRoute: typeof SafetyRoute
+  SellRoute: typeof SellRoute
   TermsRoute: typeof TermsRoute
+  TouringRoute: typeof TouringRoute
   ApplyCollectionRoute: typeof ApplyCollectionRoute
   ApplyMemberRoute: typeof ApplyMemberRoute
   ApplyOwnerRoute: typeof ApplyOwnerRoute
@@ -441,6 +480,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/photography': {
+      id: '/photography'
+      path: '/photography'
+      fullPath: '/photography'
+      preLoaderRoute: typeof PhotographyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -455,11 +501,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SafetyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sell': {
+      id: '/sell'
+      path: '/sell'
+      fullPath: '/sell'
+      preLoaderRoute: typeof SellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/touring': {
+      id: '/touring'
+      path: '/touring'
+      fullPath: '/touring'
+      preLoaderRoute: typeof TouringRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -642,9 +702,12 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MembershipRoute: MembershipRoute,
   OwnersRoute: OwnersRoute,
+  PhotographyRoute: PhotographyRoute,
   PrivacyRoute: PrivacyRoute,
   SafetyRoute: SafetyRoute,
+  SellRoute: SellRoute,
   TermsRoute: TermsRoute,
+  TouringRoute: TouringRoute,
   ApplyCollectionRoute: ApplyCollectionRoute,
   ApplyMemberRoute: ApplyMemberRoute,
   ApplyOwnerRoute: ApplyOwnerRoute,

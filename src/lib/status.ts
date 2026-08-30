@@ -50,7 +50,7 @@ export const EVENT_LABEL: Record<string, string> = {
 };
 
 export const SUBJECT_LABEL: Record<SubjectType, string> = {
-  owner: "オーナーネットワーク申込",
+  owner: "REGISTRY登録",
   member: "旧・会員事前登録",
   contact: "お問い合わせ",
   collection: "共同オーナー候補",
