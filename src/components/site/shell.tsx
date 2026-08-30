@@ -2,17 +2,17 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 import { BRAND, FOOTER_LINKS, MOBILE_AUX_NAV, MOBILE_SERVICE_CARDS, NAV } from "@/lib/brand";
-import { PHOTO_NOTE } from "@/lib/content";
+import { PHOTO_NOTE, SERVICE_START_NOTE } from "@/lib/content";
 import { track } from "@/lib/analytics";
 import { getLineUrl, lineCtaLabel } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export function Wordmark({ invert = false }: { invert?: boolean }) {
   return (
-    <Link to="/" className="group min-w-0 block leading-none">
+    <Link to="/" className="group block shrink-0 leading-none">
       <span
         className={cn(
-          "block truncate font-serif text-[0.95rem] tracking-[0.14em] sm:text-[1.05rem] sm:tracking-[0.18em]",
+          "block whitespace-nowrap font-serif text-[0.95rem] tracking-[0.14em] sm:text-[1.05rem] sm:tracking-[0.18em]",
           invert ? "text-cream" : "text-ink",
         )}
       >
@@ -49,7 +49,7 @@ export function SiteHeader({
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/90 backdrop-blur-md">
       <div className="mx-auto flex h-[4.25rem] max-w-6xl items-center justify-between gap-3 px-5">
         <Wordmark />
-        <nav className="hidden items-center gap-5 xl:gap-7 lg:flex" aria-label="主要">
+        <nav className="hidden items-center gap-5 xl:flex xl:gap-7" aria-label="主要">
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -63,7 +63,7 @@ export function SiteHeader({
             </Link>
           ))}
         </nav>
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-3 xl:flex">
           <Link
             to="/apply/collection"
             onClick={() => track("collection_cta_click", { place: "header" })}
@@ -77,7 +77,7 @@ export function SiteHeader({
         </div>
         <button
           type="button"
-          className="inline-flex size-11 min-h-11 min-w-11 items-center justify-center rounded-md border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oxblood lg:hidden"
+          className="inline-flex size-11 min-h-11 min-w-11 items-center justify-center rounded-md border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oxblood xl:hidden"
           aria-label={open ? "メニューを閉じる" : "メニューを開く"}
           aria-expanded={open}
           aria-controls={menuId}
@@ -147,7 +147,6 @@ export function SiteFooter() {
         <div>
           <p className="font-serif text-xl tracking-[0.16em]">{BRAND.name}</p>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-cream/70">{BRAND.phaseNote}</p>
-          <p className="mt-4 text-sm text-cream/55">{BRAND.region}</p>
         </div>
         <div className="flex flex-col gap-3 text-sm">
           {FOOTER_LINKS.map((l) => (
@@ -165,7 +164,8 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-cream/10 px-5 py-5 text-center text-xs leading-relaxed tracking-wide text-cream/60">
-        <p>{PHOTO_NOTE}</p>
+        <p>{SERVICE_START_NOTE}</p>
+        <p className="mt-2">{PHOTO_NOTE}</p>
         <p className="mt-2">
           © {new Date().getFullYear()} {BRAND.name}
         </p>
